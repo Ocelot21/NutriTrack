@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using NutriTrack.Application.Common.Interfaces.Services;
 using NutriTrack.Domain.Users;
+using System.Security.Claims;
 
 namespace NutriTrack.Infrastructure.Services.Identity;
 
@@ -14,7 +15,8 @@ public sealed class HttpCurrentUserService : ICurrentUserService
     }
 
     public UserId? UserId =>
-        Guid.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("sub")?.Value, out var id)
+        Guid.TryParse(_httpContextAccessor.HttpContext?.User?
+            .FindFirst(ClaimTypes.NameIdentifier)?.Value, out var id)
             ? new UserId(id)
             : null;
 }

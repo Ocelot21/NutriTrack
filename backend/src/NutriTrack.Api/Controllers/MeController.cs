@@ -1,7 +1,6 @@
 using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using NutriTrack.Api.Common.Mappings;
 using NutriTrack.Contracts.Me;
 using NutriTrack.Application.Me.Queries.GetMe;
 using NutriTrack.Application.Me.Commands.UpdateHealthProfile;

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NutriTrack.Application.Common.Interfaces.Persistence;
+using NutriTrack.Application.Common.Models;
 using NutriTrack.Domain.Common.Models;
 
 namespace NutriTrack.Infrastructure.Persistence.Repositories;
@@ -39,4 +40,30 @@ public class EfRepository<TEntity, TId> : IRepository<TEntity, TId>
     {
         _dbContext.Set<TEntity>().Remove(entity);
     }
+
+    public async Task<PagedResult<TEntity>> ListAsync(
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken = default)
+    {
+        if (page <= 0) page = 1;
+        if (pageSize <= 0) pageSize = 10;
+
+        var query = _dbContext.Set<TEntity>().AsQueryable();
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var items = await query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        return new PagedResult<TEntity>(
+            items,
+            totalCount,
+            page,
+            pageSize
+        );
+    }
+
 }

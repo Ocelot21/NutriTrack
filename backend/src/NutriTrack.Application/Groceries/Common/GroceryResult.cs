@@ -14,3 +14,10 @@ public record GroceryResult(
     bool IsApproved,
     bool IsDeleted
 );
+
+public record GroceryResultList(
+    IReadOnlyList<GroceryResult> Items,
+    int Page,
+    int PageSize,
+    int TotalCount
+);
