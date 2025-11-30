@@ -64,6 +64,11 @@ public sealed class MealConfiguration : IEntityTypeConfiguration<Meal>
             nb.Property(mi => mi.Id)
                 .HasMealItemIdConversion();
 
+            nb.HasOne(mi => mi.Grocery)
+                    .WithMany()
+                    .HasForeignKey(m => m.GroceryId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
             nb.Property(mi => mi.Quantity)
                 .HasPrecision(9, 2)
                 .IsRequired();

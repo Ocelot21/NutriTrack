@@ -1,4 +1,6 @@
-﻿namespace NutriTrack.Api;
+﻿using NutriTrack.Api.Common.Mappings;
+
+namespace NutriTrack.Api;
 
 public static class DependencyInjection
 {
@@ -6,6 +8,7 @@ public static class DependencyInjection
     {
         services.AddHttpContextAccessor();
         services.AddControllers();
+        services.AddMappings();
 
         // Add services to the container.
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
