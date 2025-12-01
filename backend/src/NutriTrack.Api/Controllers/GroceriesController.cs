@@ -27,11 +27,14 @@ public sealed class GroceriesController : ApiController
 
     [Authorize(Policy = PermissionKeys.Groceries.Read)]
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetById([FromRoute] Guid id)
+    public async Task<IActionResult> GetById(
+        [FromRoute] Guid id,
+        CancellationToken cancellationToken = default)
     {
-        var request = new GetGroceryByIdRequest(id);
-        var query = _mapper.Map<GetGroceryByIdQuery>(request);
-        var result = await _mediator.Send(query);
+        var query = new GetGroceryByIdQuery(new Domain.Groceries.GroceryId(id));
+
+        var result = await _mediator.Send(query, cancellationToken);
+
         return result.Match(
             grocery => Ok(_mapper.Map<GroceryResponse>(grocery)),
             errors => Problem(errors));
@@ -39,10 +42,14 @@ public sealed class GroceriesController : ApiController
 
     [Authorize(Policy = PermissionKeys.Groceries.Read)]
     [HttpGet]
-    public async Task<IActionResult> List([FromQuery] ListGroceriesRequest request)
+    public async Task<IActionResult> List(
+        [FromQuery] ListGroceriesRequest request, 
+        CancellationToken cancellationToken = default)
     {
         var query = _mapper.Map<ListGroceriesQuery>(request);
-        var result = await _mediator.Send(query);
+
+        var result = await _mediator.Send(query, cancellationToken);
+
         return result.Match(
             groceries => Ok(_mapper.Map<PagedResponse<GroceryResponse>>(groceries)),
             errors => Problem(errors));
@@ -50,10 +57,14 @@ public sealed class GroceriesController : ApiController
 
     [Authorize(Policy = PermissionKeys.Groceries.Create)]
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateGroceryRequest request)
+    public async Task<IActionResult> Create(
+        [FromBody] CreateGroceryRequest request,
+        CancellationToken cancellationToken = default)
     {
         var command = _mapper.Map<CreateGroceryCommand>(request);
-        var result = await _mediator.Send(command);
+
+        var result = await _mediator.Send(command, cancellationToken);
+
         return result.Match(
             grocery => CreatedAtAction(
                 nameof(GetById),
@@ -64,10 +75,15 @@ public sealed class GroceriesController : ApiController
 
     [Authorize(Policy = PermissionKeys.Groceries.Update)]
     [HttpPut("{id:Guid}")]
-    public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateGroceryRequest request)
+    public async Task<IActionResult> Update(
+        [FromRoute] Guid id,
+        [FromBody] UpdateGroceryRequest request,
+        CancellationToken cancellationToken = default)
     {
         var command = _mapper.Map<UpdateGroceryCommand>((id, request));
-        var result = await _mediator.Send(command);
+
+        var result = await _mediator.Send(command, cancellationToken);
+
         return result.Match(
             grocery => Ok(_mapper.Map<GroceryResponse>(grocery)),
             errors => Problem(errors));

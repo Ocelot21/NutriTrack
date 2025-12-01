@@ -22,10 +22,12 @@ public class AuthController : ApiController
 
     [AllowAnonymous]
     [HttpPost("register")]
-    public async Task<IActionResult> Register(RegisterRequest request)
+    public async Task<IActionResult> Register(
+        RegisterRequest request,
+        CancellationToken cancellationToken = default)
     {
         var command = _mapper.Map<RegisterCommand>(request);
-        var result = await _mediator.Send(command);
+        var result = await _mediator.Send(command, cancellationToken);
 
         return result.Match(
             result => Ok(_mapper.Map<AuthenticationResponse>(result)),
@@ -35,10 +37,12 @@ public class AuthController : ApiController
 
     [AllowAnonymous]
     [HttpPost("login")]
-    public async Task<IActionResult> Login(LoginRequest request)
+    public async Task<IActionResult> Login(
+        LoginRequest request,
+        CancellationToken cancellationToken = default)
     {
         var command = _mapper.Map<LoginCommand>(request);
-        var result = await _mediator.Send(command);
+        var result = await _mediator.Send(command, cancellationToken);
 
         return result.Match(
             result => Ok(_mapper.Map<AuthenticationResponse>(result)),

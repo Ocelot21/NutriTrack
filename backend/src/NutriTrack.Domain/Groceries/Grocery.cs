@@ -41,6 +41,7 @@ public sealed class Grocery : AggregateRoot<GroceryId>
     public int CaloriesPer100 { get; private set; }
     public UnitOfMeasure UnitOfMeasure { get; private set; }
     public string? ImageUrl { get; private set; }
+
     public bool IsApproved { get; private set; } = true;
     public bool IsDeleted { get; private set; } = false;
 

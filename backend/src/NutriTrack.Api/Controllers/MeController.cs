@@ -5,6 +5,7 @@ using NutriTrack.Contracts.Me;
 using NutriTrack.Application.Me.Queries.GetMe;
 using NutriTrack.Application.Me.Commands.UpdateHealthProfile;
 using Microsoft.AspNetCore.Authorization;
+using NutriTrack.Application.Me.Queries.GetDailyOverview;
 
 namespace NutriTrack.Api.Controllers;
 
@@ -27,11 +28,21 @@ public class MeController : ApiController
         var userId = GetUserId();
 
         var query = new GetMeQuery(userId);
-        var result = await _mediator.Send(query);
+        var result = await _mediator.Send(query, cancellationToken);
 
         return result.Match(
             user => Ok(_mapper.Map<MeResponse>(user)),
             errors => Problem(errors));
+    }
+
+    [Authorize]
+    [HttpGet("overview/daily")]
+    public async Task<IActionResult> GetDailyOverview(CancellationToken cancellationToken = default)
+    {
+        var userId = GetUserId();
+        var query = new GetDailyOverviewQuery(userId);
+        var result = await _mediator.Send(query, cancellationToken);
+        return result.Match(_ => NoContent(), errors => Problem(errors));
     }
 
     [Authorize]
@@ -43,7 +54,7 @@ public class MeController : ApiController
         var userId = GetUserId();
 
         var command = _mapper.Map<UpdateHealthProfileCommand>((userId, request));
-        var result = await _mediator.Send(command);
+        var result = await _mediator.Send(command, cancellationToken);
 
         return result.Match(
             user => Ok(_mapper.Map<MeResponse>(user)),

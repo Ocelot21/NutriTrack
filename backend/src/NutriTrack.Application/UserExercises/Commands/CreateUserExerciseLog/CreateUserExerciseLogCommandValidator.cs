@@ -8,7 +8,6 @@ public sealed class CreateUserExerciseLogCommandValidator : AbstractValidator<Cr
     public CreateUserExerciseLogCommandValidator()
     {
         RuleFor(x => x.UserId.Value).NotEmpty();
-        RuleFor(x => x.Exercise).NotNull();
         RuleFor(x => x.DurationMinutes).GreaterThan(0).LessThanOrEqualTo(1440);
         RuleFor(x => x.LocalDate).NotEmpty();
         When(x => !string.IsNullOrWhiteSpace(x.Notes), () =>

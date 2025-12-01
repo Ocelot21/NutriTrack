@@ -8,11 +8,13 @@ namespace NutriTrack.Application.Meals.Commands.AddMealItem;
 public sealed class AddMealItemCommandHandler : IRequestHandler<AddMealItemCommand, ErrorOr<Unit>>
 {
     private readonly IMealRepository _mealRepository;
+    private readonly IGroceryRepository _groceryRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public AddMealItemCommandHandler(IMealRepository mealRepository, IUnitOfWork unitOfWork)
+    public AddMealItemCommandHandler(IMealRepository mealRepository, IGroceryRepository groceryRepository, IUnitOfWork unitOfWork)
     {
         _mealRepository = mealRepository;
+        _groceryRepository = groceryRepository;
         _unitOfWork = unitOfWork;
     }
 
@@ -24,7 +26,13 @@ public sealed class AddMealItemCommandHandler : IRequestHandler<AddMealItemComma
             return Errors.Meals.NotFound;
         }
 
-        meal.AddItem(request.Grocery, request.Quantity);
+        var grocery = await _groceryRepository.GetByIdAsync(request.GroceryId, cancellationToken);
+        if (grocery is null)
+        {
+            return Errors.Groceries.NotFound;
+        }
+
+        meal.AddItem(grocery, request.Quantity);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
         return Unit.Value;
     }

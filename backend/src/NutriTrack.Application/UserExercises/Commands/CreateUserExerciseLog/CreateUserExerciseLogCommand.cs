@@ -8,7 +8,7 @@ namespace NutriTrack.Application.UserExercises.Commands.CreateUserExerciseLog;
 
 public record CreateUserExerciseLogCommand(
     UserId UserId,
-    Exercise Exercise,
+    ExerciseId ExerciseId,
     decimal DurationMinutes,
     DateTime OccurredAtUtc,
     DateTimeOffset OccurredAtLocal,

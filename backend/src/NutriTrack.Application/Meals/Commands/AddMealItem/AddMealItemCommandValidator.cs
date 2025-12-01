@@ -7,7 +7,6 @@ public sealed class AddMealItemCommandValidator : AbstractValidator<AddMealItemC
     public AddMealItemCommandValidator()
     {
         RuleFor(x => x.MealId.Value).NotEmpty();
-        RuleFor(x => x.Grocery).NotNull();
         RuleFor(x => x.Quantity).GreaterThan(0);
     }
 }

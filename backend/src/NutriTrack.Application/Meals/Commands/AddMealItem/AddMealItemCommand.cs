@@ -5,4 +5,4 @@ using NutriTrack.Domain.Meals;
 
 namespace NutriTrack.Application.Meals.Commands.AddMealItem;
 
-public record AddMealItemCommand(MealId MealId, Grocery Grocery, decimal Quantity) : IRequest<ErrorOr<Unit>>;
+public record AddMealItemCommand(MealId MealId, GroceryId GroceryId, decimal Quantity) : IRequest<ErrorOr<Unit>>;
