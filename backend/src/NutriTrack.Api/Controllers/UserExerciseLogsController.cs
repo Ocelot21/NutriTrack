@@ -12,7 +12,7 @@ using NutriTrack.Domain.UserExercises;
 
 namespace NutriTrack.Api.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/user-exercise-logs")]
 public sealed class UserExerciseLogsController : ApiController
 {
     private readonly ISender _mediator;

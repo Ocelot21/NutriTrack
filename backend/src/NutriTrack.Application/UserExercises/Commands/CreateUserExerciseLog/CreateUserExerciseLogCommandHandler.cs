@@ -1,44 +1,69 @@
 using ErrorOr;
 using MediatR;
+using NutriTrack.Application.Common.Errors;
 using NutriTrack.Application.Common.Interfaces.Persistence;
+using NutriTrack.Application.Common.Interfaces.Services;
 using NutriTrack.Application.Common.Mappings;
 using NutriTrack.Application.UserExercises.Common;
-using NutriTrack.Domain.UserExercises;
 using NutriTrack.Domain.Exercises;
+using NutriTrack.Domain.UserExercises;
+using NutriTrack.Domain.Users;
 
 namespace NutriTrack.Application.UserExercises.Commands.CreateUserExerciseLog;
 
 public sealed class CreateUserExerciseLogCommandHandler : IRequestHandler<CreateUserExerciseLogCommand, ErrorOr<UserExerciseLogResult>>
 {
-    private readonly IUserExerciseLogRepository _repo;
-    private readonly IExerciseRepository _exerciseRepo;
+    private readonly IUserRepository _userRepository;
+    private readonly IUserExerciseLogRepository _userExerciseRepository;
+    private readonly IExerciseRepository _exerciseRepository;
+    private readonly ITimeZoneService _timeZoneService;
     private readonly IUnitOfWork _unitOfWork;
 
-    public CreateUserExerciseLogCommandHandler(IUserExerciseLogRepository repo, IExerciseRepository exerciseRepo, IUnitOfWork unitOfWork)
+    public CreateUserExerciseLogCommandHandler(
+        IUserRepository userRepository,
+        IUserExerciseLogRepository userExerciseLogsRepository,
+        IExerciseRepository exerciseRepository,
+        ITimeZoneService timeZoneService,
+        IUnitOfWork unitOfWork)
     {
-        _repo = repo;
-        _exerciseRepo = exerciseRepo;
+        _userRepository = userRepository;
+        _userExerciseRepository = userExerciseLogsRepository;
+        _exerciseRepository = exerciseRepository;
+        _timeZoneService = timeZoneService;
         _unitOfWork = unitOfWork;
     }
 
     public async Task<ErrorOr<UserExerciseLogResult>> Handle(CreateUserExerciseLogCommand request, CancellationToken cancellationToken)
     {
-        var exercise = await _exerciseRepo.GetByIdAsync(request.ExerciseId, cancellationToken);
-        if (exercise is null)
+        if (await _userRepository.GetByIdAsync(request.UserId, cancellationToken) is not User user)
         {
-            return Error.NotFound(code: "Exercises.NotFound", description: "Exercise was not found.");
+            return Errors.Users.NotFound;
         }
+
+        if (await _exerciseRepository.GetByIdAsync(request.ExerciseId, cancellationToken) is not Exercise exercise)
+        {
+            return Errors.Exercises.NotFound;
+        }
+
+        if (!_timeZoneService.TryNormalize(user.TimeZoneId, out string normalizedTimeZoneId))
+        {
+            return Errors.Users.InvalidTimeZone;
+        }
+
+        var occuredAtUtc = _timeZoneService.ToUtc(request.OccurredAtLocal, normalizedTimeZoneId);
+
+        var localDate = DateOnly.FromDateTime(request.OccurredAtLocal.LocalDateTime);
 
         var entity = UserExerciseLog.Create(
             request.UserId,
             exercise,
             request.DurationMinutes,
-            request.OccurredAtUtc,
+            occuredAtUtc,
             request.OccurredAtLocal,
-            request.LocalDate,
+            localDate,
             request.Notes);
 
-        await _repo.AddAsync(entity, cancellationToken);
+        await _userExerciseRepository.AddAsync(entity, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
         return entity.ToUserExerciseLogResult();
     }

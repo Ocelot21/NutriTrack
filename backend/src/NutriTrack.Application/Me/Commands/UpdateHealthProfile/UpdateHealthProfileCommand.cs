@@ -11,5 +11,6 @@ public record UpdateHealthProfileCommand(
     DateOnly? Birthdate,
     decimal? HeightCm,
     decimal? WeightKg,
-    ActivityLevel? ActivityLevel
+    ActivityLevel? ActivityLevel,
+    NutritionGoal? NutritionGoal
 ) : IRequest<ErrorOr<UserResult>>;

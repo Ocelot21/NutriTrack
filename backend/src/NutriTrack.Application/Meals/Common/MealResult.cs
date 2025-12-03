@@ -14,5 +14,6 @@ public sealed record MealResult(
     int TotalCalories,
     decimal TotalProtein,
     decimal TotalCarbohydrates,
-    decimal TotalFats
+    decimal TotalFats,
+    IReadOnlyList<MealItem> Items
 );

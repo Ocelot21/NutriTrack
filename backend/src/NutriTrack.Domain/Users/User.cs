@@ -60,6 +60,8 @@ public sealed class User : AggregateRoot<UserId>
     public decimal? HeightCm { get; private set; }
     public decimal? WeightKg { get; private set; }
 
+    public NutritionGoal NutritionGoal { get; private set; } = NutritionGoal.MaintainWeight;
+
 
     // --------- Factory ---------
 
@@ -149,7 +151,8 @@ public sealed class User : AggregateRoot<UserId>
         Optional<DateOnly?> birthdate,
         Optional<decimal?> heightCm,
         Optional<decimal?> weightKg,
-        Optional<ActivityLevel> activityLevel)
+        Optional<ActivityLevel> activityLevel,
+        Optional<NutritionGoal> nutritionGoal)
     {
         if (gender.IsSet)
         {
@@ -176,6 +179,12 @@ public sealed class User : AggregateRoot<UserId>
         {
             ValidateActivityLevel(activityLevel.Value);
             ActivityLevel = activityLevel.Value;
+        }
+
+        if (nutritionGoal.IsSet)
+        {
+            ValidateNutritionGoal(nutritionGoal.Value);
+            NutritionGoal = nutritionGoal.Value;
         }
     }
 
@@ -373,5 +382,13 @@ public sealed class User : AggregateRoot<UserId>
         }
     }
 
-
+    private static void ValidateNutritionGoal(NutritionGoal nutritionGoal)
+    {
+        if (!Enum.IsDefined(typeof(NutritionGoal), nutritionGoal))
+        {
+            throw new DomainException(
+                DomainErrorCodes.Users.InvalidActivityLevel,
+                "Activity level value is invalid.");
+        }
+    }
 }

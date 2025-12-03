@@ -11,5 +11,6 @@ namespace NutriTrack.Application.Common.Interfaces.Services
         DateOnly LocalDate(DateTime utcDateTime, string timeZoneId);
         int LocalTimeMinutes(DateTime utcDateTime, string timeZoneId);
         short OffsetMinutes(string timeZoneId, DateTime utcDateTime);
+        DateTime ToUtc(DateTimeOffset localDateTime, string timeZoneId);
     }
 }

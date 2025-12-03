@@ -45,9 +45,9 @@ public sealed class ListGroceriesQueryHandler : IRequestHandler<ListGroceriesQue
 
         return new PagedResult<GroceryResult>(
             list.Select(g => g.ToGroceryResult()).ToList(),
+            list.Count,
             request.Page ?? 0,
-            request.PageSize ?? 0,
-            list.Count
+            request.PageSize ?? 0
         );
     }
 }

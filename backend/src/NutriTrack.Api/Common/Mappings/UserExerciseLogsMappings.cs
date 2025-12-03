@@ -16,9 +16,6 @@ public class UserExerciseLogsMappings : IRegister
         config.NewConfig<CreateUserExerciseLogRequest, CreateUserExerciseLogCommand>()
             .Map(dest => dest.ExerciseId, src => new ExerciseId(src.ExerciseId));
 
-        config.NewConfig<DeleteUserExerciseLogRequest, DeleteUserExerciseLogCommand>()
-            .Map(dest => dest.Id, src => new UserExerciseLogId(src.Id));
-
         config.NewConfig<UserExerciseLogResult, UserExerciseLogResponse>()
             .Map(dest => dest.Id, src => src.Id.Value)
             .Map(dest => dest.ExerciseId, src => src.ExerciseId.Value)

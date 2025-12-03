@@ -18,6 +18,7 @@ public static class MealMappings
             meal.TotalCalories,
             meal.TotalProtein,
             meal.TotalCarbohydrates,
-            meal.TotalFats);
+            meal.TotalFats,
+            meal.Items.ToList());
     }
 }

@@ -6,7 +6,8 @@ namespace NutriTrack.Application.Common.Behaviors;
 
 public sealed class DomainExceptionBehavior<TRequest, TResponse>
     : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : notnull
+    where TRequest : IRequest<TResponse>
+    where TResponse : IErrorOr
 {
     public async Task<TResponse> Handle(
         TRequest request,
@@ -19,26 +20,13 @@ public sealed class DomainExceptionBehavior<TRequest, TResponse>
         }
         catch (DomainException ex)
         {
-            var responseType = typeof(TResponse);
+            var error = Error.Validation(
+                ex.Code ?? "Domain.Validation",
+                ex.Message);
 
-            if (responseType.IsGenericType &&
-                responseType.GetGenericTypeDefinition() == typeof(ErrorOr<>))
-            {
-                var error = Error.Failure(ex.Code ?? "General.Failure", ex.Message);
+            var errors = new List<Error> { error };
 
-                // ErrorOr<T>.From(params Error[] errors)
-                var fromMethod = responseType.GetMethod(
-                    nameof(ErrorOr<>.From),
-                    [typeof(IEnumerable<Error>)]);
-
-                if (fromMethod is not null)
-                {
-                    var result = fromMethod.Invoke(null, [new[] { error }]);
-                    return (TResponse)result!;
-                }
-            }
-
-            throw;
+            return (dynamic)errors;
         }
     }
 }

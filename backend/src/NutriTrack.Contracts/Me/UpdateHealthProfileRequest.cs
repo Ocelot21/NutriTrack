@@ -5,5 +5,6 @@ public sealed record UpdateHealthProfileRequest(
     DateOnly? Birthdate,
     decimal? HeightCm,
     decimal? WeightKg,
-    string? ActivityLevel
+    string? ActivityLevel,
+    string? NutritionGoal
 );

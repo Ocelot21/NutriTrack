@@ -7,6 +7,7 @@ using NutriTrack.Application.Meals.Commands.RemoveMealItem;
 using NutriTrack.Domain.Meals;
 using NutriTrack.Contracts.Meals;
 using NutriTrack.Application.Common.Models;
+using NutriTrack.Application.Meals.Common;
 
 namespace NutriTrack.Api.Common.Mappings;
 
@@ -15,6 +16,7 @@ public class MealsMappings : IRegister
     public void Register(TypeAdapterConfig config)
     {
         config.NewConfig<CreateMealRequest, CreateMealCommand>();
+
         config.NewConfig<DeleteMealRequest, DeleteMealCommand>()
             .Map(dest => dest.Id, src => new NutriTrack.Domain.Meals.MealId(src.MealId));
 
@@ -26,7 +28,7 @@ public class MealsMappings : IRegister
             .Map(dest => dest.MealId, src => new NutriTrack.Domain.Meals.MealId(src.MealId))
             .Map(dest => dest.MealItemId, src => new NutriTrack.Domain.Meals.MealItemId(src.MealItemId));
 
-        config.NewConfig<Meal, MealResponse>()
+        config.NewConfig<MealResult, MealResponse>()
             .Map(dest => dest.Id, src => src.Id.Value)
             .Map(dest => dest.Name, src => src.Name)
             .Map(dest => dest.Description, src => src.Description)

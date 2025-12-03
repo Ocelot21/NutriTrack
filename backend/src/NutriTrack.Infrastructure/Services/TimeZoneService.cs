@@ -52,4 +52,10 @@ public sealed class TimeZoneService : ITimeZoneService
         var zonedDateTime = dateTimeUtc.InZone(zone);
         return zonedDateTime.ToDateTimeUnspecified();
     }
+
+    public DateTime ToUtc(DateTimeOffset localDateTime, string timeZoneId)
+    {
+        var tz = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+        return TimeZoneInfo.ConvertTimeToUtc(localDateTime.DateTime, tz);
+    }
 }

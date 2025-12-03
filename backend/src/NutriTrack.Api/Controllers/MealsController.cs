@@ -62,13 +62,8 @@ public sealed class MealsController : ApiController
         CancellationToken cancellationToken = default)
     {
         var userId = GetUserId();
-        var command = new CreateMealCommand(
-            userId,
-            request.Name,
-            request.OccurredAtUtc,
-            request.OccurredAtLocal,
-            request.LocalDate,
-            request.Description);
+        var command = _mapper.Map<CreateMealCommand>(request) with { UserId = userId };
+
         var result = await _mediator.Send(command, cancellationToken);
 
         return result.Match(
@@ -119,7 +114,9 @@ public sealed class MealsController : ApiController
     {
         var command = new RemoveMealItemCommand(new MealId(mealId), new MealItemId(itemId));
         var result = await _mediator.Send(command, cancellationToken);
-        return result.Match(_ => NoContent(), errors => Problem(errors));
+        return result.Match(
+            _ => NoContent(),
+            errors => Problem(errors));
     }
 
     [Authorize(Policy = PermissionKeys.Meals.Read_Own)]

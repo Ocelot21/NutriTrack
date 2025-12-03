@@ -36,13 +36,17 @@ public class MeController : ApiController
     }
 
     [Authorize]
-    [HttpGet("overview/daily")]
-    public async Task<IActionResult> GetDailyOverview(CancellationToken cancellationToken = default)
+    [HttpGet("daily-overview/{localDate:datetime}")]
+    public async Task<IActionResult> GetDailyOverview(
+        DateOnly localDate,
+        CancellationToken cancellationToken = default)
     {
         var userId = GetUserId();
-        var query = new GetDailyOverviewQuery(userId);
+        var query = new GetDailyOverviewQuery(userId, localDate);
         var result = await _mediator.Send(query, cancellationToken);
-        return result.Match(_ => NoContent(), errors => Problem(errors));
+        return result.Match(
+            overview => Ok(_mapper.Map<DailyOverviewResponse>(overview)),
+            errors => Problem(errors));
     }
 
     [Authorize]

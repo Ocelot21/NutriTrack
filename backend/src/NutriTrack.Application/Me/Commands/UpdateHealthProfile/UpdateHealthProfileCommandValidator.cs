@@ -26,5 +26,8 @@ public sealed class UpdateHealthProfileCommandValidator : AbstractValidator<Upda
 
         RuleFor(x => x.ActivityLevel)
             .IsInEnum().When(x => x.ActivityLevel.HasValue);
+
+        RuleFor(x => x.NutritionGoal)
+            .IsInEnum().When(x => x.NutritionGoal.HasValue);
     }
 }

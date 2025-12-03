@@ -44,6 +44,11 @@ namespace NutriTrack.Application.Common.Errors
                 Error.Validation(
                     code: DomainErrorCodes.Users.InvalidUsername,
                     description: "Username is invalid.");
+
+            public static Error HealthProfileNotCompleted =>
+                Error.Validation(
+                    code: DomainErrorCodes.Users.HealthProfileNotCompleted,
+                    description: "User's health profile is not completed.");
         }
 
         public static class Groceries

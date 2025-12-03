@@ -9,11 +9,10 @@ namespace NutriTrack.Api.Controllers
     [ApiController]
     public class ApiController : ControllerBase
     {
-        //private readonly ICurrentUserService _currentUserService;
 
-        public ApiController(/*ICurrentUserService currentUserService*/)
+        public ApiController()
         {
-            //_currentUserService = currentUserService;
+
         }
 
         protected UserId GetUserId()

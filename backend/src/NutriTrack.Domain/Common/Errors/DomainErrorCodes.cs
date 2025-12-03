@@ -25,6 +25,10 @@ public static class DomainErrorCodes
         public const string InvalidWeight = "Users.InvalidWeight";
         public const string InvalidGender = "Users.InvalidGender";
         public const string InvalidActivityLevel = "Users.InvalidActivityLevel";
+        public const string InvalidNutritionGoal = "Users.InvalidNutritionGoal";
+
+        public const string EmailNotConfirmed = "Users.EmailNotConfirmed";
+        public const string HealthProfileNotCompleted = "Users.HealthProfileNotCompleted";
 
         public const string NotFound = "Users.NotFound";
     }

@@ -1,4 +1,7 @@
 ﻿using NutriTrack.Application.Common.Models;
+using NutriTrack.Application.Me.Common;
+using NutriTrack.Domain.Meals;
+using NutriTrack.Domain.UserExercises;
 using NutriTrack.Domain.Users;
 
 namespace NutriTrack.Application.Common.Mappings;
@@ -25,6 +28,20 @@ public static class UserMappings
             user.Birthdate,
             user.HeightCm,
             user.WeightKg
+        );
+    }
+
+    public static DailyOverviewResult ToDailyOverviewResult(
+        IReadOnlyList<Meal> meals,
+        IReadOnlyList<UserExerciseLog> exercises,
+        DailyNutritionTargets targets,
+        DailyNutritionSnapshot snapshot)
+    {
+        return new DailyOverviewResult(
+            meals.Select(meal => meal.ToMealResult()).ToList(),
+            exercises.Select(exercise => exercise.ToUserExerciseLogResult()).ToList(),
+            targets,
+            snapshot
         );
     }
 }

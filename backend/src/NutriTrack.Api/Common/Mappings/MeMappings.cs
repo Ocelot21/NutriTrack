@@ -3,6 +3,7 @@ using NutriTrack.Application.Me.Commands.UpdateHealthProfile;
 using NutriTrack.Application.Common.Models;
 using NutriTrack.Contracts.Me;
 using NutriTrack.Domain.Users;
+using NutriTrack.Application.Me.Common;
 
 namespace NutriTrack.Api.Common.Mappings;
 
@@ -22,10 +23,15 @@ public class MeMappings : IRegister
             .Map(dest => dest.ActivityLevel, src =>
                 string.IsNullOrWhiteSpace(src.Request.ActivityLevel) ?
                 (Domain.Users.ActivityLevel?)null :
-                Enum.Parse<Domain.Users.ActivityLevel>(src.Request.ActivityLevel, ignoreCase: true));
+                Enum.Parse<Domain.Users.ActivityLevel>(src.Request.ActivityLevel, ignoreCase: true))
+            .Map(dest => dest.NutritionGoal, src =>
+                string.IsNullOrWhiteSpace(src.Request.NutritionGoal) ?
+                (Domain.Users.NutritionGoal?)null :
+                Enum.Parse<Domain.Users.NutritionGoal>(src.Request.NutritionGoal, ignoreCase: true));
 
         config.NewConfig<UserResult, MeResponse>()
             .Map(dest => dest.Id, src => src.Id.Value);
 
+        config.NewConfig<DailyOverviewResult, DailyOverviewResponse>();
     }
 }

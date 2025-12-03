@@ -9,6 +9,5 @@ public sealed class CreateMealCommandValidator : AbstractValidator<CreateMealCom
     {
         RuleFor(x => x.UserId.Value).NotEmpty();
         RuleFor(x => x.Name).NotEmpty().MaximumLength(DomainConstraints.Meals.MaxMealNameLength);
-        RuleFor(x => x.LocalDate).NotEmpty();
     }
 }

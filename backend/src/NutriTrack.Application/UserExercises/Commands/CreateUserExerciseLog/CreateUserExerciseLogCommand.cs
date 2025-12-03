@@ -10,8 +10,6 @@ public record CreateUserExerciseLogCommand(
     UserId UserId,
     ExerciseId ExerciseId,
     decimal DurationMinutes,
-    DateTime OccurredAtUtc,
     DateTimeOffset OccurredAtLocal,
-    DateOnly LocalDate,
     string? Notes
 ) : IRequest<ErrorOr<UserExerciseLogResult>>;

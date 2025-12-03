@@ -8,8 +8,6 @@ namespace NutriTrack.Application.Meals.Commands.CreateMeal;
 public record CreateMealCommand(
     UserId UserId,
     string Name,
-    DateTime OccurredAtUtc,
     DateTimeOffset OccurredAtLocal,
-    DateOnly LocalDate,
     string? Description
 ) : IRequest<ErrorOr<MealResult>>;

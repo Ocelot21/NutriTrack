@@ -33,7 +33,8 @@ public sealed class UpdateHealthProfileCommandHandler : IRequestHandler<UpdateHe
             request.Birthdate is null ? Optional<DateOnly?>.None() : request.Birthdate,
             request.HeightCm is null ? Optional<decimal?>.None() : request.HeightCm,
             request.WeightKg is null ? Optional<decimal?>.None() : request.WeightKg,
-            request.ActivityLevel is null ? Optional<ActivityLevel>.None() : request.ActivityLevel.Value);
+            request.ActivityLevel is null ? Optional<ActivityLevel>.None() : request.ActivityLevel.Value,
+            request.NutritionGoal is null ? Optional<NutritionGoal>.None() : request.NutritionGoal.Value);
 
         user.MarkHealthProfileCompleted();
 

@@ -9,7 +9,6 @@ public sealed class CreateUserExerciseLogCommandValidator : AbstractValidator<Cr
     {
         RuleFor(x => x.UserId.Value).NotEmpty();
         RuleFor(x => x.DurationMinutes).GreaterThan(0).LessThanOrEqualTo(1440);
-        RuleFor(x => x.LocalDate).NotEmpty();
         When(x => !string.IsNullOrWhiteSpace(x.Notes), () =>
         {
             RuleFor(x => x.Notes!).MaximumLength(DomainConstraints.UserExerciseLogs.MaxNotesLength);
