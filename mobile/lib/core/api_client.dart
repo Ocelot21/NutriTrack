@@ -5,8 +5,21 @@ import 'problem_details.dart';
 
 class ApiClient {
   final Dio _dio;
+  String? _authToken;
 
   ApiClient(this._dio);
+
+  void setAuthToken(String? token) {
+    _authToken = token;
+
+    if (_authToken != null && _authToken!.isNotEmpty) {
+      _dio.options.headers['Authorization'] = 'Bearer $_authToken';
+    } else {
+      _dio.options.headers.remove('Authorization');
+    }
+  }
+
+  Dio get raw => _dio;
 
   Future<Response<T>> _wrapRequest<T>(Future<Response<T>> future) async {
     try {
@@ -23,9 +36,9 @@ class ApiClient {
         problem = ProblemDetails.fromJson(data);
 
         if (problem.hasErrors) {
-          final messages = problem.allMessages;
-          if (messages.isNotEmpty) {
-            message = messages.join('\n');
+          final msgs = problem.allMessages;
+          if (msgs.isNotEmpty) {
+            message = msgs.join('\n');
           }
         } else if (problem.title != null) {
           message = problem.title!;
@@ -34,6 +47,10 @@ class ApiClient {
         message = data;
       } else if (e.message != null && e.message!.isNotEmpty) {
         message = e.message!;
+      }
+
+      if (statusCode == 401) {
+        message = 'You are not authorized. Please log in again.';
       }
 
       throw ApiException(
@@ -72,5 +89,17 @@ class ApiClient {
     );
   }
 
-// Put and delete methods can be added similarly
+  Future<Response<T>> put<T>(
+      String path, {
+        dynamic data,
+        Map<String, dynamic>? queryParameters,
+      }) {
+    return _wrapRequest(
+      _dio.put<T>(
+        path,
+        data: data,
+        queryParameters: queryParameters,
+      ),
+    );
+  }
 }

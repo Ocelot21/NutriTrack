@@ -68,19 +68,21 @@ class AuthRepo {
         },
       );
 
-      final token = _extractToken(response.data);
-      if (token != null && token.isNotEmpty) {
-        await _tokenStore.save(token);
-        return true;
+      final data = response.data ?? {};
+
+      final token = data['accessToken'] as String?;
+
+      if (token == null || token.isEmpty) {
+        throw AuthException(
+          'Login succeeded but accessToken is missing in response.',
+        );
       }
 
-      throw AuthException('Login succeeded but token was missing in response.');
+      await _tokenStore.save(token);
+      _api.setAuthToken(token);
+
+      return true;
     } on ApiException catch (e) {
-      final codes = e.problem?.errorKeys ?? const [];
-      if (codes.contains('Authentication.InvalidCredentials')) {
-        throw AuthException('The provided email or password is incorrect.');
-      }
-
       throw AuthException(e.message);
     } catch (e) {
       throw AuthException('Unexpected error: $e');

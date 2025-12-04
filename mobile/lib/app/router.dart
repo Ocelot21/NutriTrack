@@ -3,12 +3,14 @@ import 'package:go_router/go_router.dart';
 
 import '../features/auth/presentation/login_page.dart';
 import '../features/auth/presentation/register_page.dart';
+import '../features/health_profile/presentation/health_profile_page.dart';
 import '../features/home/presentation/home_page.dart';
 
 enum AppRoute {
   login,
   register,
   home,
+  healthProfile,
 }
 
 class AppRouter {
@@ -34,6 +36,12 @@ class AppRouter {
         name: AppRoute.home.name,
         pageBuilder: (context, state) =>
             const MaterialPage(child: HomePage()),
+      ),
+      GoRoute(
+        path: '/health-profile',
+        name: AppRoute.healthProfile.name,
+        pageBuilder: (context, state) =>
+        const MaterialPage(child: HealthProfilePage()),
       ),
     ],
   );
