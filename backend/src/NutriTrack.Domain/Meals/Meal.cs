@@ -82,9 +82,9 @@ public sealed class Meal : AggregateRoot<MealId>
     public void UpdateDetails(
         Optional<string> name,
         Optional<string?> description,
-        Optional<DateTime?> occurredAtUtc,
-        Optional<DateTimeOffset?> occurredAtLocal,
-        Optional<DateOnly?> localDate)
+        Optional<DateTime> occurredAtUtc,
+        Optional<DateTimeOffset> occurredAtLocal,
+        Optional<DateOnly> localDate)
     {
         if (name.IsSet)
         {
@@ -96,19 +96,19 @@ public sealed class Meal : AggregateRoot<MealId>
             Description = NormalizeDescription(description.Value);
         }
 
-        if (occurredAtUtc.IsSet && occurredAtUtc.Value is not null)
+        if (occurredAtUtc.IsSet)
         {
-            OccurredAtUtc = EnsureUtc(occurredAtUtc.Value.Value);
+            OccurredAtUtc = EnsureUtc(occurredAtUtc.Value);
         }
 
-        if (occurredAtLocal.IsSet && occurredAtLocal.Value is not null)
+        if (occurredAtLocal.IsSet)
         {
-            OccurredAtLocal = NormalizeLocal(occurredAtLocal.Value.Value);
+            OccurredAtLocal = NormalizeLocal(occurredAtLocal.Value);
         }
 
-        if (localDate.IsSet && localDate.Value is not null)
+        if (localDate.IsSet)
         {
-            LocalDate = NormalizeLocalDate(localDate.Value.Value);
+            LocalDate = NormalizeLocalDate(localDate.Value);
         }
     }
 

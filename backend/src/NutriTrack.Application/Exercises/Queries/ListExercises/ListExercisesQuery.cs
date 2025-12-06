@@ -2,10 +2,12 @@ using ErrorOr;
 using MediatR;
 using NutriTrack.Application.Common.Models;
 using NutriTrack.Application.Exercises.Common;
+using NutriTrack.Domain.Users;
 
 namespace NutriTrack.Application.Exercises.Queries.ListExercises;
 
 public record ListExercisesQuery(
-    int? Page = null,
-    int? PageSize = null,
-    bool ApprovedOnly = true) : IRequest<ErrorOr<PagedResult<ExerciseResult>>>;
+    UserId? UserId,
+    ExerciseListFilters Filters,
+    int Page,
+    int PageSize) : IRequest<ErrorOr<PagedResult<ExerciseResult>>>;

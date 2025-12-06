@@ -102,4 +102,17 @@ class ApiClient {
       ),
     );
   }
+
+  Future<Response<T>> delete<T>(
+      String path, {
+        Map<String, dynamic>? queryParameters,
+      }) {
+    return _wrapRequest(
+      _dio.delete<T>(
+        path,
+        queryParameters: queryParameters,
+      ),
+    );
+  }
+
 }

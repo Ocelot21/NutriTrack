@@ -19,26 +19,13 @@ public sealed class ListExercisesQueryHandler : IRequestHandler<ListExercisesQue
 
     public async Task<ErrorOr<PagedResult<ExerciseResult>>> Handle(ListExercisesQuery request, CancellationToken cancellationToken)
     {
-        if (request.Page.HasValue && request.PageSize.HasValue)
-        {
-            var list = await _exerciseRepository.ListAsync(
-                page: request.Page.Value,
-                pageSize: request.PageSize.Value,
-                cancellationToken: cancellationToken);
+        var list = await _exerciseRepository.GetPagedAsync(
+            request.Filters,
+            request.UserId,
+            request.Page,
+            request.PageSize,
+            cancellationToken);
 
-            return new PagedResult<ExerciseResult>(
-                list.Items.ToList().Select(exercise => exercise.ToExerciseResult()).ToList(),
-                list.TotalCount,
-                list.Page,
-                list.PageSize);
-        }
-
-        var listAll = (await _exerciseRepository.ListAsync(cancellationToken: cancellationToken)).ToList();
-
-        return new PagedResult<ExerciseResult>(
-            listAll.Select(exercise => exercise.ToExerciseResult()).ToList(),
-            TotalCount: 0,
-            Page: 0,
-            PageSize: 0);
+        return list.ToPagedResult();
     }
 }

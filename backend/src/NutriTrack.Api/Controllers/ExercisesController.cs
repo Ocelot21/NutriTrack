@@ -46,7 +46,7 @@ public sealed class ExercisesController : ApiController
         [FromQuery] ListExercisesRequest request,
         CancellationToken cancellationToken = default)
     {
-        var query = _mapper.Map<ListExercisesQuery>(request);
+        var query = _mapper.Map<ListExercisesQuery>((GetUserId(), request));
 
         var result = await _mediator.Send(query, cancellationToken);
 

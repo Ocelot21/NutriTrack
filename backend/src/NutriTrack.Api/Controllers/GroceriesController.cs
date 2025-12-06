@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using NutriTrack.Domain.Authorization;
 using NutriTrack.Application.Groceries.Commands.DeleteGrocery;
 using NutriTrack.Contracts.Common;
+using NutriTrack.Application.Groceries.Queries.GetGroceryByCode;
 
 namespace NutriTrack.Api.Controllers;
 
@@ -41,12 +42,24 @@ public sealed class GroceriesController : ApiController
     }
 
     [Authorize(Policy = PermissionKeys.Groceries.Read)]
+    [HttpGet("by-code")]
+    public async Task<IActionResult> GetByCode([FromQuery] string code)
+    {
+        var query = new GetGroceryByCodeQuery(code);
+        var result = await _mediator.Send(query);
+
+        return result.Match(
+            grocery => Ok(_mapper.Map<GroceryResponse>(grocery)),
+            errors => Problem(errors));
+    }
+
+    [Authorize(Policy = PermissionKeys.Groceries.Read)]
     [HttpGet]
     public async Task<IActionResult> List(
         [FromQuery] ListGroceriesRequest request, 
         CancellationToken cancellationToken = default)
     {
-        var query = _mapper.Map<ListGroceriesQuery>(request);
+        var query = _mapper.Map<ListGroceriesQuery>((GetUserId(), request));
 
         var result = await _mediator.Send(query, cancellationToken);
 

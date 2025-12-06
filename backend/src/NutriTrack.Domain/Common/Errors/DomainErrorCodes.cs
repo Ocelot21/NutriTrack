@@ -63,6 +63,8 @@ public static class DomainErrorCodes
 
         public const string RoleNotFound = "Authorization.RoleNotFound";
         public const string PermissionNotFound = "Authorization.PermissionNotFound";
+
+        public const string Unauthorized = "Authorization.Unauthorized";
     }
 
     public static class Meals

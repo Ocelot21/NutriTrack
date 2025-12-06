@@ -6,7 +6,7 @@ public sealed class ListExercisesQueryValidator : AbstractValidator<ListExercise
 {
     public ListExercisesQueryValidator()
     {
-        RuleFor(x => x.Page).GreaterThan(0).When(x => x.Page.HasValue);
-        RuleFor(x => x.PageSize).GreaterThan(0).When(x => x.PageSize.HasValue);
+        RuleFor(x => x.Page).GreaterThan(0);
+        RuleFor(x => x.PageSize).GreaterThan(0);
     }
 }

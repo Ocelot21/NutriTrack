@@ -51,7 +51,7 @@ public sealed class UserExerciseLogsController : ApiController
 
         var result = await _mediator.Send(query, cancellationToken);
         return result.Match(
-            logs => Ok(logs.Select(l => _mapper.Map<UserExerciseLogResponse>(l))),
+            logs => Ok(new { Exercises = logs.Select(l => _mapper.Map<UserExerciseLogResponse>(l))}),
             errors => Problem(errors));
     }
 

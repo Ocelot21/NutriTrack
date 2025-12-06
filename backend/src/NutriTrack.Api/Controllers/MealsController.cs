@@ -12,6 +12,7 @@ using NutriTrack.Application.Meals.Commands.AddMealItem;
 using NutriTrack.Application.Meals.Commands.UpdateMealItem;
 using NutriTrack.Application.Meals.Commands.RemoveMealItem;
 using NutriTrack.Domain.Meals;
+using NutriTrack.Application.Meals.Commands.UpdateMeal;
 
 namespace NutriTrack.Api.Controllers;
 
@@ -51,7 +52,7 @@ public sealed class MealsController : ApiController
         var query = new ListMealsQuery(userId, from, to);
         var result = await _mediator.Send(query, cancellationToken);
         return result.Match(
-            meals => Ok(meals.Select(m => _mapper.Map<MealResponse>(m))),
+            meals => Ok(new { Meals = meals.Select(m => _mapper.Map<MealResponse>(m)) }),
             errors => Problem(errors));
     }
 
@@ -68,6 +69,23 @@ public sealed class MealsController : ApiController
 
         return result.Match(
             meal => CreatedAtAction(nameof(GetById), new { id = meal.Id.Value }, _mapper.Map<MealResponse>(meal)),
+            errors => Problem(errors));
+    }
+
+    [Authorize(Policy = PermissionKeys.Meals.Update_Own)]
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(
+        [FromRoute] Guid id,
+        [FromBody] UpdateMealRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var userId = GetUserId();
+        var command = _mapper.Map<UpdateMealCommand>((id, userId, request));
+
+        var result = await _mediator.Send(command, cancellationToken);
+
+        return result.Match(
+            _ => NoContent(),
             errors => Problem(errors));
     }
 

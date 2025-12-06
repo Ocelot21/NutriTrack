@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../domain/health_enums.dart';
 import 'health_profile_providers.dart';
@@ -9,6 +10,18 @@ class HealthProfilePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.listen(
+      healthProfileControllerProvider,
+          (previous, next) {
+        final wasSubmitted = previous?.submitted ?? false;
+        final isSubmittedNow = next.submitted;
+
+        if (!wasSubmitted && isSubmittedNow) {
+          context.go('/home');
+        }
+      },
+    );
+
     final theme = Theme.of(context);
     final state = ref.watch(healthProfileControllerProvider);
     final controller = ref.read(healthProfileControllerProvider.notifier);

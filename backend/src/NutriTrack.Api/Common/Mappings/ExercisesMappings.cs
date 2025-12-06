@@ -8,6 +8,7 @@ using NutriTrack.Contracts.Exercises;
 using NutriTrack.Domain.Exercises;
 using NutriTrack.Application.Common.Models;
 using NutriTrack.Contracts.Common;
+using NutriTrack.Domain.Users;
 
 namespace NutriTrack.Api.Common.Mappings;
 
@@ -33,5 +34,10 @@ public class ExercisesMappings : IRegister
 
         config.NewConfig<PagedResult<ExerciseResult>, PagedResponse<ExerciseResponse>>()
             .Map(dest => dest.Items, src => src.Items);
+
+        config.NewConfig<(UserId UserId, ListExercisesRequest Request), ListExercisesQuery>()
+            .Map(dest => dest.UserId, src => src.UserId)
+            .Map(dest => dest, src => src.Request)
+            .Map(dest => dest.Filters, src => src.Request);
     }
 }

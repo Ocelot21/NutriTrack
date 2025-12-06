@@ -7,6 +7,7 @@ using NutriTrack.Application.Groceries.Common;
 using NutriTrack.Contracts.Groceries;
 using NutriTrack.Domain.Groceries;
 using NutriTrack.Application.Common.Models;
+using NutriTrack.Domain.Users;
 
 namespace NutriTrack.Api.Common.Mappings;
 
@@ -42,5 +43,10 @@ public class GroceriesMappings : IRegister
 
         config.NewConfig<PagedResult<GroceryResult>, PagedResult<GroceryResponse>>()
             .Map(dest => dest.Items, src => src.Items);
+
+        config.NewConfig<(UserId UserId, ListGroceriesRequest Request), ListGroceriesQuery>()
+            .Map(dest => dest.UserId, src => src.UserId)
+            .Map(dest => dest, src => src.Request)
+            .Map(dest => dest.Filters, src => src.Request);
     }
 }

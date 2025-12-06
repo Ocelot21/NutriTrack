@@ -3,14 +3,27 @@ import 'package:go_router/go_router.dart';
 
 import '../features/auth/presentation/login_page.dart';
 import '../features/auth/presentation/register_page.dart';
+import '../features/exercises/presentation/edit_exercise_log_page.dart';
+import '../features/exercises/presentation/exercise_log_page.dart';
+import '../features/exercises/presentation/exercise_search_page.dart';
+import '../features/groceries/presentation/grocery_search_page.dart';
 import '../features/health_profile/presentation/health_profile_page.dart';
 import '../features/home/presentation/home_page.dart';
+import '../features/meals/presentation/create_meal_item_page.dart';
+import '../features/meals/presentation/create_meal_page.dart';
+import '../features/meals/presentation/edit_meal_page.dart';
+import '../features/home/data/daily_overview_models.dart';
+import '../features/scanner/scanner_page.dart';
+
 
 enum AppRoute {
   login,
   register,
   home,
   healthProfile,
+  createMeal,
+  editMeal,
+  exercises,
 }
 
 class AppRouter {
@@ -42,6 +55,126 @@ class AppRouter {
         name: AppRoute.healthProfile.name,
         pageBuilder: (context, state) =>
         const MaterialPage(child: HealthProfilePage()),
+      ),
+      GoRoute(
+        path: '/meals/create',
+        name: AppRoute.createMeal.name,
+        pageBuilder: (context, state) {
+          final extra = state.extra;
+          final now = DateTime.now();
+          final date = extra is DateTime
+              ? extra
+              : DateTime(now.year, now.month, now.day);
+          return MaterialPage(
+            child: CreateMealPage(date: date),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/meals/edit',
+        name: AppRoute.editMeal.name,
+        pageBuilder: (context, state) {
+          final extra = state.extra;
+          if (extra is! Meal) {
+            return const MaterialPage(
+              child: Scaffold(
+                body: Center(
+                  child: Text('Meal data not provided'),
+                ),
+              ),
+            );
+          }
+
+          return MaterialPage(
+            child: EditMealPage(meal: extra),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/exercises',
+        name: 'exercises',
+        pageBuilder: (context, state) {
+          final extra = state.extra;
+          final DateTime? contextDate =
+          extra is DateTime ? extra : null;
+
+          return MaterialPage(
+            child: ExerciseSearchPage(contextDate: contextDate),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/exercises/log',
+        name: 'exerciseLog',
+        pageBuilder: (context, state) {
+          final extra = state.extra;
+          if (extra is! ExerciseLogPageArgs) {
+            return const MaterialPage(
+              child: Scaffold(
+                body: Center(child: Text('Exercise data not provided')),
+              ),
+            );
+          }
+
+          return MaterialPage(
+            child: ExerciseLogPage(args: extra),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/exercise-logs/edit',
+        name: 'editExerciseLog',
+        pageBuilder: (context, state) {
+          final extra = state.extra;
+          if (extra is! EditExerciseLogPageArgs) {
+            return const MaterialPage(
+              child: Scaffold(
+                body: Center(child: Text('Exercise log data not provided')),
+              ),
+            );
+          }
+
+          return MaterialPage(
+            child: EditExerciseLogPage(args: extra),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/groceries',
+        name: 'groceries',
+        pageBuilder: (context, state) {
+          final extra = state.extra;
+          GrocerySearchPageArgs? args;
+          if (extra is GrocerySearchPageArgs) {
+            args = extra;
+          }
+          return MaterialPage(
+            child: GrocerySearchPage(args: args),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/meal-items/create',
+        name: 'mealItemCreate',
+        pageBuilder: (context, state) {
+          final extra = state.extra;
+          if (extra is! MealItemCreatePageArgs) {
+            return const MaterialPage(
+              child: Scaffold(
+                body: Center(child: Text('Missing meal item args')),
+              ),
+            );
+          }
+          return MaterialPage(
+            child: MealItemCreatePage(args: extra),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/scanner',
+        pageBuilder: (_, __) => const MaterialPage(
+          child: ScannerPage(),
+        ),
       ),
     ],
   );

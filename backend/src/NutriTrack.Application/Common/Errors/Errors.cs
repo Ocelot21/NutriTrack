@@ -23,6 +23,14 @@ namespace NutriTrack.Application.Common.Errors
                     description: "Username is already taken.");
         }
 
+        public static class Authorization
+        {
+            public static Error Unauthorized =>
+                Error.Unauthorized(
+                    code: DomainErrorCodes.Authorization.Unauthorized,
+                    description: "You are not authorized to perform this action.");
+        }
+
         public static class Users
         {
             public static Error NotFound =>

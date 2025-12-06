@@ -2,12 +2,13 @@ using Mapster;
 using NutriTrack.Application.Meals.Commands.CreateMeal;
 using NutriTrack.Application.Meals.Commands.DeleteMeal;
 using NutriTrack.Application.Meals.Commands.AddMealItem;
-using NutriTrack.Application.Meals.Commands.UpdateMealItem;
 using NutriTrack.Application.Meals.Commands.RemoveMealItem;
 using NutriTrack.Domain.Meals;
 using NutriTrack.Contracts.Meals;
 using NutriTrack.Application.Common.Models;
 using NutriTrack.Application.Meals.Common;
+using NutriTrack.Application.Meals.Commands.UpdateMeal;
+using NutriTrack.Domain.Users;
 
 namespace NutriTrack.Api.Common.Mappings;
 
@@ -16,6 +17,13 @@ public class MealsMappings : IRegister
     public void Register(TypeAdapterConfig config)
     {
         config.NewConfig<CreateMealRequest, CreateMealCommand>();
+
+        config.NewConfig<(Guid Id, UserId UserId, UpdateMealRequest Request), UpdateMealCommand>()
+            .Map(dest => dest.Id, src => new MealId(src.Id))
+            .Map(dest => dest.UserId, src => src.UserId)
+            .Map(dest => dest.Name, src => src.Request.Name)
+            .Map(dest => dest.Description, src => src.Request.Description)
+            .Map(dest => dest.OccurredAtLocal, src => src.Request.OccurredAtLocal);
 
         config.NewConfig<DeleteMealRequest, DeleteMealCommand>()
             .Map(dest => dest.Id, src => new NutriTrack.Domain.Meals.MealId(src.MealId));

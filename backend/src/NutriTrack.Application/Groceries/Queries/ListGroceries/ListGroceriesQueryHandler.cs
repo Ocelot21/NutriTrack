@@ -19,35 +19,12 @@ public sealed class ListGroceriesQueryHandler : IRequestHandler<ListGroceriesQue
 
     public async Task<ErrorOr<PagedResult<GroceryResult>>> Handle(ListGroceriesQuery request, CancellationToken cancellationToken)
     {
-        IReadOnlyList<Grocery> list;
-
-
-        if (request.Page.HasValue && request.PageSize.HasValue)
-        {
-            var pagedResult = await _groceryRepository.ListAsync(
-                request.Page.Value,
-                request.PageSize.Value,
-                cancellationToken
-            );
-            list = pagedResult.Items;
-
-            return new PagedResult<GroceryResult>(
-                list.Select(g => g.ToGroceryResult()).ToList(),
-                pagedResult.Page,
-                pagedResult.PageSize,
-                pagedResult.TotalCount
-            );
-        }
-        else
-        {
-            list = await _groceryRepository.ListAsync(cancellationToken);
-        }
-
-        return new PagedResult<GroceryResult>(
-            list.Select(g => g.ToGroceryResult()).ToList(),
-            list.Count,
-            request.Page ?? 0,
-            request.PageSize ?? 0
-        );
+        return (await _groceryRepository.GetPagedAsync(
+            request.Filters,
+            request.UserId,
+            request.Page ?? 1,
+            request.PageSize ?? 10,
+            cancellationToken))
+            .ToGroceryPagedResult();
     }
 }
