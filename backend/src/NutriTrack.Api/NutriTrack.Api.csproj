@@ -20,6 +20,7 @@
     <ProjectReference Include="..\NutriTrack.Application\NutriTrack.Application.csproj" />
     <ProjectReference Include="..\NutriTrack.Infrastructure\NutriTrack.Infrastructure.csproj" />
     <ProjectReference Include="..\NutriTrack.Contracts\NutriTrack.Contracts.csproj" />
+    <ProjectReference Include="..\NutriTrack.Shared.Contracts\NutriTrack.Shared.Contracts.csproj" />
   </ItemGroup>
 
 </Project>
