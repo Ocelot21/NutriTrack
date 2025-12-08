@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/auth/presentation/auth_providers.dart';
+import '../router.dart';
 
 
 class AppDrawer extends ConsumerWidget {
@@ -55,6 +56,31 @@ class AppDrawer extends ConsumerWidget {
                 context.push('/groceries');
               },
             ),
+            ListTile(
+              leading: const Icon(Icons.flag_outlined),
+              title: const Text('Goals'),
+              onTap: () {
+                Navigator.of(context).pop();
+                context.push('/user-goal');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.notifications),
+              title: const Text('Notifications'),
+              onTap: () {
+                Navigator.of(context).pop();
+                context.push('/notifications');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.emoji_events_outlined),
+              title: const Text('Achievements'),
+              onTap: () {
+                Navigator.of(context).pop();
+                context.push('/achievements');
+              },
+            ),
+
             const Spacer(),
             ListTile(
               leading: const Icon(Icons.logout, color: Colors.red),

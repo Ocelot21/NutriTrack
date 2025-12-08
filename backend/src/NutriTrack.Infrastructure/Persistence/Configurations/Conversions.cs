@@ -5,6 +5,7 @@ using NutriTrack.Domain.Groceries;
 using NutriTrack.Domain.Meals;
 using NutriTrack.Domain.UserExercises;
 using NutriTrack.Domain.Users;
+using NutriTrack.Domain.Achievements;
 
 namespace NutriTrack.Infrastructure.Persistence.Configurations;
 
@@ -48,5 +49,11 @@ internal static class Conversions
 
     public static PropertyBuilder<UserExerciseLogId> HasUserExerciseLogIdConversion(this PropertyBuilder<UserExerciseLogId> propertyBuilder)
         => propertyBuilder.HasIdConversion(id => id.Value, value => new UserExerciseLogId(value));
+
+    public static PropertyBuilder<AchievementId> HasAchievementIdConversion(this PropertyBuilder<AchievementId> propertyBuilder)
+        => propertyBuilder.HasIdConversion(id => id.Value, value => new AchievementId(value));
+
+    public static PropertyBuilder<UserAchievementId> HasUserAchievementIdConversion(this PropertyBuilder<UserAchievementId> propertyBuilder)
+        => propertyBuilder.HasIdConversion(id => id.Value, value => new UserAchievementId(value));
 }
 

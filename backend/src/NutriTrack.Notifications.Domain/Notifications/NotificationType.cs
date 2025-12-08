@@ -9,7 +9,7 @@ public enum NotificationType
     CaloriesExceeded = 2,
     StreakExtended = 3,
     InactivityReminder = 4,
-
+    AchievementUnlocked = 5,
     // Account / security related
     EmailVerified = 10,
     PasswordResetRequested = 11,

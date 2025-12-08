@@ -21,7 +21,8 @@ public sealed class Grocery : AggregateRoot<GroceryId>
         int caloriesPer100g,
         string? barcode,
         UnitOfMeasure unitOfMeasure,
-        string? imageUrl)
+        string? imageUrl,
+        bool isApproved = true)
         : base(id)
     {
         Name = name;
@@ -31,6 +32,7 @@ public sealed class Grocery : AggregateRoot<GroceryId>
         Barcode = barcode;
         UnitOfMeasure = unitOfMeasure;
         ImageUrl = imageUrl;
+        IsApproved = isApproved;
     }
 
     public string Name { get; private set; } = null!;
@@ -54,7 +56,8 @@ public sealed class Grocery : AggregateRoot<GroceryId>
         int caloriesPer100g,
         UnitOfMeasure unitOfMeasure,
         Optional<string> barcode,
-        string? imageUrl)
+        string? imageUrl,
+        bool isApproved = true)
     {
         name = NormalizeName(name);
         category = NormalizeCategory(category);
@@ -76,7 +79,8 @@ public sealed class Grocery : AggregateRoot<GroceryId>
             caloriesPer100g,
             normalizedBarcode,
             unitOfMeasure,
-            imageUrl);
+            imageUrl,
+            isApproved);
     }
 
     // --------- Domain methods ---------

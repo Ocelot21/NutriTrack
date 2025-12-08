@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../features/achievements/presentation/user_achievements_page.dart';
 import '../features/auth/presentation/login_page.dart';
 import '../features/auth/presentation/register_page.dart';
 import '../features/exercises/presentation/edit_exercise_log_page.dart';
@@ -13,7 +14,10 @@ import '../features/meals/presentation/create_meal_item_page.dart';
 import '../features/meals/presentation/create_meal_page.dart';
 import '../features/meals/presentation/edit_meal_page.dart';
 import '../features/home/data/daily_overview_models.dart';
+import '../features/notifications/presentation/notifications_page.dart';
 import '../features/scanner/scanner_page.dart';
+import '../features/user_goals/presentation/user_goal_history_page.dart';
+import '../features/user_goals/presentation/user_goal_page.dart';
 
 
 enum AppRoute {
@@ -24,6 +28,10 @@ enum AppRoute {
   createMeal,
   editMeal,
   exercises,
+  userGoal,
+  userGoalHistory,
+  notifications,
+  achievements,
 }
 
 class AppRouter {
@@ -175,6 +183,36 @@ class AppRouter {
         pageBuilder: (_, __) => const MaterialPage(
           child: ScannerPage(),
         ),
+      ),
+      GoRoute(
+        name: AppRoute.userGoal.name,
+        path: '/user-goal',
+        pageBuilder: (context, state) {
+          return const MaterialPage(
+            child: UserGoalPage(),
+          );
+        },
+      ),
+      GoRoute(
+        name: AppRoute.userGoalHistory.name,
+        path: '/user-goal-history',
+        pageBuilder: (context, state) {
+          return const MaterialPage(
+            child: UserGoalHistoryPage(),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/notifications',
+        name: AppRoute.notifications.name,
+        pageBuilder: (context, state) =>
+        const MaterialPage(child: NotificationsPage()),
+      ),
+      GoRoute(
+        path: '/achievements',
+        name: AppRoute.achievements.name,
+        pageBuilder: (context, state) =>
+        const MaterialPage(child: UserAchievementsPage()),
       ),
     ],
   );

@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using NutriTrack.Domain.Authorization;
 using NutriTrack.Application.Groceries.Commands.DeleteGrocery;
 using NutriTrack.Contracts.Common;
-using NutriTrack.Application.Groceries.Queries.GetGroceryByCode;
+using NutriTrack.Application.Groceries.Queries.ListGroceriesByApproval;
 
 namespace NutriTrack.Api.Controllers;
 
@@ -42,29 +42,32 @@ public sealed class GroceriesController : ApiController
     }
 
     [Authorize(Policy = PermissionKeys.Groceries.Read)]
-    [HttpGet("by-code")]
-    public async Task<IActionResult> GetByCode([FromQuery] string code)
-    {
-        var query = new GetGroceryByCodeQuery(code);
-        var result = await _mediator.Send(query);
-
-        return result.Match(
-            grocery => Ok(_mapper.Map<GroceryResponse>(grocery)),
-            errors => Problem(errors));
-    }
-
-    [Authorize(Policy = PermissionKeys.Groceries.Read)]
     [HttpGet]
     public async Task<IActionResult> List(
         [FromQuery] ListGroceriesRequest request, 
         CancellationToken cancellationToken = default)
     {
-        var query = _mapper.Map<ListGroceriesQuery>((GetUserId(), request));
+        var query = _mapper.Map<ListGroceriesQuery>(((GetUserId()),request));
 
         var result = await _mediator.Send(query, cancellationToken);
 
         return result.Match(
             groceries => Ok(_mapper.Map<PagedResponse<GroceryResponse>>(groceries)),
+            errors => Problem(errors));
+    }
+
+    [Authorize(Policy = PermissionKeys.Groceries.Read)]
+    [HttpGet("suggestions")]
+    public async Task<IActionResult> ListByApproval(
+        [FromQuery] bool approved = true, 
+        [FromQuery] int page = 1, 
+        [FromQuery] int pageSize = 20)
+    {
+        var query = new ListGroceriesByApprovalQuery(approved, page, pageSize);
+        var result = await _mediator.Send(query);
+
+        return result.Match(
+            paged => Ok(_mapper.Map<PagedResponse<GroceryResponse>>(paged)),
             errors => Problem(errors));
     }
 

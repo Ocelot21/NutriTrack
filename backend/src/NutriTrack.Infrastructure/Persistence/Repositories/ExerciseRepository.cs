@@ -81,4 +81,23 @@ public sealed class ExerciseRepository : EfRepository<Exercise, ExerciseId>, IEx
             page,
             pageSize);
     }
+
+    public async Task<PagedResult<Exercise>> GetPagedByApprovalAsync(bool isApproved, int page, int pageSize, CancellationToken cancellationToken = default)
+    {
+        if (page < 1) page = 1;
+        if (pageSize < 1) pageSize = 10;
+
+        var query = _dbContext.Exercises.AsQueryable()
+            .Where(e => e.IsApproved == isApproved && !e.IsDeleted);
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var items = await query
+            .OrderByDescending(e => e.CreatedAtUtc)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        return new PagedResult<Exercise>(items, totalCount, page, pageSize);
+    }
 }

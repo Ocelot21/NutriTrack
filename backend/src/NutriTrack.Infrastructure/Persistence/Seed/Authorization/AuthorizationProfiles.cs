@@ -11,7 +11,9 @@ public static class AuthorizationProfiles
         PermissionKeys.Meals.Update_Own,
         PermissionKeys.UserExerciseLogs.Read_Own,
         PermissionKeys.UserExerciseLogs.Create,
-        PermissionKeys.UserExerciseLogs.Update_Own
+        PermissionKeys.UserExerciseLogs.Update_Own,
+        PermissionKeys.Groceries.Read,
+        PermissionKeys.Exercises.Read
     };
 
     public static readonly string[] AdminAll = PermissionKeys.All;

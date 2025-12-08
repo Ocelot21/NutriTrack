@@ -24,9 +24,6 @@ public class GroceriesMappings : IRegister
         config.NewConfig<GetGroceryByIdRequest, GetGroceryByIdQuery>()
             .Map(dest => dest.Id, src => new NutriTrack.Domain.Groceries.GroceryId(src.Id));
 
-
-        config.NewConfig<ListGroceriesRequest, ListGroceriesQuery>();
-
         config.NewConfig<GroceryResult, GroceryResponse>()
             .Map(dest => dest.Id, src => src.Id.Value)
             .Map(dest => dest.Name, src => src.Name)

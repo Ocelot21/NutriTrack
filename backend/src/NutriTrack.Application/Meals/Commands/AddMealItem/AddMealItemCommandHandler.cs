@@ -2,6 +2,7 @@ using ErrorOr;
 using MediatR;
 using NutriTrack.Application.Common.Errors;
 using NutriTrack.Application.Common.Interfaces.Persistence;
+using NutriTrack.Application.Common.Interfaces.Services;
 using NutriTrack.Domain.Groceries;
 using NutriTrack.Domain.Meals;
 
@@ -12,12 +13,14 @@ public sealed class AddMealItemCommandHandler : IRequestHandler<AddMealItemComma
     private readonly IMealRepository _mealRepository;
     private readonly IGroceryRepository _groceryRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IAchievementService _achievementService;
 
-    public AddMealItemCommandHandler(IMealRepository mealRepository, IGroceryRepository groceryRepository, IUnitOfWork unitOfWork)
+    public AddMealItemCommandHandler(IMealRepository mealRepository, IGroceryRepository groceryRepository, IUnitOfWork unitOfWork, IAchievementService achievementService)
     {
         _mealRepository = mealRepository;
         _groceryRepository = groceryRepository;
         _unitOfWork = unitOfWork;
+        _achievementService = achievementService;
     }
 
     public async Task<ErrorOr<Unit>> Handle(AddMealItemCommand request, CancellationToken cancellationToken)
@@ -34,6 +37,8 @@ public sealed class AddMealItemCommandHandler : IRequestHandler<AddMealItemComma
 
         meal.AddItem(grocery, request.Quantity);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        await _achievementService.CheckMealItemLoggedAsync(meal.UserId, cancellationToken);
 
         return Unit.Value;
     }

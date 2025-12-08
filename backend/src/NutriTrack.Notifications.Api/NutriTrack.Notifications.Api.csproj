@@ -16,4 +16,8 @@
     <ProjectReference Include="..\NutriTrack.Shared.Contracts\NutriTrack.Shared.Contracts.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+  </ItemGroup>
+
 </Project>

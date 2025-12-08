@@ -10,6 +10,7 @@ using NutriTrack.Application.Exercises.Commands.CreateExercise;
 using NutriTrack.Application.Exercises.Commands.UpdateExercise;
 using NutriTrack.Application.Exercises.Commands.DeleteExercise;
 using NutriTrack.Contracts.Common;
+using NutriTrack.Application.Exercises.Queries.ListExercisesByApproval;
 
 namespace NutriTrack.Api.Controllers;
 
@@ -52,6 +53,17 @@ public sealed class ExercisesController : ApiController
 
         return result.Match(
             exercises => Ok(_mapper.Map<PagedResponse<ExerciseResponse>>(exercises)),
+            errors => Problem(errors));
+    }
+
+    [Authorize(Policy = PermissionKeys.Exercises.Read)]
+    [HttpGet("suggestions")]
+    public async Task<IActionResult> ListByApproval([FromQuery] bool approved = true, [FromQuery] int page = 1, [FromQuery] int pageSize = 20, CancellationToken cancellationToken = default)
+    {
+        var query = new ListExercisesByApprovalQuery(approved, page, pageSize);
+        var result = await _mediator.Send(query, cancellationToken);
+        return result.Match(
+            paged => Ok(_mapper.Map<PagedResponse<ExerciseResponse>>(paged)),
             errors => Problem(errors));
     }
 

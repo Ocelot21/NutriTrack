@@ -129,4 +129,23 @@ public sealed class GroceryRepository : EfRepository<Grocery, GroceryId>, IGroce
             page,
             pageSize);
     }
+
+    public async Task<PagedResult<Grocery>> GetPagedByApprovalAsync(bool isApproved, int page, int pageSize, CancellationToken cancellationToken = default)
+    {
+        if (page < 1) page = 1;
+        if (pageSize < 1) pageSize = 10;
+
+        var query = _dbContext.Groceries.AsQueryable()
+            .Where(g => g.IsApproved == isApproved && !g.IsDeleted);
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var items = await query
+            .OrderByDescending(g => g.CreatedAtUtc)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        return new PagedResult<Grocery>(items, totalCount, page, pageSize);
+    }
 }

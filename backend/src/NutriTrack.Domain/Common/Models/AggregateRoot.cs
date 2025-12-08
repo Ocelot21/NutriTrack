@@ -1,8 +1,14 @@
-﻿namespace NutriTrack.Domain.Common.Models;
+﻿using NutriTrack.Domain.Common.Events;
 
-public abstract class AggregateRoot<TId> : AuditableEntity<TId>, IAggregateRoot
+namespace NutriTrack.Domain.Common.Models;
+
+public abstract class AggregateRoot<TId> 
+    : AuditableEntity<TId>, IAggregateRoot, IHasDomainEvents
     where TId : notnull
 {
+    private readonly List<IDomainEvent> _domainEvents = new();
+    public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
+
     protected AggregateRoot()
         : base()
     {
@@ -12,4 +18,9 @@ public abstract class AggregateRoot<TId> : AuditableEntity<TId>, IAggregateRoot
         : base(id)
     {
     }
+    protected void RaiseDomainEvent(IDomainEvent domainEvent)
+        => _domainEvents.Add(domainEvent);
+
+    public void ClearDomainEvents()
+        => _domainEvents.Clear();
 }

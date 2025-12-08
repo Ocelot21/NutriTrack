@@ -44,6 +44,11 @@ public static class PersistenceExtensions
         services.AddScoped<IMealRepository, MealRepository>();
         services.AddScoped<IUserExerciseLogRepository, UserExerciseLogRepository>();
         services.AddScoped<IPermissionProvider, PermissionProvider>();
+        services.AddScoped<IActivityLevelHistoryRepository, ActivityLevelHistoryRepository>();
+        services.AddScoped<IUserGoalRepository, UserGoalRepository>();
+        services.AddScoped<IWeightHistoryRepository, WeightHistoryRepository>();
+        services.AddScoped<IAchievementRepository, AchievementRepository>();
+        services.AddScoped<IUserAchievementRepository, UserAchievementRepository>();
 
         services.Scan(scan => scan
                 .FromAssemblyOf<ISeeder>()

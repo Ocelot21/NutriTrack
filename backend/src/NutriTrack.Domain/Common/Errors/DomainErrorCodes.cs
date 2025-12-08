@@ -93,4 +93,13 @@ public static class DomainErrorCodes
         public const string NotFound = "UserExerciseLogs.NotFound";
     }
 
+    public static class UserGoals
+    {
+        public const string InvalidType = "UserGoals.InvalidType";
+        public const string InvalidStartDate = "UserGoals.InvalidStartDate";
+        public const string InvalidTargetDate = "UserGoals.InvalidTargetDate";
+        public const string InvalidStartWeightKg = "UserGoals.InvalidStartWeightKg";
+        public const string InvalidTargetWeightKg = "UserGoals.InvalidTargetWeightKg";
+        public const string NotFound = "UserGoals.NotFound";
+    }
 }

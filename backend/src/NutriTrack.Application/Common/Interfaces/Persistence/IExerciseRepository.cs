@@ -14,4 +14,10 @@ public interface IExerciseRepository : IRepository<Exercise, ExerciseId>
         int page,
         int pageSize,
         CancellationToken cancellationToken = default);
+
+    Task<PagedResult<Exercise>> GetPagedByApprovalAsync(
+        bool isApproved,
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken = default);
 }

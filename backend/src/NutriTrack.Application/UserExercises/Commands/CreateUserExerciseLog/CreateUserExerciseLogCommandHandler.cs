@@ -18,19 +18,22 @@ public sealed class CreateUserExerciseLogCommandHandler : IRequestHandler<Create
     private readonly IExerciseRepository _exerciseRepository;
     private readonly ITimeZoneService _timeZoneService;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IAchievementService _achievementService;
 
     public CreateUserExerciseLogCommandHandler(
         IUserRepository userRepository,
         IUserExerciseLogRepository userExerciseLogsRepository,
         IExerciseRepository exerciseRepository,
         ITimeZoneService timeZoneService,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        IAchievementService achievementService)
     {
         _userRepository = userRepository;
         _userExerciseRepository = userExerciseLogsRepository;
         _exerciseRepository = exerciseRepository;
         _timeZoneService = timeZoneService;
         _unitOfWork = unitOfWork;
+        _achievementService = achievementService;
     }
 
     public async Task<ErrorOr<UserExerciseLogResult>> Handle(CreateUserExerciseLogCommand request, CancellationToken cancellationToken)
@@ -65,6 +68,9 @@ public sealed class CreateUserExerciseLogCommandHandler : IRequestHandler<Create
 
         await _userExerciseRepository.AddAsync(entity, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        await _achievementService.CheckExerciseLoggedAsync(request.UserId, cancellationToken);
+
         return entity.ToUserExerciseLogResult();
     }
 }

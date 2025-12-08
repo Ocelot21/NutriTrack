@@ -15,4 +15,10 @@ public interface IGroceryRepository : IRepository<Grocery, GroceryId>
         int page,
         int pageSize,
         CancellationToken cancellationToken = default);
+
+    Task<PagedResult<Grocery>> GetPagedByApprovalAsync(
+        bool isApproved,
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken = default);
 }
