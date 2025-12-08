@@ -37,7 +37,15 @@ class AppDrawer extends ConsumerWidget {
               title: const Text('Profile'),
               onTap: () {
                 Navigator.of(context).pop();
-                context.go('/home');
+                context.push('/profile');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.fastfood),
+              title: const Text('Groceries'),
+              onTap: () {
+                Navigator.of(context).pop();
+                context.push('/groceries-menu');
               },
             ),
             ListTile(
@@ -45,15 +53,7 @@ class AppDrawer extends ConsumerWidget {
               title: const Text('Exercises'),
               onTap: () {
                 Navigator.of(context).pop();
-                context.push('/exercises');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.shopping_cart),
-              title: const Text('Groceries'),
-              onTap: () {
-                Navigator.of(context).pop();
-                context.push('/groceries');
+                context.push('/exercises-menu');
               },
             ),
             ListTile(

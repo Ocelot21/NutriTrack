@@ -40,12 +40,12 @@ class Exercise {
   });
 
   factory Exercise.fromJson(Map<String, dynamic> json) {
-    final categoryStr = json['category'] as String? ?? 'Uncategorized';
+    final rawCategory = json['category'];
 
     return Exercise(
       id: json['id'] as String,
       name: json['name'] as String,
-      category: ExerciseCategory.fromBackend(categoryStr),
+      category: ExerciseCategoryMapper.fromBackendDynamic(rawCategory),
       defaultCaloriesPerMinute:
       (json['defaultCaloriesPerMinute'] as num).toDouble(),
       description: json['description'] as String?,
@@ -54,6 +54,59 @@ class Exercise {
     );
   }
 }
+
+extension ExerciseCategoryX on ExerciseCategory {
+  int get backendInt {
+    switch (this) {
+      case ExerciseCategory.uncategorized:
+        return 0;
+      case ExerciseCategory.cardio:
+        return 1;
+      case ExerciseCategory.strength:
+        return 2;
+      case ExerciseCategory.mobility:
+        return 3;
+      case ExerciseCategory.flexibility:
+        return 4;
+      case ExerciseCategory.hiit:
+        return 5;
+      case ExerciseCategory.other:
+        return 6;
+    }
+  }
+}
+
+extension ExerciseCategoryMapper on ExerciseCategory {
+  static ExerciseCategory fromBackendDynamic(dynamic value) {
+    if (value == null) return ExerciseCategory.uncategorized;
+
+    if (value is int) {
+      switch (value) {
+        case 1:
+          return ExerciseCategory.cardio;
+        case 2:
+          return ExerciseCategory.strength;
+        case 3:
+          return ExerciseCategory.mobility;
+        case 4:
+          return ExerciseCategory.flexibility;
+        case 5:
+          return ExerciseCategory.hiit;
+        case 6:
+          return ExerciseCategory.other;
+        default:
+          return ExerciseCategory.uncategorized;
+      }
+    }
+
+    if (value is String) {
+      return ExerciseCategory.fromBackend(value);
+    }
+
+    return ExerciseCategory.uncategorized;
+  }
+}
+
 
 class PagedResponse<T> {
   final List<T> items;

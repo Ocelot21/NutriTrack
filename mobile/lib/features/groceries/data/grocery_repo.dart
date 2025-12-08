@@ -1,3 +1,6 @@
+import 'package:dio/dio.dart';
+import 'package:image_picker/image_picker.dart';
+
 import '../../../core/api_client.dart';
 import '../../../core/api_exception.dart';
 import '../../../core/token_store.dart';
@@ -175,5 +178,42 @@ class GroceryRepo {
     } on ApiException catch (e) {
       throw GrocerySearchException(e.message);
     }
+  }
+
+  Future<void> createGrocery({
+    required String name,
+    required GroceryCategory category,
+    required UnitOfMeasureUi unitOfMeasure,
+    required double proteinPer100g,
+    required double carbsPer100g,
+    required double fatPer100g,
+    required int caloriesPer100,
+    String? barcode,
+    XFile? imageFile,
+  }) async {
+    final token = await _tokenStore.read();
+    _api.setAuthToken(token);
+
+    final map = <String, dynamic>{
+      'Name': name,
+      'Category': category.backendValue,
+      'ProteinPer100g': proteinPer100g.toString(),
+      'CarbsPer100g': carbsPer100g.toString(),
+      'FatPer100g': fatPer100g.toString(),
+      'CaloriesPer100': caloriesPer100.toString(),
+      'UnitOfMeasure': unitOfMeasure.backendValue,
+      'Barcode': barcode,
+    };
+
+    if (imageFile != null) {
+      map['Image'] = await MultipartFile.fromFile(
+        imageFile.path,
+        filename: imageFile.name,
+      );
+    }
+
+    final formData = FormData.fromMap(map);
+
+    await _api.postMultipart<void>('/groceries', formData);
   }
 }

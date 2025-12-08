@@ -1,4 +1,4 @@
-namespace NutriTrack.Contracts.Groceries;
+namespace NutriTrack.Api.Controllers.Groceries;
 
 public sealed record CreateGroceryRequest(
     string Name,
@@ -9,5 +9,5 @@ public sealed record CreateGroceryRequest(
     int CaloriesPer100,
     string UnitOfMeasure,
     string? Barcode,
-    string? ImageUrl
+    IFormFile? Image
 );

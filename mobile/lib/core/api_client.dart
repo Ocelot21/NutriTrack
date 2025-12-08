@@ -115,4 +115,39 @@ class ApiClient {
     );
   }
 
+  Future<T> postMultipart<T>(
+      String path,
+      FormData formData,
+      ) async {
+    final response = await _dio.post<T>(
+      path,
+      data: formData,
+      options: Options(
+        contentType: 'multipart/form-data',
+      ),
+    );
+
+    return response.data as T;
+  }
+
+  Future<T> patch<T>(
+      String path, {
+        dynamic data,
+        Map<String, dynamic>? queryParameters,
+        Options? options,
+        T Function(dynamic json)? decoder,
+      }) async {
+    final response = await _dio.patch(
+      path,
+      data: data,
+      queryParameters: queryParameters,
+      options: options,
+    );
+
+    if (decoder != null) {
+      return decoder(response.data);
+    }
+
+    return response.data as T;
+  }
 }

@@ -11,6 +11,7 @@ using NutriTrack.Domain.Authorization;
 using NutriTrack.Application.Groceries.Commands.DeleteGrocery;
 using NutriTrack.Contracts.Common;
 using NutriTrack.Application.Groceries.Queries.ListGroceriesByApproval;
+using NutriTrack.Api.Controllers.Groceries;
 
 namespace NutriTrack.Api.Controllers;
 
@@ -71,10 +72,10 @@ public sealed class GroceriesController : ApiController
             errors => Problem(errors));
     }
 
-    [Authorize(Policy = PermissionKeys.Groceries.Create)]
+    [Authorize/*(Policy = PermissionKeys.Groceries.Create)*/]
     [HttpPost]
     public async Task<IActionResult> Create(
-        [FromBody] CreateGroceryRequest request,
+        [FromForm] CreateGroceryRequest request,
         CancellationToken cancellationToken = default)
     {
         var command = _mapper.Map<CreateGroceryCommand>(request);

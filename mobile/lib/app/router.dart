@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:nutritrack_mobile/features/exercises/presentation/exercise_suggest_page.dart';
+import 'package:nutritrack_mobile/features/exercises/presentation/exercises_menu_page.dart';
+import 'package:nutritrack_mobile/features/groceries/presentation/groceries_menu_page.dart';
 
 import '../features/achievements/presentation/user_achievements_page.dart';
 import '../features/auth/presentation/login_page.dart';
@@ -7,6 +10,7 @@ import '../features/auth/presentation/register_page.dart';
 import '../features/exercises/presentation/edit_exercise_log_page.dart';
 import '../features/exercises/presentation/exercise_log_page.dart';
 import '../features/exercises/presentation/exercise_search_page.dart';
+import '../features/groceries/presentation/groceries_suggest_page.dart';
 import '../features/groceries/presentation/grocery_search_page.dart';
 import '../features/health_profile/presentation/health_profile_page.dart';
 import '../features/home/presentation/home_page.dart';
@@ -16,6 +20,7 @@ import '../features/meals/presentation/edit_meal_page.dart';
 import '../features/home/data/daily_overview_models.dart';
 import '../features/notifications/presentation/notifications_page.dart';
 import '../features/scanner/scanner_page.dart';
+import '../features/user/presentation/profile_page.dart';
 import '../features/user_goals/presentation/user_goal_history_page.dart';
 import '../features/user_goals/presentation/user_goal_page.dart';
 
@@ -24,6 +29,7 @@ enum AppRoute {
   login,
   register,
   home,
+  userProfile,
   healthProfile,
   createMeal,
   editMeal,
@@ -32,6 +38,10 @@ enum AppRoute {
   userGoalHistory,
   notifications,
   achievements,
+  groceriesMenu,
+  exercisesMenu,
+  exercisesSuggest,
+  groceriesSuggest,
 }
 
 class AppRouter {
@@ -57,6 +67,12 @@ class AppRouter {
         name: AppRoute.home.name,
         pageBuilder: (context, state) =>
             const MaterialPage(child: HomePage()),
+      ),
+      GoRoute(
+        path: '/profile',
+        name: AppRoute.userProfile.name,
+        pageBuilder: (context, state) =>
+        const MaterialPage(child: ProfilePage()),
       ),
       GoRoute(
         path: '/health-profile',
@@ -214,6 +230,31 @@ class AppRouter {
         pageBuilder: (context, state) =>
         const MaterialPage(child: UserAchievementsPage()),
       ),
+      GoRoute(
+        path: '/groceries-menu',
+        name: AppRoute.groceriesMenu.name,
+        pageBuilder: (context, state) =>
+        const MaterialPage(child: GroceriesMenuPage()),
+      ),
+
+      GoRoute(
+        path: '/exercises-menu',
+        name: AppRoute.exercisesMenu.name,
+        pageBuilder: (context, state) =>
+        const MaterialPage(child: ExercisesMenuPage()),
+      ),
+      GoRoute(
+          path: '/exercises/suggest',
+          name: AppRoute.exercisesSuggest.name,
+          pageBuilder: (context, state) =>
+          const MaterialPage(child: ExerciseSuggestPage())
+      ),
+      GoRoute(
+          path: '/groceries/suggest',
+          name: AppRoute.groceriesSuggest.name,
+          pageBuilder: (context, state) =>
+          const MaterialPage(child: GrocerySuggestPage())
+      )
     ],
   );
 }

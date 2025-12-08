@@ -8,6 +8,7 @@ using NutriTrack.Contracts.Groceries;
 using NutriTrack.Domain.Groceries;
 using NutriTrack.Application.Common.Models;
 using NutriTrack.Domain.Users;
+using NutriTrack.Api.Controllers.Groceries;
 
 namespace NutriTrack.Api.Common.Mappings;
 

@@ -9,6 +9,7 @@ using NutriTrack.Domain.Exercises;
 using NutriTrack.Application.Common.Models;
 using NutriTrack.Contracts.Common;
 using NutriTrack.Domain.Users;
+using NutriTrack.Api.Controllers.Exercises;
 
 namespace NutriTrack.Api.Common.Mappings;
 

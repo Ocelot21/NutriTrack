@@ -1,3 +1,6 @@
+import 'package:dio/dio.dart';
+import 'package:image_picker/image_picker.dart';
+
 import '../../../core/api_client.dart';
 import '../../../core/api_exception.dart';
 import '../../../core/token_store.dart';
@@ -148,5 +151,34 @@ class ExerciseRepo {
     } catch (e) {
       throw ExerciseSearchException('Unexpected error: $e');
     }
+  }
+
+  Future<void> createExercise({
+    required String name,
+    required ExerciseCategory category,
+    required double defaultCaloriesPerMinute,
+    String? description,
+    XFile? imageFile,
+  }) async {
+    final token = await _tokenStore.read();
+    _api.setAuthToken(token);
+
+    final map = <String, dynamic>{
+      'Name': name,
+      'Category': category.backendValue,
+      'DefaultCaloriesPerMinute': defaultCaloriesPerMinute.toString(),
+      'Description': description,
+    };
+
+    if (imageFile != null) {
+      map['Image'] = await MultipartFile.fromFile(
+        imageFile.path,
+        filename: imageFile.name,
+      );
+    }
+
+    final formData = FormData.fromMap(map);
+
+    await _api.postMultipart<void>('/exercises', formData);
   }
 }

@@ -11,6 +11,7 @@ using NutriTrack.Application.Exercises.Commands.UpdateExercise;
 using NutriTrack.Application.Exercises.Commands.DeleteExercise;
 using NutriTrack.Contracts.Common;
 using NutriTrack.Application.Exercises.Queries.ListExercisesByApproval;
+using NutriTrack.Api.Controllers.Exercises;
 
 namespace NutriTrack.Api.Controllers;
 
@@ -58,7 +59,11 @@ public sealed class ExercisesController : ApiController
 
     [Authorize(Policy = PermissionKeys.Exercises.Read)]
     [HttpGet("suggestions")]
-    public async Task<IActionResult> ListByApproval([FromQuery] bool approved = true, [FromQuery] int page = 1, [FromQuery] int pageSize = 20, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> ListByApproval(
+        [FromQuery] bool approved = true,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 20,
+        CancellationToken cancellationToken = default)
     {
         var query = new ListExercisesByApprovalQuery(approved, page, pageSize);
         var result = await _mediator.Send(query, cancellationToken);
@@ -67,10 +72,10 @@ public sealed class ExercisesController : ApiController
             errors => Problem(errors));
     }
 
-    [Authorize(Policy = PermissionKeys.Exercises.Create)]
+    [Authorize/*(Policy = PermissionKeys.Exercises.Create)*/]
     [HttpPost]
     public async Task<IActionResult> Create(
-        [FromBody] CreateExerciseRequest request,
+        [FromForm] CreateExerciseRequest request,
         CancellationToken cancellationToken = default)
     {
         var command = _mapper.Map<CreateExerciseCommand>(request);
