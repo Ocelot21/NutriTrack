@@ -1,8 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/providers.dart';
-import '../../../core/token_store.dart';
-import '../../../core/models/paged_response.dart';
 import '../data/user_achievement_models.dart';
 import '../data/user_achievement_repo.dart';
 

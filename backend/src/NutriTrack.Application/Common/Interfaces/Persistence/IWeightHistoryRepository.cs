@@ -11,4 +11,9 @@ public interface IWeightHistoryRepository : IRepository<WeightHistoryEntry, Weig
         DateOnly From,
         DateOnly To,
         CancellationToken cancellationToken = default);
+
+    Task<WeightHistoryEntry?> GetClosestOnOrBeforeAsync(
+        UserId userId,
+        DateOnly date,
+        CancellationToken cancellationToken = default);
 }

@@ -2,6 +2,8 @@ using ErrorOr;
 using MediatR;
 using NutriTrack.Application.Common.Errors;
 using NutriTrack.Application.Common.Interfaces.Persistence;
+using NutriTrack.Application.Common.Interfaces.Storage;
+using NutriTrack.Application.Common.Storage;
 using NutriTrack.Application.Common.Mappings;
 using NutriTrack.Application.Groceries.Common;
 using NutriTrack.Domain.Common.Primitives;
@@ -13,17 +15,32 @@ public sealed class CreateGroceryCommandHandler : IRequestHandler<CreateGroceryC
 {
     private readonly IGroceryRepository _groceryRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IBlobStorageService _blobStorageService;
 
-    public CreateGroceryCommandHandler(IGroceryRepository groceryRepository, IUnitOfWork unitOfWork)
+    public CreateGroceryCommandHandler(
+        IGroceryRepository groceryRepository,
+        IUnitOfWork unitOfWork,
+        IBlobStorageService blobStorageService)
     {
         _groceryRepository = groceryRepository;
         _unitOfWork = unitOfWork;
+        _blobStorageService = blobStorageService;
     }
 
     public async Task<ErrorOr<GroceryResult>> Handle(CreateGroceryCommand request, CancellationToken cancellationToken)
     {
-        var macros = new MacroNutrients(request.ProteinPer100g, request.CarbsPer100g, request.FatPer100g);
-        var barcodeOpt = string.IsNullOrWhiteSpace(request.Barcode) ? Optional<string>.None() : request.Barcode!;
+        var macros = new MacroNutrients(request.ProteinPer100, request.CarbsPer100, request.FatPer100);
+
+        string? imageBlobName = null;
+        if (request.Image is not null)
+        {
+            imageBlobName = await _blobStorageService.UploadAsync(
+                BlobContainer.Groceries,
+                request.Image,
+                request.ImageFileName ?? "image",
+                request.ImageContentType ?? "application/octet-stream",
+                cancellationToken);
+        }
 
         var entity = Grocery.Create(
             request.Name,
@@ -31,8 +48,9 @@ public sealed class CreateGroceryCommandHandler : IRequestHandler<CreateGroceryC
             macros,
             request.CaloriesPer100,
             request.UnitOfMeasure,
-            barcodeOpt,
-            request.ImageUrl);
+            request.GramsPerPiece,
+            request.Barcode,
+            imageBlobName);
 
         await _groceryRepository.AddAsync(entity, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);

@@ -1,6 +1,3 @@
-using MediatR;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using NutriTrack.Notifications.Application;
 using NutriTrack.Notifications.Infrastructure;
 using NutriTrack.Notifications.Worker;
@@ -10,7 +7,6 @@ IHost host = Host.CreateDefaultBuilder(args)
     {
         var configuration = context.Configuration;
 
-        // tvoj AddApplication / AddInfrastructure koje si ve? napravio
         services.AddApplication().AddInfrastructure(configuration);
 
         // RabbitMQ config

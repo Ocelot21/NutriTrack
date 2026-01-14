@@ -24,4 +24,15 @@ public sealed class WeightHistoryRepository : EfRepository<WeightHistoryEntry, W
 
         return entries;
     }
+
+    public async Task<WeightHistoryEntry?> GetClosestOnOrBeforeAsync(
+        UserId userId,
+        DateOnly date,
+        CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.WeightHistoryEntries
+            .Where(e => e.UserId == userId && e.Date <= date)
+            .OrderByDescending(e => e.Date)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
 }

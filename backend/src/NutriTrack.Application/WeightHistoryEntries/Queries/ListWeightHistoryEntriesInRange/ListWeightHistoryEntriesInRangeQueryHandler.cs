@@ -8,16 +8,20 @@ namespace NutriTrack.Application.WeightHistoryEntries.Queries.ListWeightEntriesI
 public sealed class ListWeightHistoryEntriesInRangeQueryHandler 
     : IRequestHandler<ListWeightHistoryEntriesInRangeQuery, ErrorOr<IReadOnlyList<WeightHistoryEntryResult>>>
 {
-    private readonly IWeightHistoryRepository _repo;
+    private readonly IWeightHistoryRepository _weightHistoryRepository;
 
-    public ListWeightHistoryEntriesInRangeQueryHandler(IWeightHistoryRepository repo)
+    public ListWeightHistoryEntriesInRangeQueryHandler(
+        IWeightHistoryRepository weightHistoryRepository)
     {
-        _repo = repo;
+        _weightHistoryRepository = weightHistoryRepository;
     }
 
-    public async Task<ErrorOr<IReadOnlyList<WeightHistoryEntryResult>>> Handle(ListWeightHistoryEntriesInRangeQuery request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<IReadOnlyList<WeightHistoryEntryResult>>> Handle(
+        ListWeightHistoryEntriesInRangeQuery request,
+        CancellationToken cancellationToken)
     {
-        var entries = await _repo.ListAsync(cancellationToken);
+        var entries = await _weightHistoryRepository.ListAsync(cancellationToken);
+
         var filtered = entries
             .Where(e => e.UserId == request.UserId && e.Date >= request.From && e.Date <= request.To)
             .Select(e => new WeightHistoryEntryResult(e.Id, e.UserId, e.Date, e.WeightKg))

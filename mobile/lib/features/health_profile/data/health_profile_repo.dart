@@ -1,6 +1,6 @@
-import '../../../core/api_client.dart';
-import '../../../core/api_exception.dart';
-import '../../../core/token_store.dart';
+import 'package:nutritrack_shared/core/api_client.dart';
+import 'package:nutritrack_shared/core/api_exception.dart';
+import 'package:nutritrack_shared/core/token_store.dart';
 import 'health_profile_request.dart';
 
 class HealthProfileException implements Exception {

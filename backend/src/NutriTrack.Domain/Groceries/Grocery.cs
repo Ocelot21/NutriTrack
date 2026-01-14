@@ -2,6 +2,8 @@ using NutriTrack.Domain.Common.Errors;
 using NutriTrack.Domain.Common.Models;
 using NutriTrack.Domain.Common.Primitives;
 using NutriTrack.Domain.Common;
+using NutriTrack.Domain.Groceries.Events;
+using NutriTrack.Domain.Users;
 
 namespace NutriTrack.Domain.Groceries;
 
@@ -21,8 +23,9 @@ public sealed class Grocery : AggregateRoot<GroceryId>
         int caloriesPer100g,
         string? barcode,
         UnitOfMeasure unitOfMeasure,
+        decimal? gramsPerPiece,
         string? imageUrl,
-        bool isApproved = true)
+        bool isApproved)
         : base(id)
     {
         Name = name;
@@ -31,6 +34,7 @@ public sealed class Grocery : AggregateRoot<GroceryId>
         CaloriesPer100 = caloriesPer100g;
         Barcode = barcode;
         UnitOfMeasure = unitOfMeasure;
+        GramsPerPiece = gramsPerPiece;
         ImageUrl = imageUrl;
         IsApproved = isApproved;
     }
@@ -42,6 +46,7 @@ public sealed class Grocery : AggregateRoot<GroceryId>
     public MacroNutrients MacrosPer100 { get; private set; } = null!; 
     public int CaloriesPer100 { get; private set; }
     public UnitOfMeasure UnitOfMeasure { get; private set; }
+    public decimal? GramsPerPiece { get; private set; }
     public string? ImageUrl { get; private set; }
 
     public bool IsApproved { get; private set; } = true;
@@ -53,22 +58,23 @@ public sealed class Grocery : AggregateRoot<GroceryId>
         string name,
         GroceryCategory category,
         MacroNutrients macros,
-        int caloriesPer100g,
+        int caloriesPer100,
         UnitOfMeasure unitOfMeasure,
-        Optional<string> barcode,
-        string? imageUrl,
+        decimal? gramsPerPiece = null,
+        string? barcode = null,
+        string? imageUrl = null,
         bool isApproved = true)
     {
         name = NormalizeName(name);
         category = NormalizeCategory(category);
         macros = macros ?? throw new DomainException(DomainErrorCodes.Groceries.InvalidMacros, "Macros cannot be null.");
-        caloriesPer100g = NormalizeCalories(caloriesPer100g);
-        unitOfMeasure = ValidateUnitOfMeasure(unitOfMeasure);
+        caloriesPer100 = NormalizeCalories(caloriesPer100);
+        unitOfMeasure = ValidateUnitOfMeasure(unitOfMeasure, gramsPerPiece);
 
         string? normalizedBarcode = null;
-        if (barcode.IsSet)
+        if (!string.IsNullOrWhiteSpace(barcode))
         {
-            normalizedBarcode = NormalizeBarcode(barcode.Value);
+            normalizedBarcode = NormalizeBarcode(barcode);
         }
 
         return new Grocery(
@@ -76,22 +82,40 @@ public sealed class Grocery : AggregateRoot<GroceryId>
             name,
             category,
             macros,
-            caloriesPer100g,
+            caloriesPer100,
             normalizedBarcode,
             unitOfMeasure,
+            gramsPerPiece,
             imageUrl,
             isApproved);
     }
 
     // --------- Domain methods ---------
 
+    public void Approve()
+    {
+        if (IsApproved)
+            return;
+
+        IsApproved = true;
+
+        if (CreatedBy is not null)
+        {
+            RaiseDomainEvent(new GrocerySuggestionApprovedDomainEvent(
+                Id,
+                CreatedBy.Value));
+        }
+    }
+
     public void Update(
         Optional<string> name,
         Optional<GroceryCategory> category,
         Optional<MacroNutrients> macros,
         Optional<int> caloriesPer100g,
-        Optional<string> barcode,
-        Optional<UnitOfMeasure> unitOfMeasure)
+        Optional<UnitOfMeasure> unitOfMeasure,
+        Optional<decimal?> gramsPerPiece,
+        Optional<string> barcode
+        )
     {
         if (name.IsSet)
         {
@@ -120,8 +144,19 @@ public sealed class Grocery : AggregateRoot<GroceryId>
 
         if (unitOfMeasure.IsSet)
         {
-            UnitOfMeasure = ValidateUnitOfMeasure(unitOfMeasure.Value);
+            decimal? gramsPerPieceValue = gramsPerPiece.IsSet ? gramsPerPiece.Value : null;
+            UnitOfMeasure = ValidateUnitOfMeasure(unitOfMeasure.Value, gramsPerPieceValue);
         }
+
+        if (gramsPerPiece.IsSet)
+        {
+            GramsPerPiece = gramsPerPiece.Value;
+        }
+    }
+
+    public void SetImage(string? imageBlobName)
+    {
+        ImageUrl = string.IsNullOrWhiteSpace(imageBlobName) ? null : imageBlobName;
     }
 
     // --------- Private helpers ---------
@@ -161,11 +196,11 @@ public sealed class Grocery : AggregateRoot<GroceryId>
 
     private static int NormalizeCalories(int caloriesPer100g)
     {
-        if (caloriesPer100g < 0 || caloriesPer100g >= DomainConstraints.Groceries.MaxCaloriesPer100g)
+        if (caloriesPer100g < 0 || caloriesPer100g >= DomainConstraints.Groceries.MaxCaloriesPer100)
         {
             throw new DomainException(
                 DomainErrorCodes.Groceries.InvalidCalories,
-                $"Calories per 100g must be between 0 and less than {DomainConstraints.Groceries.MaxCaloriesPer100g}.");
+                $"Calories per 100g must be between 0 and less than {DomainConstraints.Groceries.MaxCaloriesPer100}.");
         }
 
         return caloriesPer100g;
@@ -186,17 +221,26 @@ public sealed class Grocery : AggregateRoot<GroceryId>
                 $"Barcode cannot be longer than {DomainConstraints.Groceries.MaxBarcodeLength} characters.");
         }
 
-        // TODO: consider barcode format validations (EAN-13, etc.)
         return value;
     }
 
-    private static UnitOfMeasure ValidateUnitOfMeasure(UnitOfMeasure unitOfMeasure)
+    private static UnitOfMeasure ValidateUnitOfMeasure(UnitOfMeasure unitOfMeasure, decimal? gramsPerPiece)
     {
         if (!Enum.IsDefined(unitOfMeasure))
         {
             throw new DomainException(
                 DomainErrorCodes.Groceries.InvalidUnitOfMeasure,
                 "Unit of measure is invalid.");
+        }
+
+        if (unitOfMeasure == UnitOfMeasure.Piece)
+        {
+            if (!gramsPerPiece.HasValue)
+            {
+                throw new DomainException(
+                    DomainErrorCodes.Groceries.GramsPerPieceNotSet,
+                    "Grams per piece must be set when unit of measure is 'Piece'.");
+            }
         }
 
         return unitOfMeasure;

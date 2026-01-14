@@ -1,10 +1,5 @@
 using NutriTrack.Application.Common.Interfaces.Persistence;
 using NutriTrack.Domain.Authorization;
-using NutriTrack.Domain.Groceries;
-using NutriTrack.Domain.Exercises;
-using NutriTrack.Domain.Meals;
-using NutriTrack.Domain.UserExercises;
-using NutriTrack.Domain.Users;
 using Microsoft.EntityFrameworkCore;
 
 namespace NutriTrack.Infrastructure.Persistence.Repositories;

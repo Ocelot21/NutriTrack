@@ -7,15 +7,12 @@ public sealed class LoginCommandValidator : AbstractValidator<LoginCommand>
 {
     public LoginCommandValidator()
     {
-        RuleFor(x => x.Email)
-            .NotEmpty()
-            .MaximumLength(DomainConstraints.Users.MaxEmailLength)
-            .Matches(DomainPatterns.BasicEmailPattern)
-            .WithMessage("Email format is invalid.");
+        RuleFor(x => x.EmailOrUsername)
+            .NotEmpty();
 
         RuleFor(x => x.Password)
             .NotEmpty()
-            .MinimumLength(8)
+            .MinimumLength(4)
             .MaximumLength(200);
     }
 }

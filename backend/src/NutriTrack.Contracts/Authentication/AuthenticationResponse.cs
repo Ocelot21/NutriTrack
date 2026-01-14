@@ -1,4 +1,6 @@
 namespace NutriTrack.Contracts.Authentication;
 
 public sealed record AuthenticationResponse(
-    string AccessToken);
+    string? AccessToken,
+    bool RequiresTwoFactor,
+    Guid? TwoFactorChallengeId);

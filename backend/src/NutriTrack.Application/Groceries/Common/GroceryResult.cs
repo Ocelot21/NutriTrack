@@ -10,6 +10,7 @@ public record GroceryResult(
     MacroNutrients MacrosPer100,
     int CaloriesPer100,
     UnitOfMeasure UnitOfMeasure,
+    decimal? GramsPerPiece,
     string? ImageUrl,
     bool IsApproved,
     bool IsDeleted

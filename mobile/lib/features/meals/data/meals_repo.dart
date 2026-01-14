@@ -1,6 +1,6 @@
-import '../../../core/api_client.dart';
-import '../../../core/api_exception.dart';
-import '../../../core/token_store.dart';
+import 'package:nutritrack_shared/core/api_client.dart';
+import 'package:nutritrack_shared/core/api_exception.dart';
+import 'package:nutritrack_shared/core/token_store.dart';
 
 import 'create_meal_item_request.dart';
 import 'create_meal_request.dart';
@@ -99,9 +99,7 @@ class MealsRepo {
       final list = data['meals'] as List<dynamic>? ?? [];
 
       return list
-          .map((e) => MealDropdownItem.fromJson(
-        e as Map<String, dynamic>,
-      ))
+          .map((e) => MealDropdownItem.fromJson(e as Map<String, dynamic>))
           .toList();
     } on ApiException catch (e) {
       throw Exception('Failed to load meals: ${e.message}');
@@ -126,6 +124,47 @@ class MealsRepo {
       throw Exception('Failed to create meal item: ${e.message}');
     } catch (e) {
       throw Exception('Failed to create meal item: $e');
+    }
+  }
+
+  /// PUT /meals/{mealId}/items/{itemId}
+  /// Body: decimal quantity (JSON number)
+  Future<void> updateMealItemQuantity({
+    required String mealId,
+    required String itemId,
+    required double quantity,
+  }) async {
+    try {
+      final token = await _tokenStore.read();
+      _api.setAuthToken(token);
+
+      await _api.put<void>(
+        '/meals/$mealId/items/$itemId',
+        data: quantity,
+      );
+    } on ApiException catch (e) {
+      throw Exception('Failed to update meal item: ${e.message}');
+    } catch (e) {
+      throw Exception('Failed to update meal item: $e');
+    }
+  }
+
+  /// DELETE /meals/{mealId}/items/{itemId}
+  Future<void> deleteMealItem({
+    required String mealId,
+    required String itemId,
+  }) async {
+    try {
+      final token = await _tokenStore.read();
+      _api.setAuthToken(token);
+
+      await _api.delete<void>(
+        '/meals/$mealId/items/$itemId',
+      );
+    } on ApiException catch (e) {
+      throw Exception('Failed to delete meal item: ${e.message}');
+    } catch (e) {
+      throw Exception('Failed to delete meal item: $e');
     }
   }
 }

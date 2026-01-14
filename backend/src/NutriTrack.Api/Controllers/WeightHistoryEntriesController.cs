@@ -22,7 +22,9 @@ public sealed class WeightHistoryEntriesController : ApiController
 
     [Authorize]
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateWeightHistoryEntryRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Create(
+        [FromBody] CreateWeightHistoryEntryRequest request,
+        CancellationToken cancellationToken)
     {
         var userId = GetUserId();
         var command = new CreateWeightHistoryEntryCommand(userId, request.Date, request.WeightKg);
@@ -32,7 +34,10 @@ public sealed class WeightHistoryEntriesController : ApiController
 
     [Authorize]
     [HttpGet]
-    public async Task<IActionResult> List([FromQuery] DateOnly from, [FromQuery] DateOnly to, CancellationToken cancellationToken)
+    public async Task<IActionResult> List(
+        [FromQuery] DateOnly from,
+        [FromQuery] DateOnly to,
+        CancellationToken cancellationToken)
     {
         var userId = GetUserId();
         var query = new ListWeightHistoryEntriesInRangeQuery(userId, from, to);

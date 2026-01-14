@@ -1,0 +1,42 @@
+name: desktop
+description: "NutriTrack admin desktop client."
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.10.1
+  flutter: ">=3.22.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+
+  # Routing
+  go_router: ^17.0.0
+
+  # State management
+  flutter_riverpod: ^3.0.3
+
+  # UI
+  cupertino_icons: ^1.0.8
+  file_picker: ^10.3.7
+
+  #data
+  cross_file: ^0.3.5+1
+
+  # HTTP client used in providers (Dio instance for ApiClient)
+  dio: ^5.6.0
+
+  # Shared domain/data layer
+  nutritrack_shared:
+    path: ../shared
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true

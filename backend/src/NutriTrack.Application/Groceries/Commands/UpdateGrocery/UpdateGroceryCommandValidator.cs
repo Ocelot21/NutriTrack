@@ -22,28 +22,28 @@ public sealed class UpdateGroceryCommandValidator : AbstractValidator<UpdateGroc
                 .MaximumLength(DomainConstraints.Groceries.MaxBarcodeLength);
         });
 
-        When(x => x.ProteinPer100g.HasValue, () =>
+        When(x => x.ProteinPer100.HasValue, () =>
         {
-            RuleFor(x => x.ProteinPer100g!.Value)
-                .GreaterThanOrEqualTo(0).LessThan(DomainConstraints.Groceries.MaxMacroValuePer100g);
+            RuleFor(x => x.ProteinPer100!.Value)
+                .GreaterThanOrEqualTo(0).LessThan(DomainConstraints.Groceries.MaxMacroValuePer100);
         });
 
-        When(x => x.CarbsPer100g.HasValue, () =>
+        When(x => x.CarbsPer100.HasValue, () =>
         {
-            RuleFor(x => x.CarbsPer100g!.Value)
-                .GreaterThanOrEqualTo(0).LessThan(DomainConstraints.Groceries.MaxMacroValuePer100g);
+            RuleFor(x => x.CarbsPer100!.Value)
+                .GreaterThanOrEqualTo(0).LessThan(DomainConstraints.Groceries.MaxMacroValuePer100);
         });
 
-        When(x => x.FatPer100g.HasValue, () =>
+        When(x => x.FatPer100.HasValue, () =>
         {
-            RuleFor(x => x.FatPer100g!.Value)
-                .GreaterThanOrEqualTo(0).LessThan(DomainConstraints.Groceries.MaxMacroValuePer100g);
+            RuleFor(x => x.FatPer100!.Value)
+                .GreaterThanOrEqualTo(0).LessThan(DomainConstraints.Groceries.MaxMacroValuePer100);
         });
 
         When(x => x.CaloriesPer100.HasValue, () =>
         {
             RuleFor(x => x.CaloriesPer100!.Value)
-                .GreaterThanOrEqualTo(0).LessThan(DomainConstraints.Groceries.MaxCaloriesPer100g);
+                .GreaterThanOrEqualTo(0).LessThan(DomainConstraints.Groceries.MaxCaloriesPer100);
         });
     }
 }

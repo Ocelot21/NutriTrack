@@ -17,5 +17,6 @@ public sealed record MeResponse(
     string ActivityLevel,
     DateOnly? Birthdate,
     decimal? HeightCm,
-    decimal? WeightKg
+    decimal? WeightKg,
+    bool IsTwoFactorEnabled
 );

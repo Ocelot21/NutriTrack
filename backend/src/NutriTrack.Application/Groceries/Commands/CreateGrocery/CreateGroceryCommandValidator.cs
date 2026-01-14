@@ -15,15 +15,15 @@ public sealed class CreateGroceryCommandValidator : AbstractValidator<CreateGroc
         RuleFor(x => x.Category)
             .IsInEnum();
 
-        RuleFor(x => x.ProteinPer100g)
-            .GreaterThanOrEqualTo(0).LessThan(DomainConstraints.Groceries.MaxMacroValuePer100g);
-        RuleFor(x => x.CarbsPer100g)
-            .GreaterThanOrEqualTo(0).LessThan(DomainConstraints.Groceries.MaxMacroValuePer100g);
-        RuleFor(x => x.FatPer100g)
-            .GreaterThanOrEqualTo(0).LessThan(DomainConstraints.Groceries.MaxMacroValuePer100g);
+        RuleFor(x => x.ProteinPer100)
+            .GreaterThanOrEqualTo(0).LessThan(DomainConstraints.Groceries.MaxMacroValuePer100);
+        RuleFor(x => x.CarbsPer100)
+            .GreaterThanOrEqualTo(0).LessThan(DomainConstraints.Groceries.MaxMacroValuePer100);
+        RuleFor(x => x.FatPer100)
+            .GreaterThanOrEqualTo(0).LessThan(DomainConstraints.Groceries.MaxMacroValuePer100);
 
         RuleFor(x => x.CaloriesPer100)
-            .GreaterThanOrEqualTo(0).LessThan(DomainConstraints.Groceries.MaxCaloriesPer100g);
+            .GreaterThanOrEqualTo(0).LessThan(DomainConstraints.Groceries.MaxCaloriesPer100);
 
         RuleFor(x => x.Barcode)
             .MaximumLength(DomainConstraints.Groceries.MaxBarcodeLength)

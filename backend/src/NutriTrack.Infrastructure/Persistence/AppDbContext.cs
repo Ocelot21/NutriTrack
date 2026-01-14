@@ -5,13 +5,18 @@ using NutriTrack.Domain.ActivityLevelHistory;
 using NutriTrack.Domain.Authorization;
 using NutriTrack.Domain.Common.Events;
 using NutriTrack.Domain.Common.Models;
+using NutriTrack.Domain.Countries;
 using NutriTrack.Domain.Exercises;
 using NutriTrack.Domain.Groceries;
 using NutriTrack.Domain.Meals;
+using NutriTrack.Domain.Reports;
+using NutriTrack.Domain.Social;
+using NutriTrack.Domain.Social.Snapshots;
 using NutriTrack.Domain.UserExercises;
 using NutriTrack.Domain.UserGoals;
 using NutriTrack.Domain.Users;
 using NutriTrack.Domain.WeightHistory;
+using NutriTrack.Infrastructure.Persistence.TwoFactor;
 
 namespace NutriTrack.Infrastructure.Persistence
 {
@@ -46,6 +51,12 @@ namespace NutriTrack.Infrastructure.Persistence
         public DbSet<ActivityLevelHistoryEntry> ActivityLevelHistoryEntries { get; set; } = null!;
         public DbSet<Achievement> Achievements { get; set; } = null!;
         public DbSet<UserAchievement> UserAchievements { get; set; } = null!;
+        public DbSet<Country> Countries { get; set; } = null!;
+        public DbSet<PendingTotpSetupEntity> PendingTotpSetups { get; set; } = null!;
+        public DbSet<GoalProgressSnapshot> GoalProgressSnapshots { get; set; } = null!;
+        public DbSet<DailyOverviewSnapshot> DailyOverviewSnapshots { get; set; } = null!;
+        public DbSet<SocialPost> SocialPosts { get; set; } = null!;
+        public DbSet<ReportRun> ReportRuns { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

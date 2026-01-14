@@ -1,7 +1,8 @@
 import 'package:dio/dio.dart';
+import 'package:nutritrack_mobile/features/user/data/two_factor_models.dart';
 
-import '../../../core/api_client.dart';
-import '../../../core/token_store.dart';
+import 'package:nutritrack_shared/core/api_client.dart';
+import 'package:nutritrack_shared/core/token_store.dart';
 import 'user_models.dart';
 
 class UserRepo {
@@ -46,7 +47,7 @@ class UserRepo {
     final token = await _tokenStore.read();
     _api.setAuthToken(token);
 
-    await _api.post<void>(
+    await _api.put<void>(
       '/me/change-password',
       data: {
         'currentPassword': currentPassword,
@@ -55,4 +56,37 @@ class UserRepo {
       },
     );
   }
+
+  Future<TotpSetupData> setupTotp() async {
+    final token = await _tokenStore.read();
+    _api.setAuthToken(token);
+
+    final response = await _api.post<Map<String, dynamic>>('/auth/totp/setup');
+    return TotpSetupData.fromJson(response.data!);
+  }
+
+  Future<void> confirmTotp(String code) async {
+    final token = await _tokenStore.read();
+    _api.setAuthToken(token);
+
+    await _api.post<void>(
+      '/auth/totp/confirm',
+      data: {
+        'code': code
+      },
+    );
+  }
+
+  Future<void> disableTotp(String code) async {
+    final token = await _tokenStore.read();
+    _api.setAuthToken(token);
+
+    await _api.post<void>(
+      '/auth/totp/disable',
+      data: {
+        'code': code
+      },
+    );
+  }
+
 }

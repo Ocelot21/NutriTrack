@@ -38,4 +38,12 @@ public sealed class UserAchievementRepository : EfRepository<UserAchievement, Us
 
         return new PagedResult<UserAchievement>(items, totalCount, page, pageSize);
     }
+
+    public async Task<int> SumPointsAsync(UserId userId, CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.UserAchievements
+            .Where(ua => ua.UserId == userId)
+            .Select(ua => (int?)ua.Achievement.Points)
+            .SumAsync(cancellationToken) ?? 0;
+    }
 }

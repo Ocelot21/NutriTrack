@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\NutriTrack.Domain\NutriTrack.Domain.csproj" />
+    <ProjectReference Include="..\NutriTrack.Contracts\NutriTrack.Contracts.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -10,7 +11,9 @@
     <PackageReference Include="FluentValidation" Version="12.1.0" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.0" />
     <PackageReference Include="MediatR" Version="13.1.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="10.0.1" />
+    <PackageReference Include="Otp.NET" Version="1.4.1" />
   </ItemGroup>
 
   <PropertyGroup>

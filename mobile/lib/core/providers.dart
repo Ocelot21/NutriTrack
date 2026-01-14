@@ -1,14 +1,15 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'api_client.dart';
-import 'token_store.dart';
+import 'package:nutritrack_shared/core/api_client.dart';
+import 'package:nutritrack_shared/core/token_store.dart';
+import 'package:nutritrack_mobile/core/config/app_config.dart';
 
 
-/// - Emulator →  `http://10.0.2.2:5071/api`
-/// - Smartphone → IP of PC `http://192.168.0.29:5071/api`
+/// - Emulator →  `http://10.0.2.2:5000/api`
+/// - Smartphone → IP of PC `http://192.168.0.29:5000/api`
 final baseUrlProvider = Provider<String>((ref) {
-  return 'http://192.168.0.29:5071/api';
+  return AppConfig.resolvedApiBaseUrl;
 });
 
 final dioProvider = Provider<Dio>((ref) {

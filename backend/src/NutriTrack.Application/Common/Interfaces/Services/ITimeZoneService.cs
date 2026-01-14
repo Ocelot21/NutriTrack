@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace NutriTrack.Application.Common.Interfaces.Services;
 
-namespace NutriTrack.Application.Common.Interfaces.Services
+public interface ITimeZoneService
 {
-    public interface ITimeZoneService
-    {
-        bool TryNormalize(string timeZoneId, out string normalizedTimeZoneId);
-        DateTime ToLocal(DateTime utcDateTime, string timeZoneId);
-        DateOnly LocalDate(DateTime utcDateTime, string timeZoneId);
-        int LocalTimeMinutes(DateTime utcDateTime, string timeZoneId);
-        short OffsetMinutes(string timeZoneId, DateTime utcDateTime);
-        DateTime ToUtc(DateTimeOffset localDateTime, string timeZoneId);
-    }
+    bool TryNormalize(string timeZoneId, out string normalizedTimeZoneId);
+    DateTime ToLocal(DateTime utcDateTime, string timeZoneId);
+    DateOnly LocalDate(DateTime utcDateTime, string timeZoneId);
+    int LocalTimeMinutes(DateTime utcDateTime, string timeZoneId);
+    short OffsetMinutes(string timeZoneId, DateTime utcDateTime);
+    DateTime ToUtc(DateTimeOffset localDateTime, string timeZoneId);
+    IEnumerable<string> GetSystemTimeZoneIds();
 }

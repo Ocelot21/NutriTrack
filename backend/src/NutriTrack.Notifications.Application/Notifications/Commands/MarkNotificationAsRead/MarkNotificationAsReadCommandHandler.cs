@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using ErrorOr;
+using MediatR;
 using NutriTrack.Notifications.Application.Common.Interfaces.Persistence;
 using NutriTrack.Notifications.Application.Common.Interfaces.Services;
 using NutriTrack.Notifications.Domain.Notifications;
@@ -6,7 +7,7 @@ using NutriTrack.Notifications.Domain.Notifications;
 namespace NutriTrack.Notifications.Application.Notifications.Commands.MarkNotificationAsRead;
 
 public sealed class MarkNotificationAsReadCommandHandler
-    : IRequestHandler<MarkNotificationAsReadCommand>
+    : IRequestHandler<MarkNotificationAsReadCommand, ErrorOr<Unit>>
 {
     private readonly INotificationRepository _notificationRepository;
     private readonly IDateTimeProvider _dateTimeProvider;
@@ -19,7 +20,7 @@ public sealed class MarkNotificationAsReadCommandHandler
         _dateTimeProvider = dateTimeProvider;
     }
 
-    public async Task Handle(
+    public async Task<ErrorOr<Unit>> Handle(
         MarkNotificationAsReadCommand request,
         CancellationToken cancellationToken)
     {
@@ -29,12 +30,11 @@ public sealed class MarkNotificationAsReadCommandHandler
 
         if (notification is null)
         {
-            // TODO: Error handling - notification not found
-            return;
+            return Error.NotFound("Notifications.NotFound", $"Notification with the given id {id} is not found");
         }
 
         notification.MarkAsRead(_dateTimeProvider.UtcNow);
 
-        await Task.CompletedTask;
+        return Unit.Value;
     }
 }

@@ -25,17 +25,17 @@ public sealed class GroceryConfiguration : IEntityTypeConfiguration<Grocery>
 
         b.OwnsOne(g => g.MacrosPer100, nb =>
         {
-            nb.Property(m => m.ProteinGramsPer100g)
+            nb.Property(m => m.ProteinGramsPer100)
                 .HasPrecision(5, 2)
                 .HasColumnName("ProteinGramsPer100g")
                 .IsRequired();
 
-            nb.Property(m => m.CarbsGramsPer100g)
+            nb.Property(m => m.CarbsGramsPer100)
                 .HasPrecision(5, 2)
                 .HasColumnName("CarbsGramsPer100g")
                 .IsRequired();
 
-            nb.Property(m => m.FatGramsPer100g)
+            nb.Property(m => m.FatGramsPer100)
                 .HasPrecision(5, 2)
                 .HasColumnName("FatGramsPer100g")
                 .IsRequired();
@@ -47,6 +47,9 @@ public sealed class GroceryConfiguration : IEntityTypeConfiguration<Grocery>
 
         b.Property(g => g.UnitOfMeasure)
             .IsRequired();
+
+        b.Property(g => g.ImageUrl)
+            .HasMaxLength(512);
 
         b.Property(g => g.IsApproved)
             .IsRequired();

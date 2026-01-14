@@ -6,8 +6,8 @@ public sealed record NotificationResult(
     Guid Id,
     string Title,
     string Message,
-    NotificationType Type,
-    NotificationStatus Status,
+    string Type,
+    string Status,
     DateTime OccurredAtUtc,
     DateTime? ReadAtUtc,
     string? LinkUrl);

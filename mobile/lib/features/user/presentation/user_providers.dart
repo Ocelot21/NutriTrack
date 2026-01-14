@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/legacy.dart';
 
 import '../../../core/providers.dart';
-import '../../../core/token_store.dart';
+import '../data/two_factor_models.dart';
 import '../data/user_repo.dart';
 import '../data/user_models.dart';
 
@@ -18,24 +18,34 @@ class UserState {
   final bool isLoading;
   final String? error;
 
+  final TotpSetupData? totpSetup;
+  final bool isTwoFactorBusy;
+
   const UserState({
     this.me,
     this.isLoading = false,
     this.error,
+    this.totpSetup,
+    this.isTwoFactorBusy = false,
   });
 
   UserState copyWith({
     Me? me,
     bool? isLoading,
     String? error,
+    TotpSetupData? totpSetup,
+    bool? isTwoFactorBusy,
   }) {
     return UserState(
       me: me ?? this.me,
       isLoading: isLoading ?? this.isLoading,
       error: error,
+      totpSetup: totpSetup ?? this.totpSetup,
+      isTwoFactorBusy: isTwoFactorBusy ?? this.isTwoFactorBusy,
     );
   }
 }
+
 
 class UserController extends StateNotifier<UserState> {
   UserController(this._repo) : super(const UserState()) {
@@ -97,6 +107,48 @@ class UserController extends StateNotifier<UserState> {
       return false;
     }
   }
+
+  Future<void> beginTotpSetup() async {
+    state = state.copyWith(isTwoFactorBusy: true, error: null, totpSetup: null);
+    try {
+      final setup = await _repo.setupTotp();
+      state = state.copyWith(isTwoFactorBusy: false, totpSetup: setup);
+    } catch (e) {
+      state = state.copyWith(isTwoFactorBusy: false, error: e.toString());
+    }
+  }
+
+  Future<bool> confirmTotp(String code) async {
+    state = state.copyWith(isTwoFactorBusy: true, error: null);
+    try {
+      await _repo.confirmTotp(code);
+      await loadMe();
+      state = state.copyWith(isTwoFactorBusy: false, totpSetup: null);
+      return true;
+    } catch (e) {
+      state = state.copyWith(isTwoFactorBusy: false, error: e.toString());
+      return false;
+    }
+  }
+
+  Future<bool> disableTotp(String code) async {
+    state = state.copyWith(isTwoFactorBusy: true, error: null);
+    try {
+      await _repo.disableTotp(code);
+      await loadMe();
+      state = state.copyWith(isTwoFactorBusy: false, totpSetup: null);
+      return true;
+    } catch (e) {
+      state = state.copyWith(isTwoFactorBusy: false, error: e.toString());
+      return false;
+    }
+  }
+
+
+  void clearTotpSetup() {
+    state = state.copyWith(totpSetup: null);
+  }
+
 }
 
 final userControllerProvider =

@@ -33,20 +33,38 @@ class ApiClient {
       final data = e.response?.data;
 
       if (data is Map<String, dynamic>) {
-        problem = ProblemDetails.fromJson(data);
+        // Try ProblemDetails first
+        try {
+          problem = ProblemDetails.fromJson(data);
+        } catch (_) {
+          problem = null;
+        }
 
-        if (problem.hasErrors) {
+        if (problem != null && problem.hasErrors) {
           final msgs = problem.allMessages;
           if (msgs.isNotEmpty) {
             message = msgs.join('\n');
           }
-        } else if (problem.title != null) {
+        } else if (problem != null && problem.title != null) {
           message = problem.title!;
+        } else {
+          // Not ProblemDetails - try common fields
+          final dynamic title = data['title'];
+          final dynamic msg = data['message'] ?? data['error'] ?? data['detail'];
+          if (msg is String && msg.trim().isNotEmpty) {
+            message = msg.trim();
+          } else if (title is String && title.trim().isNotEmpty) {
+            message = title.trim();
+          } else if (statusCode != null) {
+            message = 'Request failed ($statusCode)';
+          }
         }
       } else if (data is String && data.isNotEmpty) {
         message = data;
       } else if (e.message != null && e.message!.isNotEmpty) {
         message = e.message!;
+      } else if (statusCode != null) {
+        message = 'Request failed ($statusCode)';
       }
 
       if (statusCode == 401) {

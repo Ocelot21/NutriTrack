@@ -15,8 +15,8 @@ public static class DomainConstraints
     {
         public const int MaxNameLength = 200;
         public const int MaxBarcodeLength = 64;
-        public const int MaxCaloriesPer100g = 5000;
-        public const int MaxMacroValuePer100g = 1000;
+        public const int MaxCaloriesPer100 = 5000;
+        public const int MaxMacroValuePer100 = 1000;
     }
 
     public static class Exercises
@@ -45,5 +45,10 @@ public static class DomainConstraints
     {
         public const int MaxNotesLength = 1000;
         public const int MaxExerciseSnapshotNameLength = 150;
+    }
+
+    public static class Countries
+    {
+        public const int MaxCountryNameLength = 100;
     }
 }

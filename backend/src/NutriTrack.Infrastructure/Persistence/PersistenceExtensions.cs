@@ -4,11 +4,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using NutriTrack.Application.Common.Interfaces.Authorization;
 using NutriTrack.Application.Common.Interfaces.Persistence;
-using NutriTrack.Application.Common.Interfaces.Services;
 using NutriTrack.Infrastructure.Authorization;
 using NutriTrack.Infrastructure.Persistence.Repositories;
 using NutriTrack.Infrastructure.Persistence.Seed;
-using NutriTrack.Infrastructure.Services;
+using NutriTrack.Infrastructure.Persistence.TwoFactor;
 
 namespace NutriTrack.Infrastructure.Persistence;
 
@@ -39,6 +38,7 @@ public static class PersistenceExtensions
         services.AddScoped(typeof(IRepository<,>), typeof(EfRepository<,>));
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
+        services.AddScoped<IRolePermissionRepository, RolePermissionRepository>();
         services.AddScoped<IGroceryRepository, GroceryRepository>();
         services.AddScoped<IExerciseRepository, ExerciseRepository>();
         services.AddScoped<IMealRepository, MealRepository>();
@@ -49,6 +49,14 @@ public static class PersistenceExtensions
         services.AddScoped<IWeightHistoryRepository, WeightHistoryRepository>();
         services.AddScoped<IAchievementRepository, AchievementRepository>();
         services.AddScoped<IUserAchievementRepository, UserAchievementRepository>();
+        services.AddScoped<ICountryRepository, CountryRepository>();
+        services.AddScoped<IPendingTotpSetupRepository, PendingTotpSetupRepository>();
+        services.AddScoped<IPendingLoginChallengeRepository, PendingLoginChallengeRepository>();
+        services.AddScoped<IGoalProgressSnapshotRepository, GoalProgressSnapshotRepository>();
+        services.AddScoped<IDailyOverviewSnapshotRepository, DailyOverviewSnapshotRepository>();
+        services.AddScoped<ISocialPostRepository, SocialPostRepository>();
+        services.AddScoped<IReportRunRepository, ReportRunRepository>();
+
 
         services.Scan(scan => scan
                 .FromAssemblyOf<ISeeder>()

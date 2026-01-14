@@ -4,16 +4,20 @@ using NutriTrack.Application.Common.Errors;
 using NutriTrack.Application.Common.Mappings;
 using NutriTrack.Application.Common.Models;
 using NutriTrack.Application.Common.Interfaces.Persistence;
+using NutriTrack.Application.Common.Interfaces.Storage;
+using NutriTrack.Application.Common.Storage;
 
 namespace NutriTrack.Application.Me.Queries.GetMe;
 
 public sealed class GetMeQueryHandler : IRequestHandler<GetMeQuery, ErrorOr<UserResult>>
 {
     private readonly IUserRepository _userRepository;
+    private readonly IBlobStorageService _blobStorageService;
 
-    public GetMeQueryHandler(IUserRepository userRepository)
+    public GetMeQueryHandler(IUserRepository userRepository, IBlobStorageService blobStorageService)
     {
         _userRepository = userRepository;
+        _blobStorageService = blobStorageService;
     }
 
     public async Task<ErrorOr<UserResult>> Handle(GetMeQuery request, CancellationToken cancellationToken)
@@ -24,6 +28,10 @@ public sealed class GetMeQueryHandler : IRequestHandler<GetMeQuery, ErrorOr<User
             return Errors.Users.NotFound;
         }
 
-        return user.ToUserResult();
+        var result = user.ToUserResult();
+        return result with
+        {
+            AvatarUrl = _blobStorageService.GenerateReadUri(BlobContainer.Avatars, result.AvatarUrl)
+        };
     }
 }

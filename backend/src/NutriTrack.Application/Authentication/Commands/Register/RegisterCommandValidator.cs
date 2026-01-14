@@ -30,7 +30,7 @@ namespace NutriTrack.Application.Authentication.Commands.Register
 
             RuleFor(x => x.Password)
                 .NotEmpty()
-                .MinimumLength(8)
+                .MinimumLength(4)
                 .MaximumLength(200);
 
             RuleFor(x => x.ConfirmPassword)

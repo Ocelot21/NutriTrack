@@ -7,7 +7,7 @@ namespace NutriTrack.Infrastructure.Persistence.Repositories;
 
 public class EfRepository<TEntity, TId> : IRepository<TEntity, TId>
     where TEntity : AggregateRoot<TId>
-    where TId : struct
+    where TId : notnull
 {
     protected readonly AppDbContext _dbContext;
 
@@ -66,4 +66,12 @@ public class EfRepository<TEntity, TId> : IRepository<TEntity, TId>
         );
     }
 
+    public async Task<bool> ExistsAsync(
+        TId id,
+        CancellationToken cancellationToken = default)
+    {
+        var entity = await _dbContext.Set<TEntity>().AnyAsync(e => e.Id.Equals(id), cancellationToken);
+
+        return entity;
+    }
 }

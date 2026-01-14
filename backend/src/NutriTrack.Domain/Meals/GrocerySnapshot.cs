@@ -16,26 +16,31 @@ public sealed class GrocerySnapshot : ValueObject
         string groceryName,
         int caloriesPer100,
         MacroNutrients macrosPer100,
-        UnitOfMeasure unitOfMeasure)
+        UnitOfMeasure unitOfMeasure,
+        decimal? gramsPerPiece)
     {
         GroceryName = NormalizeName(groceryName);
         CaloriesPer100 = ValidateCalories(caloriesPer100);
         MacrosPer100 = macrosPer100;
-        UnitOfMeasure = ValidateUnitOfMeasure(unitOfMeasure);
+        UnitOfMeasure = ValidateUnitOfMeasure(unitOfMeasure, gramsPerPiece);
+        GramsPerPiece = gramsPerPiece;
     }
 
     public string GroceryName { get; private set; } = null!;
     public int CaloriesPer100 { get; private set; }
     public MacroNutrients MacrosPer100 { get; private set; } = null!;
-    public UnitOfMeasure UnitOfMeasure { get; private set; } 
+    public UnitOfMeasure UnitOfMeasure { get; private set; }
+    public decimal? GramsPerPiece { get; private set; }
 
     public static GrocerySnapshot Create(
         string groceryName,
         int caloriesPer100,
         MacroNutrients macrosPer100,
-        UnitOfMeasure unitOfMeasure)
+        UnitOfMeasure unitOfMeasure,
+        decimal? gramsPerPiece = null)
     {
-        return new GrocerySnapshot(groceryName, caloriesPer100, macrosPer100, unitOfMeasure);
+        macrosPer100 ??= new MacroNutrients(0m, 0m, 0m);
+        return new GrocerySnapshot(groceryName, caloriesPer100, macrosPer100, unitOfMeasure, gramsPerPiece);
     }
 
     protected override IEnumerable<object?> GetAtomicValues()
@@ -71,23 +76,35 @@ public sealed class GrocerySnapshot : ValueObject
 
     private static int ValidateCalories(int caloriesPer100)
     {
-        if (caloriesPer100 < 0 || caloriesPer100 >= DomainConstraints.Groceries.MaxCaloriesPer100g)
+        if (caloriesPer100 < 0 || caloriesPer100 >= DomainConstraints.Groceries.MaxCaloriesPer100)
         {
             throw new DomainException(
                 DomainErrorCodes.Groceries.InvalidCalories,
-                $"Calories per 100 units must be between 0 and less than {DomainConstraints.Groceries.MaxCaloriesPer100g}.");
+                $"Calories per 100 units must be between 0 and less than {DomainConstraints.Groceries.MaxCaloriesPer100}.");
         }
 
         return caloriesPer100;
     }
 
-    private static UnitOfMeasure ValidateUnitOfMeasure(UnitOfMeasure unitOfMeasure)
+    private static UnitOfMeasure ValidateUnitOfMeasure(
+        UnitOfMeasure unitOfMeasure,
+        decimal? gramsPerPiece)
     {
         if (!Enum.IsDefined(unitOfMeasure))
         {
             throw new DomainException(
                 DomainErrorCodes.Groceries.InvalidUnitOfMeasure,
                 "Unit of measure is invalid.");
+        }
+
+        if (unitOfMeasure == UnitOfMeasure.Piece)
+        {
+            if (!gramsPerPiece.HasValue)
+            {
+                throw new DomainException(
+                    DomainErrorCodes.Groceries.GramsPerPieceNotSet,
+                    "Grams per piece must be set when unit of measure is 'Piece'.");
+            }
         }
 
         return unitOfMeasure;

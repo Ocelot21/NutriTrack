@@ -5,9 +5,10 @@ public sealed record MealItemResponse(
     Guid GroceryId,
     string GroceryName,
     int CaloriesPer100,
-    decimal ProteinGramsPer100g,
-    decimal CarbsGramsPer100g,
-    decimal FatGramsPer100g,
+    decimal ProteinGramsPer100,
+    decimal CarbsGramsPer100,
+    decimal FatGramsPer100,
     string UnitOfMeasure,
+    decimal? GramsPerPiece,
     decimal Quantity
 );

@@ -21,13 +21,14 @@ public static class UserMappings
             user.AvatarUrl,
             user.TimeZoneId,
             user.LastLoginAtUtc,
-            user.Country,
+            user.CountryCode,
             user.IsHealthProfileCompleted,
             user.Gender,
             user.ActivityLevel,
             user.Birthdate,
             user.HeightCm,
-            user.WeightKg
+            user.WeightKg,
+            user.IsTwoFactorEnabled
         );
     }
 

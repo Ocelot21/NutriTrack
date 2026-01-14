@@ -1,0 +1,103 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks: [nutritrack]
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=${SA_PASSWORD}
+    ports:
+      - "1433:1433"
+    networks: [nutritrack]
+
+  nutritrack-api:
+    build:
+      context: .
+      dockerfile: src/NutriTrack.Api/Dockerfile
+    container_name: nutritrack-api
+    depends_on:
+      - sqlserver
+      - rabbitmq
+      - nutritrack-notifications-api
+    environment:
+      # DB (main)
+      - Database__ConnectionString=Server=sqlserver;Database=NTTest1;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True
+
+      # RabbitMQ
+      - RabbitMq__HostName=rabbitmq
+      - RabbitMq__Port=5672
+      - RabbitMq__UserName=guest
+      - RabbitMq__Password=guest
+      - RabbitMq__QueueName=notifications-queue
+
+      # JWT
+      - JwtSettings__Secret=${JWT_SECRET}
+      - JwtSettings__Issuer=${JWT_ISSUER}
+      - JwtSettings__Audience=${JWT_AUDIENCE}
+      - JwtSettings__ExpiryMinutes=60
+
+      # Notifications.Api connection (internal)
+      - Services__Notifications__BaseUrl=http://nutritrack-notifications-api:8080
+      - Services__Notifications__ApiKey=${INTERNAL_NOTIF_API_KEY}
+
+      # Azure Blob Storage
+      - AzureBlob__ConnectionString=${AZURE_BLOB_CONNECTION_STRING}
+      - AzureBlob__Containers__Avatars=avatars
+      - AzureBlob__Containers__Groceries=groceries
+      - AzureBlob__Containers__Exercises=exercises
+      - AzureBlob__Containers__Reports=reports
+      - AzureBlob__SasExpiryMinutes=60
+    ports:
+      - "5000:8080"
+    networks: [nutritrack]
+
+  nutritrack-notifications-api:
+    build:
+      context: .
+      dockerfile: src/NutriTrack.Notifications.Api/Dockerfile
+    container_name: nutritrack-notifications-api
+    depends_on:
+      - sqlserver
+      - rabbitmq
+    environment:
+      - InternalAuth__ApiKey=${INTERNAL_NOTIF_API_KEY}
+
+      # Notifications DB
+      - Database__ConnectionString=Server=sqlserver;Database=NTNotif1;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True
+
+      # RabbitMQ
+      - RabbitMq__HostName=rabbitmq
+      - RabbitMq__Port=5672
+      - RabbitMq__UserName=guest
+      - RabbitMq__Password=guest
+      - RabbitMq__QueueName=notifications-queue
+    # bez ports -> internal-only
+    networks: [nutritrack]
+
+  nutritrack-notifications-worker:
+    build:
+      context: .
+      dockerfile: src/NutriTrack.Notifications.Worker/Dockerfile
+    container_name: nutritrack-notifications-worker
+    depends_on:
+      - sqlserver
+      - rabbitmq
+    environment:
+      - Database__ConnectionString=Server=sqlserver;Database=NTNotif1;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True
+      - RabbitMq__HostName=rabbitmq
+      - RabbitMq__Port=5672
+      - RabbitMq__UserName=guest
+      - RabbitMq__Password=guest
+      - RabbitMq__QueueName=notifications-queue
+    networks: [nutritrack]
+
+networks:
+  nutritrack:
+    driver: bridge

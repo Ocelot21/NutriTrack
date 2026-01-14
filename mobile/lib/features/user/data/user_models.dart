@@ -5,7 +5,6 @@ class Me {
   final String firstName;
   final String lastName;
   final String? role;
-  final bool isEmailVerified;
   final String? avatarUrl;
   final String timeZoneId;
   final DateTime? lastLoginAtUtc;
@@ -16,6 +15,7 @@ class Me {
   final DateTime? birthdate;
   final double? heightCm;
   final double? weightKg;
+  final bool isTwoFactorEnabled;
 
   Me({
     required this.id,
@@ -24,7 +24,6 @@ class Me {
     required this.firstName,
     required this.lastName,
     required this.role,
-    required this.isEmailVerified,
     required this.avatarUrl,
     required this.timeZoneId,
     required this.lastLoginAtUtc,
@@ -35,6 +34,7 @@ class Me {
     required this.birthdate,
     required this.heightCm,
     required this.weightKg,
+    required this.isTwoFactorEnabled
   });
 
   factory Me.fromJson(Map<String, dynamic> json) {
@@ -60,11 +60,10 @@ class Me {
       firstName: json['firstName'] as String,
       lastName: json['lastName'] as String,
       role: json['role'] as String?,
-      isEmailVerified: json['isEmailVerified'] as bool? ?? false,
       avatarUrl: json['avatarUrl'] as String?,
       timeZoneId: json['timeZoneId'] as String,
       lastLoginAtUtc: parseNullableDateTime(json['lastLoginAtUtc']),
-      country: json['country'] as String?,
+      country: (json['countryIso2'] as String?) ?? (json['country'] as String?),
       isHealthProfileCompleted:
       json['isHealthProfileCompleted'] as bool? ?? false,
       gender: json['gender'] as String,
@@ -72,6 +71,7 @@ class Me {
       birthdate: parseNullableDateOnly(json['birthdate']),
       heightCm: parseNullableDecimal(json['heightCm']),
       weightKg: parseNullableDecimal(json['weightKg']),
+      isTwoFactorEnabled: json['isTwoFactorEnabled'] as bool? ?? false,
     );
   }
 }

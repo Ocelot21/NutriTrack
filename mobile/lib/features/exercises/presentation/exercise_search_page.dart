@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import 'exercise_log_page.dart';
 import 'exercise_providers.dart';
-import '../data/exercise_models.dart';
+import 'package:nutritrack_shared/exercises/data/exercise_models.dart';
 
 class ExerciseSearchPage extends ConsumerStatefulWidget {
   final DateTime? contextDate;

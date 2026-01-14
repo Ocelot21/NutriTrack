@@ -3,9 +3,9 @@ class MealItem {
   final String groceryId;
   final String groceryName;
   final int caloriesPer100;
-  final double proteinGramsPer100g;
-  final double carbsGramsPer100g;
-  final double fatGramsPer100g;
+  final double proteinGramsPer100;
+  final double carbsGramsPer100;
+  final double fatGramsPer100;
   final String unitOfMeasure;
   final double quantity;
 
@@ -14,9 +14,9 @@ class MealItem {
     required this.groceryId,
     required this.groceryName,
     required this.caloriesPer100,
-    required this.proteinGramsPer100g,
-    required this.carbsGramsPer100g,
-    required this.fatGramsPer100g,
+    required this.proteinGramsPer100,
+    required this.carbsGramsPer100,
+    required this.fatGramsPer100,
     required this.unitOfMeasure,
     required this.quantity,
   });
@@ -27,9 +27,9 @@ class MealItem {
       groceryId: json['groceryId'] as String,
       groceryName: json['groceryName'] as String,
       caloriesPer100: json['caloriesPer100'] as int,
-      proteinGramsPer100g: (json['proteinGramsPer100g'] as num).toDouble(),
-      carbsGramsPer100g: (json['carbsGramsPer100g'] as num).toDouble(),
-      fatGramsPer100g: (json['fatGramsPer100g'] as num).toDouble(),
+      proteinGramsPer100: (json['proteinGramsPer100'] as num).toDouble(),
+      carbsGramsPer100: (json['carbsGramsPer100'] as num).toDouble(),
+      fatGramsPer100: (json['fatGramsPer100'] as num).toDouble(),
       unitOfMeasure: json['unitOfMeasure'] as String,
       quantity: (json['quantity'] as num).toDouble(),
     );

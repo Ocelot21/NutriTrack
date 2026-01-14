@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../data/exercise_models.dart';
-import '../data/exercise_repo.dart';
+import 'package:nutritrack_shared/exercises/data/exercise_models.dart';
+import 'package:nutritrack_shared/exercises/data/exercise_repo.dart';
 import '../../../core/providers.dart';
-import '../../../core/token_store.dart';
 
 final exerciseRepoProvider = Provider<ExerciseRepo>((ref) {
   final api = ref.read(apiClientProvider);
@@ -76,7 +75,7 @@ class _ExerciseSuggestPageState extends ConsumerState<ExerciseSuggestPage> {
     final repo = ref.read(exerciseRepoProvider);
 
     try {
-      await repo.createExercise(
+      await repo.suggestExercise(
         name: _nameCtrl.text.trim(),
         category: _selectedCategory,
         defaultCaloriesPerMinute: calories,
@@ -155,7 +154,7 @@ class _ExerciseSuggestPageState extends ConsumerState<ExerciseSuggestPage> {
                     ),
                     const SizedBox(height: 12),
                     DropdownButtonFormField<ExerciseCategory>(
-                      value: _selectedCategory,
+                      initialValue: _selectedCategory,
                       decoration: const InputDecoration(
                         labelText: 'Category',
                       ),

@@ -10,8 +10,9 @@ using NutriTrack.Application.Exercises.Commands.CreateExercise;
 using NutriTrack.Application.Exercises.Commands.UpdateExercise;
 using NutriTrack.Application.Exercises.Commands.DeleteExercise;
 using NutriTrack.Contracts.Common;
-using NutriTrack.Application.Exercises.Queries.ListExercisesByApproval;
-using NutriTrack.Api.Controllers.Exercises;
+using NutriTrack.Application.Exercises.Queries.ListExerciseSuggestions;
+using NutriTrack.Application.Exercises.Commands.CreateExerciseSuggestion;
+using NutriTrack.Application.Exercises.Commands.ApproveExercise;
 
 namespace NutriTrack.Api.Controllers;
 
@@ -59,26 +60,58 @@ public sealed class ExercisesController : ApiController
 
     [Authorize(Policy = PermissionKeys.Exercises.Read)]
     [HttpGet("suggestions")]
-    public async Task<IActionResult> ListByApproval(
-        [FromQuery] bool approved = true,
+    public async Task<IActionResult> ListSuggestions(
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 20,
         CancellationToken cancellationToken = default)
     {
-        var query = new ListExercisesByApprovalQuery(approved, page, pageSize);
+        var query = new ListExerciseSuggestionsQuery(page, pageSize);
         var result = await _mediator.Send(query, cancellationToken);
         return result.Match(
             paged => Ok(_mapper.Map<PagedResponse<ExerciseResponse>>(paged)),
             errors => Problem(errors));
     }
 
-    [Authorize/*(Policy = PermissionKeys.Exercises.Create)*/]
+    [Authorize]
+    [HttpPost("suggestions")]
+    public async Task<IActionResult> Suggest(
+        [FromForm] CreateExerciseRequest request,
+        [FromForm] IFormFile? image,
+        CancellationToken cancellationToken = default)
+    {
+        var command = _mapper.Map<CreateExerciseSuggestionCommand>((request, image));
+        var result = await _mediator.Send(command, cancellationToken);
+
+        return result.Match(
+            exercise => CreatedAtAction(
+                nameof(GetById),
+                new { id = exercise.Id.Value },
+                _mapper.Map<ExerciseResponse>(exercise)),
+            errors => Problem(errors));
+    }
+
+    [Authorize(Policy = PermissionKeys.Exercises.Update)]
+    [HttpPost("suggestions/{id:Guid}/approve")]
+    public async Task<IActionResult> ApproveSuggestion(
+        [FromRoute] Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        var command = new ApproveExerciseCommand(new Domain.Exercises.ExerciseId(id));
+        var result = await _mediator.Send(command, cancellationToken);
+
+        return result.Match(
+            exercise => Ok(_mapper.Map<ExerciseResponse>(exercise)),
+            errors => Problem(errors));
+    }
+
+    [Authorize(Policy = PermissionKeys.Exercises.Create)]
     [HttpPost]
     public async Task<IActionResult> Create(
         [FromForm] CreateExerciseRequest request,
+        [FromForm] IFormFile? image,
         CancellationToken cancellationToken = default)
     {
-        var command = _mapper.Map<CreateExerciseCommand>(request);
+        var command = _mapper.Map<CreateExerciseCommand>((request, image));
 
         var result = await _mediator.Send(command, cancellationToken);
 
@@ -94,10 +127,11 @@ public sealed class ExercisesController : ApiController
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(
         [FromRoute] Guid id,
-        [FromBody] UpdateExerciseRequest request,
+        [FromForm] UpdateExerciseRequest request,
+        [FromForm] IFormFile? image,
         CancellationToken cancellationToken = default)
     {
-        var command = _mapper.Map<UpdateExerciseCommand>((id, request));
+        var command = _mapper.Map<UpdateExerciseCommand>((id, request, image));
 
         var result = await _mediator.Send(command, cancellationToken);
 

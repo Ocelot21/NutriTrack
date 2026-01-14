@@ -9,6 +9,7 @@ using NutriTrack.Application.UserGoals.Queries.GetCurrentUserGoal;
 using NutriTrack.Application.UserGoals.Queries.ListUserGoals;
 using NutriTrack.Contracts.Common;
 using NutriTrack.Contracts.UserGoals;
+using NutriTrack.Domain.UserGoals;
 
 namespace NutriTrack.Api.Controllers;
 
@@ -49,7 +50,7 @@ public sealed class UserGoalsController : ApiController
     public async Task<IActionResult> Evaluate([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         var userId = GetUserId();
-        var command = new EvaluateUserProgressCommand(new NutriTrack.Domain.UserGoals.UserGoalId(id), userId);
+        var command = new EvaluateUserProgressCommand(new UserGoalId(id), userId);
         var result = await _mediator.Send(command, cancellationToken);
         return result.Match(changed => Ok(changed), errors => Problem(errors));
     }

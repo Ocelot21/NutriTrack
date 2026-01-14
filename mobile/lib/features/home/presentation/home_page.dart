@@ -6,8 +6,11 @@ import 'package:nutritrack_mobile/features/meals/presentation/meals_providers.da
 import '../../../app/widgets/app_drawer.dart';
 import '../../exercises/presentation/edit_exercise_log_page.dart';
 import '../../groceries/presentation/grocery_search_page.dart';
+import '../../meals/presentation/edit_meal_item_page.dart';
 import 'home_providers.dart';
 import '../data/daily_overview_models.dart';
+import 'daily_overview_share_providers.dart';
+import 'daily_overview_share_sheet.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -78,6 +81,13 @@ class _HomePageState extends ConsumerState<HomePage> {
     return '$h:$m';
   }
 
+  String _formatDateOnlyParam(DateTime date) {
+    final y = date.year.toString().padLeft(4, '0');
+    final m = date.month.toString().padLeft(2, '0');
+    final d = date.day.toString().padLeft(2, '0');
+    return '$y-$m-$d';
+  }
+
   Future<void> _editMeal(Meal meal) async {
     final changed = await context.push<bool>(
       '/meals/edit',
@@ -87,7 +97,6 @@ class _HomePageState extends ConsumerState<HomePage> {
       _loadForSelectedDate();
     }
   }
-
 
   Future<void> _deleteMeal(String mealId) async {
     final theme = Theme.of(context);
@@ -120,7 +129,6 @@ class _HomePageState extends ConsumerState<HomePage> {
 
       if (!mounted) return;
 
-      // refresh daily overview za taj dan
       _loadForSelectedDate();
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -162,6 +170,22 @@ class _HomePageState extends ConsumerState<HomePage> {
     }
   }
 
+  Future<void> _editMealItem({
+    required String mealId,
+    required MealItem item,
+  }) async {
+    final changed = await context.push<bool>(
+      '/meals/items/edit',
+      extra: EditMealItemPageArgs(
+        mealId: mealId,
+        item: item,
+      ),
+    );
+
+    if (changed == true) {
+      _loadForSelectedDate();
+    }
+  }
 
   Future<void> _editExerciseLog(UserExerciseLog log) async {
     final changed = await context.push<bool>(
@@ -174,12 +198,14 @@ class _HomePageState extends ConsumerState<HomePage> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final state = ref.watch(dailyOverviewControllerProvider);
     final overview = state.overview;
+
+    final localDateParam = _formatDateOnlyParam(_selectedDate);
+    final isShared = ref.watch(sharedDailyOverviewsProvider).contains(localDateParam);
 
     return Scaffold(
       appBar: AppBar(
@@ -197,10 +223,52 @@ class _HomePageState extends ConsumerState<HomePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _DateSelector(
-                    dateLabel: _formatDate(_selectedDate),
-                    onPrev: _goToPreviousDay,
-                    onNext: _goToNextDay,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _DateSelector(
+                          dateLabel: _formatDate(_selectedDate),
+                          onPrev: _goToPreviousDay,
+                          onNext: _goToNextDay,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      if (isShared)
+                        Tooltip(
+                          message: 'Already shared',
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 10),
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.primary,
+                              borderRadius: BorderRadius.circular(999),
+                            ),
+                            child: Icon(
+                              Icons.check,
+                              color: theme.colorScheme.onPrimary,
+                              size: 18,
+                            ),
+                          ),
+                        )
+                      else
+                        IconButton(
+                          tooltip: 'Share daily overview',
+                          onPressed: overview == null
+                              ? null
+                              : () {
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              showDragHandle: true,
+                              builder: (_) => DailyOverviewShareSheet(
+                                localDate: localDateParam,
+                                dateLabel: _formatDate(_selectedDate),
+                              ),
+                            );
+                          },
+                          icon: const Icon(Icons.share),
+                        ),
+                    ],
                   ),
                   const SizedBox(height: 24),
                   if (state.error != null) ...[
@@ -228,6 +296,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                       onEditMeal: _editMeal,
                       onDeleteMeal: _deleteMeal,
                       onAddItem: _addMealItem,
+                      onTapItem: (mealId, item) => _editMealItem(mealId: mealId, item: item),
                     ),
                     const SizedBox(height: 16),
                     _AddCard(
@@ -304,7 +373,7 @@ class _DateSelector extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 10),
             decoration: BoxDecoration(
-              color: theme.colorScheme.surfaceVariant,
+              color: theme.colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(40),
             ),
             alignment: Alignment.center,
@@ -334,8 +403,6 @@ class _CaloriesSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Column(
       children: [
         Row(
@@ -431,8 +498,6 @@ class _MacroCards extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Row(
       children: [
         Expanded(
@@ -495,7 +560,7 @@ class _MacroCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceVariant,
+        color: theme.colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -534,13 +599,16 @@ class _MealsSection extends StatelessWidget {
   final void Function(Meal meal)? onEditMeal;
   final void Function(String mealId)? onDeleteMeal;
   final void Function(Meal meal)? onAddItem;
+  final void Function(String mealId, MealItem item)? onTapItem;
+
 
   const _MealsSection({
     required this.meals,
     required this.formatTime,
     this.onEditMeal,
     this.onDeleteMeal,
-    this.onAddItem
+    this.onAddItem,
+    this.onTapItem
   });
 
 
@@ -574,6 +642,7 @@ class _MealsSection extends StatelessWidget {
                 ? null
                 : () => onDeleteMeal!(meal.id),
             onAddItem: onAddItem == null ? null : () => onAddItem!(meal),
+            onTapItem: onTapItem == null ? null : (it) => onTapItem!(meal.id, it),
           ),
 
 
@@ -590,13 +659,16 @@ class _MealBlock extends StatelessWidget {
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
   final VoidCallback? onAddItem;
+  final void Function(MealItem item)? onTapItem;
+
 
   const _MealBlock({
     required this.meal,
     required this.formatTime,
     this.onEdit,
     this.onDelete,
-    this.onAddItem
+    this.onAddItem,
+    this.onTapItem
   });
 
 
@@ -647,9 +719,13 @@ class _MealBlock extends StatelessWidget {
         Column(
           children: [
             for (final item in meal.items) ...[
-              _MealItemCard(item: item),
+              _MealItemCard(
+                item: item,
+                onTap: onTapItem == null ? null : () => onTapItem!(item),
+              ),
               const SizedBox(height: 8),
             ],
+
             _AddCard(
               label: 'Add item',
               onTap: onAddItem ?? () {},
@@ -664,8 +740,12 @@ class _MealBlock extends StatelessWidget {
 
 class _MealItemCard extends StatelessWidget {
   final MealItem item;
+  final VoidCallback? onTap;
 
-  const _MealItemCard({required this.item});
+  const _MealItemCard({
+    required this.item,
+    this.onTap,
+  });
 
   int _calculateCalories() {
     // caloriesPer100 * quantity / 100
@@ -678,14 +758,12 @@ class _MealItemCard extends StatelessWidget {
     final kcal = _calculateCalories();
 
     return InkWell(
-      onTap: () {
-        // TODO: open meal item details
-      },
+      onTap: onTap,
       borderRadius: BorderRadius.circular(12),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
         decoration: BoxDecoration(
-          color: theme.colorScheme.surfaceVariant,
+          color: theme.colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
@@ -788,7 +866,7 @@ class _ExerciseCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
         decoration: BoxDecoration(
-          color: theme.colorScheme.surfaceVariant,
+          color: theme.colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
@@ -839,7 +917,7 @@ class _AddCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         decoration: BoxDecoration(
-          color: theme.colorScheme.surfaceVariant,
+          color: theme.colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: theme.colorScheme.secondary,

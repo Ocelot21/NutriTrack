@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace NutriTrack.Application.Notifications.Messages;
 
-namespace NutriTrack.Application.Notifications.Messages
-{
-    public sealed record NotificationRequestedMessage(
+public sealed record NotificationRequestedMessage(
     Guid UserId,
     string Title,
     string Message,
@@ -12,4 +8,3 @@ namespace NutriTrack.Application.Notifications.Messages
     DateTime OccurredAtUtc,
     string? LinkUrl,
     string? MetadataJson);
-}

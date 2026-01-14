@@ -1,11 +1,10 @@
 using Mapster;
 using NutriTrack.Application.UserExercises.Commands.CreateUserExerciseLog;
-using NutriTrack.Application.UserExercises.Commands.DeleteUserExerciseLog;
 using NutriTrack.Application.UserExercises.Common;
 using NutriTrack.Contracts.UserExerciseLogs;
 using NutriTrack.Application.Common.Models;
-using NutriTrack.Domain.UserExercises;
 using NutriTrack.Domain.Exercises;
+using NutriTrack.Contracts.Common;
 
 namespace NutriTrack.Api.Common.Mappings;
 
@@ -22,7 +21,7 @@ public class UserExerciseLogsMappings : IRegister
             .Map(dest => dest.ExerciseName, src => src.ExerciseName)
             .Map(dest => dest.Category, src => src.Category.ToString());
 
-        config.NewConfig<PagedResult<UserExerciseLogResult>, NutriTrack.Contracts.Common.PagedResponse<UserExerciseLogResponse>>()
+        config.NewConfig<PagedResult<UserExerciseLogResult>, PagedResponse<UserExerciseLogResponse>>()
             .Map(dest => dest.Items, src => src.Items)
             .Map(dest => dest.TotalCount, src => src.TotalCount)
             .Map(dest => dest.Page, src => src.Page)

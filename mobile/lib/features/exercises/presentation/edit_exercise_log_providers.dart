@@ -1,11 +1,9 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/providers.dart';
-import '../../../core/token_store.dart';
-import '../../home/data/daily_overview_models.dart'; // zbog UserExerciseLog
-import '../data/exercise_repo.dart';
-import '../data/update_user_exercise_log_request.dart';
+import '../../home/data/daily_overview_models.dart';
+import 'package:nutritrack_shared/exercises/data/exercise_repo.dart';
+import 'package:nutritrack_shared/exercises/data/update_user_exercise_log_request.dart';
 
 class EditExerciseLogState {
   final bool isSubmitting;

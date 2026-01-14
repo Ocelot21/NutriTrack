@@ -21,6 +21,31 @@ public static class Errors
             Error.Conflict(
                 code: DomainErrorCodes.Authentication.UsernameAlreadyExists,
                 description: "Username is already taken.");
+
+        public static Error PasswordsDoNotMatch =>
+            Error.Validation(
+                code: DomainErrorCodes.Authentication.PasswordsDoNotMatch,
+                description: "The provided passwords do not match.");
+
+        public static Error InvalidPassword =>
+            Error.Validation(
+                code: DomainErrorCodes.Authentication.InvalidPassword,
+                description: "The provided password is incorrect.");
+
+        public static Error TwoFactorExpired =>
+            Error.Validation(
+                code: DomainErrorCodes.Authentication.TwoFactorExpired,
+                description: "The two-factor authentication code has expired.");
+
+        public static Error TooManyAttempts =>
+            Error.Validation(
+                code: DomainErrorCodes.Authentication.TooManyAttempts,
+                description: "Too many login attempts. Please try again later.");
+
+        public static Error InvalidTwoFactorCode =>
+            Error.Validation(
+                code: DomainErrorCodes.Authentication.InvalidTwoFactorCode,
+                description: "The provided two-factor authentication code is invalid.");
     }
 
     public static class Authorization
@@ -29,6 +54,15 @@ public static class Errors
             Error.Unauthorized(
                 code: DomainErrorCodes.Authorization.Unauthorized,
                 description: "You are not authorized to perform this action.");
+
+    }
+
+    public static class Roles
+    {
+        public static Error NotFound =>
+            Error.NotFound(
+                code: DomainErrorCodes.Roles.NotFound,
+                description: "Role was not found.");
     }
 
     public static class Users
@@ -90,5 +124,18 @@ public static class Errors
                 code: DomainErrorCodes.UserGoals.NotFound,
                 description: "User goal was not found.");
 
+    }
+
+    public static class SocialPosts
+    {
+        public static Error NotFound =>
+            Error.NotFound(
+                code: "SocialPosts.NotFound",
+                description: "Social post was not found.");
+
+        public static Error Forbidden =>
+            Error.Unauthorized(
+                code: "SocialPosts.Forbidden",
+                description: "You are not authorized to perform this action.");
     }
 }

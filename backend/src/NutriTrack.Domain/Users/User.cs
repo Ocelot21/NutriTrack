@@ -3,6 +3,7 @@ using NutriTrack.Domain.Common.Errors;
 using NutriTrack.Domain.Common.Models;
 using NutriTrack.Domain.Common.Primitives;
 using NutriTrack.Domain.Common;
+using NutriTrack.Domain.Countries;
 
 namespace NutriTrack.Domain.Users;
 
@@ -31,7 +32,7 @@ public sealed class User : AggregateRoot<UserId>
         RoleId = roleId;
         IsEmailVerified = isEmailVerified;
         TimeZoneId = timeZoneId;
-        Country = country;
+        CountryCode = country;
     }
 
     public string FirstName { get; private set; } = null!;
@@ -48,7 +49,9 @@ public sealed class User : AggregateRoot<UserId>
     public string? AvatarUrl { get; private set; }
     public string TimeZoneId { get; private set; } = null!;
     public DateTime? LastLoginAtUtc { get; private set; }
-    public CountryCode? Country { get; private set; }
+
+    public CountryCode? CountryCode { get; private set; }
+    public Country? Country { get; private set; }
 
     public bool IsHealthProfileCompleted { get; private set; }
 
@@ -61,6 +64,9 @@ public sealed class User : AggregateRoot<UserId>
     public decimal? WeightKg { get; private set; }
 
     public NutritionGoal NutritionGoal { get; private set; } = NutritionGoal.MaintainWeight;
+
+    public bool IsTwoFactorEnabled { get; private set; }
+    public string? TotpSecretProtected { get; private set; }
 
 
     // --------- Factory ---------
@@ -142,7 +148,7 @@ public sealed class User : AggregateRoot<UserId>
 
         if (countryIso2.IsSet)
         {
-            Country = CountryCode.CreateOptional(countryIso2.Value);
+            CountryCode = CountryCode.CreateOptional(countryIso2.Value);
         }
     }
 
@@ -234,6 +240,18 @@ public sealed class User : AggregateRoot<UserId>
     public void MarkHealthProfileCompleted()
     {
         IsHealthProfileCompleted = true;
+    }
+
+    public void EnableTotp(string totpSecretProtected)
+    {
+        TotpSecretProtected = totpSecretProtected;
+        IsTwoFactorEnabled = true;
+    }
+
+    public void DisableTotp()
+    {
+        TotpSecretProtected = null;
+        IsTwoFactorEnabled = false;
     }
 
 

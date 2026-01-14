@@ -1,4 +1,6 @@
-﻿namespace NutriTrack.Domain.Common.Errors;
+﻿using System.Reflection;
+
+namespace NutriTrack.Domain.Common.Errors;
 
 public static class DomainErrorCodes
 {
@@ -7,6 +9,11 @@ public static class DomainErrorCodes
         public const string InvalidCredentials = "Authentication.InvalidCredentials";
         public const string EmailAlreadyInUse = "Authentication.EmailAlreadyInUse";
         public const string UsernameAlreadyExists = "Authentication.UsernameAlreadyExists";
+        public const string InvalidPassword = "Authentication.InvalidPassword";
+        public const string PasswordsDoNotMatch = "Authentication.PasswordsDoNotMatch";
+        public const string TwoFactorExpired = "Authentication.TwoFactorExpired";
+        public const string TooManyAttempts = "Authentication.TooManyAttempts";
+        public const string InvalidTwoFactorCode = "Authentication.InvalidTwoFactorCode";
     }
 
     public static class Users
@@ -15,9 +22,9 @@ public static class DomainErrorCodes
         public const string InvalidLastName = "Users.InvalidLastName";
         public const string InvalidUsername = "Users.InvalidUsername";
         public const string InvalidEmail = "Users.InvalidEmail";
-        public const string InvalidPasswordHash = "Users.InvalidPasswordHash";
         public const string InvalidTimeZone = "Users.InvalidTimeZone";
         public const string InvalidRole = "Users.InvalidRole";
+        public const string InvalidPasswordHash = "Users.InvalidPasswordHash";
 
         public const string InvalidCountry = "Users.InvalidCountry";
         public const string InvalidBirthdate = "Users.InvalidBirthdate";
@@ -33,6 +40,11 @@ public static class DomainErrorCodes
         public const string NotFound = "Users.NotFound";
     }
 
+    public static class  Roles
+    {
+        public const string NotFound = "Roles.NotFound";
+    }
+
     public static class Groceries
     {
         public const string InvalidName = "Groceries.InvalidName";
@@ -42,6 +54,7 @@ public static class DomainErrorCodes
         public const string InvalidCalories = "Groceries.InvalidCalories";
         public const string NotFound = "Groceries.NotFound";
         public const string InvalidUnitOfMeasure = "Groceries.InvalidUnitOfMeasure";
+        public const string GramsPerPieceNotSet = "Groceries.GramsPerPieceNotSet";
     }
 
     public static class Exercises

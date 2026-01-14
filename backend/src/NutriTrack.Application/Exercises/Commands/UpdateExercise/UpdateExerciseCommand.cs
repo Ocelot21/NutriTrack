@@ -11,7 +11,9 @@ public record UpdateExerciseCommand(
     ExerciseCategory? Category,
     decimal? DefaultCaloriesPerMinute,
     string? Description,
-    string? ImageUrl,
+    Stream? Image,
+    string? ImageFileName,
+    string? ImageContentType,
     bool? IsApproved,
     bool? IsDeleted
 ) : IRequest<ErrorOr<ExerciseResult>>;

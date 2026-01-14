@@ -165,12 +165,37 @@ public sealed class Meal : AggregateRoot<MealId>
 
         foreach (var item in _items)
         {
-            var factor = item.Quantity / 100m;
+            decimal factor;
+
+            switch (item.Snapshot.UnitOfMeasure)
+            {
+                case UnitOfMeasure.Gram:
+                case UnitOfMeasure.Milliliter:
+                default:
+                { 
+                    factor = item.Quantity / 100m;
+                    break;
+                }
+
+                case UnitOfMeasure.Piece:
+                {
+                    if (item.Snapshot.GramsPerPiece is null)
+                    {
+                        throw new DomainException(
+                            DomainErrorCodes.Groceries.GramsPerPieceNotSet,
+                            "Grams per piece must be set when unit of measure is 'Piece'.");
+                        }
+
+                    var totalGrams = item.Quantity * item.Snapshot.GramsPerPiece.Value;
+                    factor = totalGrams / 100m;
+                    break;
+                }
+            }
 
             kcal += factor * item.Snapshot.CaloriesPer100;
-            p += factor * item.Snapshot.MacrosPer100.ProteinGramsPer100g;
-            c += factor * item.Snapshot.MacrosPer100.CarbsGramsPer100g;
-            f += factor * item.Snapshot.MacrosPer100.FatGramsPer100g;
+            p += factor * item.Snapshot.MacrosPer100.ProteinGramsPer100;
+            c += factor * item.Snapshot.MacrosPer100.CarbsGramsPer100;
+            f += factor * item.Snapshot.MacrosPer100.FatGramsPer100;
         }
 
         TotalCalories = (int)Math.Round(kcal, MidpointRounding.AwayFromZero);
@@ -184,11 +209,15 @@ public sealed class Meal : AggregateRoot<MealId>
         var value = name.Trim();
         if (string.IsNullOrWhiteSpace(value))
         {
-            throw new DomainException(DomainErrorCodes.Meals.InvalidName, "Meal name cannot be empty.");
+            throw new DomainException(
+                DomainErrorCodes.Meals.InvalidName,
+                "Meal name cannot be empty.");
         }
         if (value.Length > DomainConstraints.Meals.MaxMealNameLength)
         {
-            throw new DomainException(DomainErrorCodes.Meals.InvalidName, $"Meal name cannot be longer than {DomainConstraints.Meals.MaxMealNameLength} characters.");
+            throw new DomainException(
+                DomainErrorCodes.Meals.InvalidName,
+                $"Meal name cannot be longer than {DomainConstraints.Meals.MaxMealNameLength} characters.");
         }
         return value;
     }
@@ -202,7 +231,9 @@ public sealed class Meal : AggregateRoot<MealId>
         var value = description.Trim();
         if (value.Length > DomainConstraints.Meals.MaxMealDescriptionLength)
         {
-            throw new DomainException(DomainErrorCodes.Meals.InvalidDescription, $"Meal description cannot be longer than {DomainConstraints.Meals.MaxMealDescriptionLength} characters.");
+            throw new DomainException(
+                DomainErrorCodes.Meals.InvalidDescription,
+                $"Meal description cannot be longer than {DomainConstraints.Meals.MaxMealDescriptionLength} characters.");
         }
         return value;
     }

@@ -56,6 +56,12 @@ public static class PermissionKeys
         public const string Manage = "RolePermissions.Manage";
     }
 
+    public static class Reports
+    {
+        public const string Read = "Reports.Read";
+        public const string Create = "Reports.Create";
+    }
+
     public static readonly string[] All =
     [
         // Groceries
@@ -71,6 +77,8 @@ public static class PermissionKeys
         // Roles
         Roles.Read, Roles.Create, Roles.Update, Roles.Delete,
         // RolePermissions
-        RolePermissions.Manage
+        RolePermissions.Manage,
+        // Reports
+        Reports.Read, Reports.Create
     ];
 }

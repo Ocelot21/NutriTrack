@@ -1,28 +1,39 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/providers.dart';
-import '../data/auth_repo.dart';
-import '../data/register_request.dart';
+import 'package:nutritrack_shared/auth/data/auth_repo.dart';
+import 'package:nutritrack_shared/auth/data/login_result.dart';
+import 'package:nutritrack_shared/auth/data/register_request.dart';
 
 class AuthState {
   final bool isLoading;
   final String? error;
 
+  final bool requiresTwoFactor;
+  final String? twoFactorChallengeId;
+
   const AuthState({
     this.isLoading = false,
     this.error,
+    this.requiresTwoFactor = false,
+    this.twoFactorChallengeId,
   });
 
   AuthState copyWith({
     bool? isLoading,
     String? error,
+    bool? requiresTwoFactor,
+    String? twoFactorChallengeId,
   }) {
     return AuthState(
       isLoading: isLoading ?? this.isLoading,
       error: error,
+      requiresTwoFactor: requiresTwoFactor ?? this.requiresTwoFactor,
+      twoFactorChallengeId: twoFactorChallengeId ?? this.twoFactorChallengeId,
     );
   }
 }
+
 
 class AuthController extends Notifier<AuthState> {
   late final AuthRepo _repo;
@@ -34,39 +45,87 @@ class AuthController extends Notifier<AuthState> {
   }
 
   Future<void> login({
-    required String email,
+    required String emailOrUsername,
     required String password,
   }) async {
-    state = state.copyWith(isLoading: true, error: null);
+    state = state.copyWith(
+      isLoading: true,
+      error: null,
+      requiresTwoFactor: false,
+      twoFactorChallengeId: null,
+    );
 
     try {
-      final success = await _repo.login(email: email, password: password);
+      final result = await _repo.login(
+        emailOrUsername: emailOrUsername,
+        password: password,
+      );
 
-      if (!success) {
+      if (result is LoginAuthenticated) {
         state = state.copyWith(
           isLoading: false,
-          error: 'Login failed for unknown reason.',
+          error: null,
+          requiresTwoFactor: false,
+          twoFactorChallengeId: null,
         );
         return;
       }
 
-      state = state.copyWith(isLoading: false, error: null);
+      if (result is LoginTwoFactorRequired) {
+        state = state.copyWith(
+          isLoading: false,
+          error: null,
+          requiresTwoFactor: true,
+          twoFactorChallengeId: result.challengeId,
+        );
+        return;
+      }
+
+      state = state.copyWith(
+        isLoading: false,
+        error: 'Unknown login result.',
+      );
     } on AuthException catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.message,
-      );
+      state = state.copyWith(isLoading: false, error: e.message);
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: 'Unexpected error: $e',
-      );
+      state = state.copyWith(isLoading: false, error: 'Unexpected error: $e');
     }
   }
 
-  void clearError() {
-    state = state.copyWith(error: null);
+  Future<void> verifyTwoFactor({
+    required String code,
+  }) async {
+    final challengeId = state.twoFactorChallengeId;
+    if (challengeId == null || challengeId.isEmpty) {
+      state = state.copyWith(error: 'Missing 2FA challenge id.');
+      return;
+    }
+
+    state = state.copyWith(isLoading: true, error: null);
+
+    try {
+      await _repo.verifyTwoFactor(challengeId: challengeId, code: code);
+
+      // success -> authenticated now
+      state = state.copyWith(
+        isLoading: false,
+        error: null,
+        requiresTwoFactor: false,
+        twoFactorChallengeId: null,
+      );
+    } on AuthException catch (e) {
+      state = state.copyWith(isLoading: false, error: e.message);
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: 'Unexpected error: $e');
+    }
   }
+
+  void clearError() => state = state.copyWith(error: null);
+
+  void resetTwoFactor() => state = state.copyWith(
+    requiresTwoFactor: false,
+    twoFactorChallengeId: null,
+  );
 }
 
 final authRepoProvider = Provider<AuthRepo>((ref) {
@@ -147,9 +206,9 @@ class RegisterController extends Notifier<RegisterState> {
       return;
     }
 
-    if (password.length < 8) {
+    if (password.length < 4) {
       state = state.copyWith(
-        error: 'Password must be at least 8 characters long.',
+        error: 'Password must be at least 4 characters long.',
       );
       return;
     }

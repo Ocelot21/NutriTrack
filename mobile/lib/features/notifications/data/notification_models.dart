@@ -1,5 +1,3 @@
-import '../../../core/models/paged_response.dart';
-
 String? _readOptionalString(Map<String, dynamic> json, String key) {
   final value = json[key];
   if (value is String && value.trim().isNotEmpty) {

@@ -58,8 +58,8 @@ public static class DailyNutritionCalculator
         return new DailyNutritionTargets(
             calorieGoal,
             proteinGoal,
-            carbGoal,
-            fatGoal
+            fatGoal,
+            carbGoal  
         );
     }
 }

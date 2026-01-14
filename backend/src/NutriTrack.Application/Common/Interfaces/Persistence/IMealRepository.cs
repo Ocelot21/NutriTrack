@@ -11,7 +11,12 @@ public interface IMealRepository : IRepository<Meal, MealId>
         DateOnly to,
         CancellationToken cancellationToken = default);
 
-    Task<int> CountTotalItemsForUserAsync(UserId userId, CancellationToken cancellationToken = default);
+    Task<int> CountTotalItemsForUserAsync(
+        UserId userId,
+        CancellationToken cancellationToken = default);
 
-    Task<int> GetCurrentStreakDaysAsync(UserId userId, DateOnly localDate, CancellationToken cancellationToken = default);
+    Task<int> GetCurrentStreakDaysAsync(
+        UserId userId,
+        DateOnly localDate,
+        CancellationToken cancellationToken = default);
 }

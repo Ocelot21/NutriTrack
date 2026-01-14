@@ -1,55 +1,72 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using NutriTrack.Application.Common.Interfaces.Persistence;
-using NutriTrack.Contracts.Common;
-using NutriTrack.Contracts.Notifications;
+using NutriTrack.Api.Common.Clients;
 
 namespace NutriTrack.Api.Controllers;
 
 [Route("api/[controller]")]
 public class NotificationsController : ApiController
 {
-    private readonly IUserNotificationsReadRepository _userNotificationsReadRepository;
-
-    public NotificationsController(IUserNotificationsReadRepository userNotificationsReadRepository)
-    {
-        _userNotificationsReadRepository = userNotificationsReadRepository;
-    }
 
     [HttpGet]
     [Authorize]
-    public async Task<IActionResult> Get(
+    public async Task<IActionResult> GetForUser(
+        [FromServices] NotificationsClient client,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 10,
         [FromQuery] bool onlyUnread = false,
         CancellationToken cancellationToken = default)
     {
-        var userId = GetUserId();
-
-        var result = await _userNotificationsReadRepository.GetForCurrentUserAsync(
-            userId,
+        var json = await client.GetForUserRaw(
+            GetUserId().Value,
+            onlyUnread,
             page,
             pageSize,
-            onlyUnread,
             cancellationToken);
 
-        var response = new PagedResponse<NotificationResponse>(
-            result.Items.Select(n => new NotificationResponse(
-                n.Id,
-                n.UserId,
-                n.Title,
-                n.Message,
-                n.Type.ToString(),
-                n.Status.ToString(),
-                n.OccurredAtUtc.ToString("o"),
-                n.ReadAtUtc?.ToString("o") ?? string.Empty,
-                n.LinkUrl,
-                n.MetadataJson)).ToList(),
-            result.Page,
-            result.PageSize,
-            result.TotalCount);
+        return Content(json, "application/json");
+    }
 
-        return Ok(response);
+    /* NOT USED YET
+    [HttpGet("unread-count")]
+    [Authorize]
+    public async Task<IActionResult> GetUnreadCount(
+        [FromServices] NotificationsClient client,
+        CancellationToken cancellationToken = default)
+    {
+        var count = await client.GetUnreadCount(
+            GetUserId().Value,
+            cancellationToken);
+
+        return Ok(count);
+    }
+    */
+
+    [HttpPost("{notificationId:guid}/read")]
+    [Authorize]
+    public async Task<IActionResult> MarkRead(
+        [FromServices] NotificationsClient client,
+        Guid notificationId,
+        CancellationToken cancellationToken = default)
+    {
+        await client.MarkRead(
+            GetUserId().Value,
+            notificationId,
+            cancellationToken);
+
+        return NoContent();
+    }
+
+    [HttpPost("mark-all-read")]
+    [Authorize]
+    public async Task<IActionResult> MarkAllRead(
+        [FromServices] NotificationsClient client,
+        CancellationToken cancellationToken = default)
+    {
+        await client.MarkAllRead(
+            GetUserId().Value,
+            cancellationToken);
+
+        return NoContent();
     }
 }

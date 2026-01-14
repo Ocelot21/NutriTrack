@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NutriTrack.Application.Authentication.Commands.Login;
+using NutriTrack.Application.Authentication.Commands.LoginTwoFactor;
 using NutriTrack.Application.Authentication.Commands.Register;
 using NutriTrack.Contracts.Authentication;
 
@@ -32,7 +33,7 @@ public class AuthController : ApiController
         return result.Match(
             result => Ok(_mapper.Map<AuthenticationResponse>(result)),
             errors => Problem(errors)
-            );
+        );
     }
 
     [AllowAnonymous]
@@ -47,6 +48,21 @@ public class AuthController : ApiController
         return result.Match(
             result => Ok(_mapper.Map<AuthenticationResponse>(result)),
             errors => Problem(errors)
-            );
+        );
+    }
+
+    [AllowAnonymous]
+    [HttpPost("login/2fa")]
+    public async Task<IActionResult> LoginTwoFactor(
+        LoginTwoFactorRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var command = _mapper.Map<LoginTwoFactorCommand>(request);
+        var result = await _mediator.Send(command, cancellationToken);
+
+        return result.Match(
+            result => Ok(_mapper.Map<AuthenticationResponse>(result)),
+            errors => Problem(errors)
+        );
     }
 }

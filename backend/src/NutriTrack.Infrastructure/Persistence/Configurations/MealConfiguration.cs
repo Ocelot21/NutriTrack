@@ -87,17 +87,17 @@ public sealed class MealConfiguration : IEntityTypeConfiguration<Meal>
 
                 sb.OwnsOne(s => s.MacrosPer100, mb =>
                 {
-                    mb.Property(m => m.ProteinGramsPer100g)
+                    mb.Property(m => m.ProteinGramsPer100)
                         .HasPrecision(5, 2)
                         .HasColumnName("ProteinGramsPer100g")
                         .IsRequired();
 
-                    mb.Property(m => m.CarbsGramsPer100g)
+                    mb.Property(m => m.CarbsGramsPer100)
                         .HasPrecision(5, 2)
                         .HasColumnName("CarbsGramsPer100g")
                         .IsRequired();
 
-                    mb.Property(m => m.FatGramsPer100g)
+                    mb.Property(m => m.FatGramsPer100)
                         .HasPrecision(5, 2)
                         .HasColumnName("FatGramsPer100g")
                         .IsRequired();

@@ -3,27 +3,32 @@ import 'package:go_router/go_router.dart';
 import 'package:nutritrack_mobile/features/exercises/presentation/exercise_suggest_page.dart';
 import 'package:nutritrack_mobile/features/exercises/presentation/exercises_menu_page.dart';
 import 'package:nutritrack_mobile/features/groceries/presentation/groceries_menu_page.dart';
+import 'package:nutritrack_mobile/features/social/presentation/social_page.dart';
 
 import '../features/achievements/presentation/user_achievements_page.dart';
 import '../features/auth/presentation/login_page.dart';
 import '../features/auth/presentation/register_page.dart';
+import '../features/auth/presentation/two_factor_page.dart';
 import '../features/exercises/presentation/edit_exercise_log_page.dart';
 import '../features/exercises/presentation/exercise_log_page.dart';
 import '../features/exercises/presentation/exercise_search_page.dart';
-import '../features/groceries/presentation/groceries_suggest_page.dart';
+import '../features/groceries/presentation/grocery_suggest_page.dart';
 import '../features/groceries/presentation/grocery_search_page.dart';
 import '../features/health_profile/presentation/health_profile_page.dart';
 import '../features/home/presentation/home_page.dart';
 import '../features/meals/presentation/create_meal_item_page.dart';
 import '../features/meals/presentation/create_meal_page.dart';
+import '../features/meals/presentation/edit_meal_item_page.dart';
 import '../features/meals/presentation/edit_meal_page.dart';
 import '../features/home/data/daily_overview_models.dart';
 import '../features/notifications/presentation/notifications_page.dart';
 import '../features/scanner/scanner_page.dart';
 import '../features/user/presentation/profile_page.dart';
+import '../features/user/presentation/two_factor_settings_page.dart';
 import '../features/user_goals/presentation/user_goal_history_page.dart';
 import '../features/user_goals/presentation/user_goal_page.dart';
-
+import '../features/groceries/presentation/recommended_groceries_page.dart';
+import '../features/social/presentation/social_profile_page.dart';
 
 enum AppRoute {
   login,
@@ -41,7 +46,10 @@ enum AppRoute {
   groceriesMenu,
   exercisesMenu,
   exercisesSuggest,
-  groceriesSuggest,
+  grocerySuggest,
+  twoFactorSettings,
+  twoFactor,
+  social
 }
 
 class AppRouter {
@@ -164,6 +172,13 @@ class AppRouter {
         },
       ),
       GoRoute(
+        path: '/meals/items/edit',
+        pageBuilder: (context, state) {
+          final args = state.extra! as EditMealItemPageArgs;
+          return MaterialPage(child: EditMealItemPage(args: args));
+        },
+      ),
+      GoRoute(
         path: '/groceries',
         name: 'groceries',
         pageBuilder: (context, state) {
@@ -251,10 +266,55 @@ class AppRouter {
       ),
       GoRoute(
           path: '/groceries/suggest',
-          name: AppRoute.groceriesSuggest.name,
+          name: AppRoute.grocerySuggest.name,
           pageBuilder: (context, state) =>
           const MaterialPage(child: GrocerySuggestPage())
-      )
+      ),
+      GoRoute(
+          path: '/two-factor',
+          name: AppRoute.twoFactor.name,
+          pageBuilder: (context, state) =>
+          const MaterialPage(child: TwoFactorPage())
+      ),
+      GoRoute(
+          path: '/two-factor-settings',
+          name: AppRoute.twoFactorSettings.name,
+          pageBuilder: (context, state) =>
+          const MaterialPage(child: TwoFactorSettingsPage())
+      ),
+      GoRoute(
+          path: '/social',
+          name: AppRoute.social.name,
+          pageBuilder: (context, state) =>
+          const MaterialPage(child: SocialPage())
+      ),
+      GoRoute(
+        path: '/groceries/recommended',
+        name: 'recommendedGroceries',
+        pageBuilder: (context, state) => const MaterialPage(
+          child: RecommendedGroceriesPage(),
+        ),
+      ),
+      GoRoute(
+        path: '/social/profile/:userId',
+        name: 'socialProfile',
+        pageBuilder: (context, state) {
+          final userId = state.pathParameters['userId'];
+          if (userId == null || userId.isEmpty) {
+            return const MaterialPage(
+              child: Scaffold(
+                body: Center(child: Text('Missing userId')),
+              ),
+            );
+          }
+
+          return MaterialPage(
+            child: SocialProfilePage(
+              args: SocialProfilePageArgs(userId: userId),
+            ),
+          );
+        },
+      ),
     ],
   );
 }

@@ -1,63 +1,76 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using NutriTrack.Domain.Common;
+using NutriTrack.Domain.Countries;
 using NutriTrack.Domain.Users;
 
 namespace NutriTrack.Infrastructure.Persistence.Configurations;
 
 public sealed class UserConfiguration : IEntityTypeConfiguration<User>
 {
-    public void Configure(EntityTypeBuilder<User> b)
+    public void Configure(EntityTypeBuilder<User> builder)
     {
-        b.HasKey(u => u.Id);
-        b.Property(u => u.Id)
+        builder.HasKey(u => u.Id);
+        builder.Property(u => u.Id)
             .HasUserIdConversion();
 
-        b.Property(u => u.FirstName)
+        builder.Property(u => u.FirstName)
             .HasMaxLength(DomainConstraints.Users.MaxNameLength)
             .IsRequired();
 
-        b.Property(u => u.LastName)
+        builder.Property(u => u.LastName)
             .HasMaxLength(DomainConstraints.Users.MaxNameLength)
             .IsRequired();
 
-        b.Property(u => u.Username)
+        builder.Property(u => u.Username)
             .HasConversion(v => v.Value, raw => Username.Create(raw))
             .HasMaxLength(DomainConstraints.Users.MaxUsernameLength)
             .IsRequired();
 
-        b.Property(u => u.Email)
+        builder.Property(u => u.Email)
             .HasConversion(v => v.Value, raw => Email.Create(raw))
             .HasMaxLength(DomainConstraints.Users.MaxEmailLength)
             .IsRequired();
 
-        b.Property(u => u.PasswordHash)
+        builder.Property(u => u.AvatarUrl)
+            .HasMaxLength(512);
+
+        builder.Property(u => u.PasswordHash)
             .IsRequired();
 
-        b.Property(u => u.TimeZoneId)
+        builder.Property(u => u.TimeZoneId)
             .HasMaxLength(128)
             .IsRequired();
 
-        b.Property(u => u.Country)
-            .HasConversion(v => v != null ? v.Value : null, raw => CountryCode.CreateOptional(raw))
+        builder.Property(u => u.CountryCode)
+            .HasOptionalCountryCodeConversion()
             .HasMaxLength(2);
 
-        b.Property(u => u.IsEmailVerified)
+        builder.HasOne(u => u.Country)
+            .WithMany()
+            .HasForeignKey(u => u.CountryCode)
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        builder.Property(u => u.IsEmailVerified)
             .IsRequired();
 
-        b.Property(u => u.RoleId)
+        builder.Property(u => u.RoleId)
             .HasRoleIdConversion()
             .IsRequired();
 
-        b.HasOne(u => u.Role)
+        builder.HasOne(u => u.Role)
             .WithMany()
             .HasForeignKey(u => u.RoleId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        b.HasIndex(u => u.Username).IsUnique();
-        b.HasIndex(u => u.Email).IsUnique();
-        b.HasIndex(u => u.RoleId);
+        builder.Property(x => x.TotpSecretProtected)
+            .HasMaxLength(512);
 
-        b.ConfigureAuditable();
+        builder.HasIndex(u => u.Username).IsUnique();
+        builder.HasIndex(u => u.Email).IsUnique();
+        builder.HasIndex(u => u.RoleId);
+
+        builder.ConfigureAuditable();
     }
 }

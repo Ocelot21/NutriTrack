@@ -7,7 +7,9 @@ namespace NutriTrack.Application.Common.Interfaces.Persistence;
 
 public interface IExerciseRepository : IRepository<Exercise, ExerciseId>
 {
-    Task<IReadOnlyList<Exercise>> GetApprovedAsync(CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<Exercise>> GetApprovedAsync(
+        CancellationToken cancellationToken = default);
+
     Task<PagedResult<Exercise>> GetPagedAsync(
         ExerciseListFilters filters,
         UserId? userId,

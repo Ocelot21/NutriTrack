@@ -12,28 +12,50 @@ class LoginPage extends ConsumerStatefulWidget {
 }
 
 class _LoginPageState extends ConsumerState<LoginPage> {
-  final _email = TextEditingController();
+  final _emailOrUsername = TextEditingController();
   final _password = TextEditingController();
 
   @override
   void dispose() {
-    _email.dispose();
+    _emailOrUsername.dispose();
     _password.dispose();
     super.dispose();
   }
 
   Future<void> _submit() async {
+    final pwd = _password.text;
+    if (pwd.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Password is required.')),
+      );
+      return;
+    }
+    if (pwd.length < 4) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Password must be at least 4 characters long.')),
+      );
+      return;
+    }
+
     final controller = ref.read(authControllerProvider.notifier);
 
     await controller.login(
-      email: _email.text.trim(),
-      password: _password.text,
+      emailOrUsername: _emailOrUsername.text.trim(),
+      password: pwd,
     );
 
+    if (!mounted) return;
+
     final state = ref.read(authControllerProvider);
-    if (state.error == null && mounted) {
-      context.go('/home');
+
+    if (state.error != null) return;
+
+    if (state.requiresTwoFactor) {
+      context.go('/two-factor');
+      return;
     }
+
+    context.go('/home');
   }
 
   @override
@@ -56,6 +78,17 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                // LOGO
+                Center(
+                  child: Image.asset(
+                    'assets/logo/logo_horizontal_1200_400.png',
+                    package: 'nutritrack_shared',
+                    height: 120,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+                const SizedBox(height: 24),
+
                 Text(
                   'Welcome back',
                   style: theme.textTheme.headlineMedium,
@@ -66,6 +99,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   style: theme.textTheme.bodyMedium,
                 ),
                 const SizedBox(height: 24),
+
                 if (error != null) ...[
                   Text(
                     error,
@@ -75,22 +109,28 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   ),
                   const SizedBox(height: 12),
                 ],
+
                 TextField(
-                  controller: _email,
+                  controller: _emailOrUsername,
                   keyboardType: TextInputType.emailAddress,
+                  textInputAction: TextInputAction.next,
                   decoration: const InputDecoration(
-                    labelText: 'Email',
-                    hintText: 'you@example.com',
+                    labelText: 'Email or username',
+                    hintText: 'you@example.com or your_username',
                   ),
                 ),
                 const SizedBox(height: 12),
+
                 TextField(
                   controller: _password,
                   obscureText: true,
+                  textInputAction: TextInputAction.done,
+                  onSubmitted: (_) => isLoading ? null : _submit(),
                   decoration: const InputDecoration(
                     labelText: 'Password',
                   ),
                 ),
+
                 const SizedBox(height: 24),
                 SizedBox(
                   height: 48,
@@ -105,6 +145,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         : const Text('Log in'),
                   ),
                 ),
+
                 const SizedBox(height: 12),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

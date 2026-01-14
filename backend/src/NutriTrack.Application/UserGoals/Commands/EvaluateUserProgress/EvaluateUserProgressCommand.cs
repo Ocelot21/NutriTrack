@@ -5,4 +5,6 @@ using NutriTrack.Domain.Users;
 
 namespace NutriTrack.Application.UserGoals.Commands.EvaluateUserProgress;
 
-public sealed record EvaluateUserProgressCommand(UserGoalId GoalId, UserId UserId) : IRequest<ErrorOr<bool>>;
+public sealed record EvaluateUserProgressCommand(
+    UserGoalId GoalId,
+    UserId UserId) : IRequest<ErrorOr<bool>>;

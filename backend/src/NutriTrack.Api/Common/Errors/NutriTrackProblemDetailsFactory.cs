@@ -66,7 +66,6 @@ namespace NutriTrack.Api.Common.Errors
 
             if (title != null)
             {
-                // For validation problem details, don't overwrite the default title with null.
                 problemDetails.Title = title;
             }
 

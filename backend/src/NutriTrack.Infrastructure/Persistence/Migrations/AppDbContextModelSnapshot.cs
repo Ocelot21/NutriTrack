@@ -17,7 +17,7 @@ namespace NutriTrack.Infrastructure.Persistence.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.0")
+                .HasAnnotation("ProductVersion", "10.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -236,6 +236,34 @@ namespace NutriTrack.Infrastructure.Persistence.Migrations
                     b.ToTable("RolePermissions");
                 });
 
+            modelBuilder.Entity("NutriTrack.Domain.Countries.Country", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(2)
+                        .HasColumnType("nvarchar(2)");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ModifiedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Countries");
+                });
+
             modelBuilder.Entity("NutriTrack.Domain.Exercises.Exercise", b =>
                 {
                     b.Property<Guid>("Id")
@@ -258,7 +286,8 @@ namespace NutriTrack.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(1000)");
 
                     b.Property<string>("ImageUrl")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
 
                     b.Property<bool>("IsApproved")
                         .HasColumnType("bit");
@@ -309,8 +338,12 @@ namespace NutriTrack.Infrastructure.Persistence.Migrations
                     b.Property<Guid?>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<decimal?>("GramsPerPiece")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<string>("ImageUrl")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
 
                     b.Property<bool>("IsApproved")
                         .HasColumnType("bit");
@@ -405,6 +438,227 @@ namespace NutriTrack.Infrastructure.Persistence.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Meals");
+                });
+
+            modelBuilder.Entity("NutriTrack.Domain.Reports.ReportRun", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CompletedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("FailureReason")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<DateTimeOffset>("FromUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTime?>("ModifiedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("OutputFileName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("OutputPdfBlobName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("OutputPdfUri")
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<string>("ParametersJson")
+                        .HasMaxLength(8000)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("RequestedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("RequestedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("StartedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset>("ToUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RequestedAtUtc");
+
+                    b.HasIndex("RequestedBy");
+
+                    b.HasIndex("Status");
+
+                    b.ToTable("ReportRuns", (string)null);
+                });
+
+            modelBuilder.Entity("NutriTrack.Domain.Social.Snapshots.DailyOverviewSnapshot", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("BurnedCalories")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ConsumedCalories")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("ConsumedCarbohydrateGrams")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("ConsumedFatGrams")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("ConsumedProteinGrams")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ExerciseCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MealCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NetCalories")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RemainingCalories")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TargetCalories")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TargetCarbohydrateGrams")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TargetFatGrams")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TargetProteinGrams")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DailyOverviewSnapshots", (string)null);
+                });
+
+            modelBuilder.Entity("NutriTrack.Domain.Social.Snapshots.GoalProgressSnapshot", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("CurrentWeightKg")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("GoalStartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("GoalTargetDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("GoalType")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("SnapshotDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("StartWeightKg")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TargetWeightKg")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid>("UserGoalId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserGoalId");
+
+                    b.ToTable("GoalProgressSnapshots", (string)null);
+                });
+
+            modelBuilder.Entity("NutriTrack.Domain.Social.SocialPost", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("DailyOverviewSnapshotId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("GoalProgressSnapshotId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ModifiedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Text")
+                        .HasMaxLength(280)
+                        .HasColumnType("nvarchar(280)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("UserAchievementId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Visibility")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DailyOverviewSnapshotId");
+
+                    b.HasIndex("GoalProgressSnapshotId");
+
+                    b.HasIndex("UserAchievementId");
+
+                    b.HasIndex("UserId", "CreatedAtUtc");
+
+                    b.ToTable("SocialPosts", t =>
+                        {
+                            t.HasCheckConstraint("CK_SocialPosts_Type_Achievement", "[Type] <> 2 OR ([UserAchievementId] IS NOT NULL)");
+
+                            t.HasCheckConstraint("CK_SocialPosts_Type_DailyOverview", "[Type] <> 3 OR ([DailyOverviewSnapshotId] IS NOT NULL AND [UserAchievementId] IS NULL AND [GoalProgressSnapshotId] IS NULL)");
+
+                            t.HasCheckConstraint("CK_SocialPosts_Type_GoalProgress", "[Type] <> 4 OR ([GoalProgressSnapshotId] IS NOT NULL AND [UserAchievementId] IS NULL AND [DailyOverviewSnapshotId] IS NULL)");
+
+                            t.HasCheckConstraint("CK_SocialPosts_Type_Text", "[Type] <> 1 OR ([Text] IS NOT NULL AND [UserAchievementId] IS NULL)");
+                        });
                 });
 
             modelBuilder.Entity("NutriTrack.Domain.UserExercises.UserExerciseLog", b =>
@@ -527,12 +781,13 @@ namespace NutriTrack.Infrastructure.Persistence.Migrations
                         .HasColumnType("tinyint");
 
                     b.Property<string>("AvatarUrl")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
 
                     b.Property<DateOnly?>("Birthdate")
                         .HasColumnType("date");
 
-                    b.Property<string>("Country")
+                    b.Property<string>("CountryCode")
                         .HasMaxLength(2)
                         .HasColumnType("nvarchar(2)");
 
@@ -564,6 +819,9 @@ namespace NutriTrack.Infrastructure.Persistence.Migrations
                     b.Property<bool>("IsHealthProfileCompleted")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsTwoFactorEnabled")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime?>("LastLoginAtUtc")
                         .HasColumnType("datetime2");
 
@@ -593,6 +851,10 @@ namespace NutriTrack.Infrastructure.Persistence.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
+                    b.Property<string>("TotpSecretProtected")
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
+
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasMaxLength(32)
@@ -602,6 +864,8 @@ namespace NutriTrack.Infrastructure.Persistence.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CountryCode");
 
                     b.HasIndex("Email")
                         .IsUnique();
@@ -648,6 +912,52 @@ namespace NutriTrack.Infrastructure.Persistence.Migrations
                     b.HasIndex("UserId", "Date");
 
                     b.ToTable("WeightHistoryEntries");
+                });
+
+            modelBuilder.Entity("NutriTrack.Infrastructure.Persistence.TwoFactor.PendingLoginChallengeEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Attempts")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Consumed")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("ExpiresAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExpiresAtUtc");
+
+                    b.HasIndex("UserId", "Consumed", "ExpiresAtUtc");
+
+                    b.ToTable("PendingLoginChallenges", (string)null);
+                });
+
+            modelBuilder.Entity("NutriTrack.Infrastructure.Persistence.TwoFactor.PendingTotpSetupEntity", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ExpiresAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("SecretProtected")
+                        .IsRequired()
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
+
+                    b.HasKey("UserId");
+
+                    b.HasIndex("ExpiresAtUtc");
+
+                    b.ToTable("PendingTotpSetups");
                 });
 
             modelBuilder.Entity("NutriTrack.Domain.Achievements.UserAchievement", b =>
@@ -706,17 +1016,17 @@ namespace NutriTrack.Infrastructure.Persistence.Migrations
                             b1.Property<Guid>("GroceryId")
                                 .HasColumnType("uniqueidentifier");
 
-                            b1.Property<decimal>("CarbsGramsPer100g")
+                            b1.Property<decimal>("CarbsGramsPer100")
                                 .HasPrecision(5, 2)
                                 .HasColumnType("decimal(5,2)")
                                 .HasColumnName("CarbsGramsPer100g");
 
-                            b1.Property<decimal>("FatGramsPer100g")
+                            b1.Property<decimal>("FatGramsPer100")
                                 .HasPrecision(5, 2)
                                 .HasColumnType("decimal(5,2)")
                                 .HasColumnName("FatGramsPer100g");
 
-                            b1.Property<decimal>("ProteinGramsPer100g")
+                            b1.Property<decimal>("ProteinGramsPer100")
                                 .HasPrecision(5, 2)
                                 .HasColumnType("decimal(5,2)")
                                 .HasColumnName("ProteinGramsPer100g");
@@ -784,6 +1094,9 @@ namespace NutriTrack.Infrastructure.Persistence.Migrations
                                         .HasColumnType("smallint")
                                         .HasColumnName("CaloriesPer100");
 
+                                    b2.Property<decimal?>("GramsPerPiece")
+                                        .HasColumnType("decimal(18,2)");
+
                                     b2.Property<string>("GroceryName")
                                         .IsRequired()
                                         .HasMaxLength(200)
@@ -806,17 +1119,17 @@ namespace NutriTrack.Infrastructure.Persistence.Migrations
                                             b3.Property<Guid>("GrocerySnapshotMealItemId")
                                                 .HasColumnType("uniqueidentifier");
 
-                                            b3.Property<decimal>("CarbsGramsPer100g")
+                                            b3.Property<decimal>("CarbsGramsPer100")
                                                 .HasPrecision(5, 2)
                                                 .HasColumnType("decimal(5,2)")
                                                 .HasColumnName("CarbsGramsPer100g");
 
-                                            b3.Property<decimal>("FatGramsPer100g")
+                                            b3.Property<decimal>("FatGramsPer100")
                                                 .HasPrecision(5, 2)
                                                 .HasColumnType("decimal(5,2)")
                                                 .HasColumnName("FatGramsPer100g");
 
-                                            b3.Property<decimal>("ProteinGramsPer100g")
+                                            b3.Property<decimal>("ProteinGramsPer100")
                                                 .HasPrecision(5, 2)
                                                 .HasColumnType("decimal(5,2)")
                                                 .HasColumnName("ProteinGramsPer100g");
@@ -842,6 +1155,70 @@ namespace NutriTrack.Infrastructure.Persistence.Migrations
                     b.Navigation("Items");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("NutriTrack.Domain.Social.Snapshots.GoalProgressSnapshot", b =>
+                {
+                    b.HasOne("NutriTrack.Domain.UserGoals.UserGoal", "UserGoal")
+                        .WithMany()
+                        .HasForeignKey("UserGoalId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.OwnsMany("NutriTrack.Domain.Social.Snapshots.GoalProgressSnapshotPoint", "Points", b1 =>
+                        {
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int");
+
+                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
+
+                            b1.Property<DateTime>("Date")
+                                .HasColumnType("datetime2");
+
+                            b1.Property<Guid>("GoalProgressSnapshotId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("WeightKg")
+                                .HasColumnType("decimal(18,2)");
+
+                            b1.HasKey("Id");
+
+                            b1.HasIndex("GoalProgressSnapshotId", "Date");
+
+                            b1.ToTable("GoalProgressSnapshotPoints", (string)null);
+
+                            b1.WithOwner()
+                                .HasForeignKey("GoalProgressSnapshotId");
+                        });
+
+                    b.Navigation("Points");
+
+                    b.Navigation("UserGoal");
+                });
+
+            modelBuilder.Entity("NutriTrack.Domain.Social.SocialPost", b =>
+                {
+                    b.HasOne("NutriTrack.Domain.Social.Snapshots.DailyOverviewSnapshot", "DailyOverviewSnapshot")
+                        .WithMany()
+                        .HasForeignKey("DailyOverviewSnapshotId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("NutriTrack.Domain.Social.Snapshots.GoalProgressSnapshot", "GoalProgressSnapshot")
+                        .WithMany()
+                        .HasForeignKey("GoalProgressSnapshotId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("NutriTrack.Domain.Achievements.UserAchievement", "UserAchievement")
+                        .WithMany()
+                        .HasForeignKey("UserAchievementId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("DailyOverviewSnapshot");
+
+                    b.Navigation("GoalProgressSnapshot");
+
+                    b.Navigation("UserAchievement");
                 });
 
             modelBuilder.Entity("NutriTrack.Domain.UserExercises.UserExerciseLog", b =>
@@ -907,16 +1284,45 @@ namespace NutriTrack.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("NutriTrack.Domain.Users.User", b =>
                 {
+                    b.HasOne("NutriTrack.Domain.Countries.Country", "Country")
+                        .WithMany()
+                        .HasForeignKey("CountryCode")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("NutriTrack.Domain.Authorization.Role", "Role")
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.Navigation("Country");
+
                     b.Navigation("Role");
                 });
 
             modelBuilder.Entity("NutriTrack.Domain.WeightHistory.WeightHistoryEntry", b =>
+                {
+                    b.HasOne("NutriTrack.Domain.Users.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("NutriTrack.Infrastructure.Persistence.TwoFactor.PendingLoginChallengeEntity", b =>
+                {
+                    b.HasOne("NutriTrack.Domain.Users.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("NutriTrack.Infrastructure.Persistence.TwoFactor.PendingTotpSetupEntity", b =>
                 {
                     b.HasOne("NutriTrack.Domain.Users.User", "User")
                         .WithMany()

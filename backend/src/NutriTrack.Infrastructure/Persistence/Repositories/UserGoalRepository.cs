@@ -49,4 +49,16 @@ public sealed class UserGoalRepository : EfRepository<UserGoal, UserGoalId>, IUs
         return await _dbContext.UserGoals.CountAsync(
             g => g.UserId == userId && g.Status == UserGoalStatus.Completed, cancellationToken);
     }
+
+    public async Task<UserGoal?> GetClosestOnOrBeforeAsync(
+        UserId userId,
+        DateOnly date,
+        CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.UserGoals
+            .Where(g => g.UserId == userId && g.StartDate <= date)
+            .OrderByDescending(g => g.StartDate)
+            .ThenByDescending(g => g.TargetDate)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
 }

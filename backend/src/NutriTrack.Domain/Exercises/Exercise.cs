@@ -1,7 +1,8 @@
 using NutriTrack.Domain.Common.Errors;
 using NutriTrack.Domain.Common.Models;
 using NutriTrack.Domain.Common.Primitives;
-using NutriTrack.Domain.Common; // DomainConstraints
+using NutriTrack.Domain.Common;
+using NutriTrack.Domain.Exercises.Events;
 
 namespace NutriTrack.Domain.Exercises;
 
@@ -40,6 +41,11 @@ public sealed class Exercise : AggregateRoot<ExerciseId>
     public string? ImageUrl { get; private set; }
     public bool IsDeleted { get; private set; }
     public bool IsApproved { get; private set; }
+
+    public void SetImage(string? imageBlobName)
+    {
+        ImageUrl = string.IsNullOrWhiteSpace(imageBlobName) ? null : imageBlobName;
+    }
 
     // --------- Factory ---------
 
@@ -100,7 +106,17 @@ public sealed class Exercise : AggregateRoot<ExerciseId>
 
     public void Approve()
     {
+        if (IsApproved)
+            return;
+
         IsApproved = true;
+
+        if (CreatedBy is not null)
+        {
+            RaiseDomainEvent(new ExerciseSuggestionApprovedDomainEvent(
+                Id,
+                CreatedBy.Value));
+        }
     }
 
     public void MarkDeleted()
@@ -174,6 +190,5 @@ public sealed class Exercise : AggregateRoot<ExerciseId>
                 $"Default calories per minute must be between 0 and less than {DomainConstraints.Exercises.MaxDefaultCaloriesPerMinute}.");
         }
 
-        // TODO: add additional validation
     }
 }

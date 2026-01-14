@@ -9,10 +9,14 @@ public record UpdateGroceryCommand(
     GroceryId Id,
     string? Name,
     GroceryCategory? Category,
-    decimal? ProteinPer100g,
-    decimal? CarbsPer100g,
-    decimal? FatPer100g,
+    decimal? ProteinPer100,
+    decimal? CarbsPer100,
+    decimal? FatPer100,
     int? CaloriesPer100,
     UnitOfMeasure? UnitOfMeasure,
-    string? Barcode
+    decimal? GramsPerPiece,
+    string? Barcode,
+    Stream? Image,
+    string? ImageFileName,
+    string? ImageContentType
 ) : IRequest<ErrorOr<GroceryResult>>;

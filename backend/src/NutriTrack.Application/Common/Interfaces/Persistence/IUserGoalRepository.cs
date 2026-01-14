@@ -10,4 +10,5 @@ public interface IUserGoalRepository : IRepository<UserGoal, UserGoalId>
     Task<IReadOnlyList<UserGoal>> ListInProgress(UserId userId);
     Task<UserGoal?> GetCurrentForUser(UserId userId);
     Task<int> CountCompletedAsync(UserId userId, CancellationToken cancellationToken = default);
+    Task<UserGoal?> GetClosestOnOrBeforeAsync(UserId userId, DateOnly date, CancellationToken cancellationToken = default);
 }

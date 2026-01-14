@@ -11,7 +11,9 @@ public sealed class GroceryRepository : EfRepository<Grocery, GroceryId>, IGroce
 {
     public GroceryRepository(AppDbContext dbContext) : base(dbContext) { }
 
-    public async Task<IReadOnlyList<Grocery>> SearchByNameAsync(string nameFragment, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<Grocery>> SearchByNameAsync(
+        string nameFragment,
+        CancellationToken cancellationToken = default)
         => await _dbContext.Groceries
             .Where(g => g.Name.Contains(nameFragment))
             .ToListAsync(cancellationToken);
@@ -82,37 +84,37 @@ public sealed class GroceryRepository : EfRepository<Grocery, GroceryId>, IGroce
         if (filters.MinProteinPer100g.HasValue)
         {
             query = query.Where(g =>
-                g.MacrosPer100.ProteinGramsPer100g >= filters.MinProteinPer100g.Value);
+                g.MacrosPer100.ProteinGramsPer100 >= filters.MinProteinPer100g.Value);
         }
 
         if (filters.MaxProteinPer100g.HasValue)
         {
             query = query.Where(g =>
-                g.MacrosPer100.ProteinGramsPer100g <= filters.MaxProteinPer100g.Value);
+                g.MacrosPer100.ProteinGramsPer100 <= filters.MaxProteinPer100g.Value);
         }
 
         if (filters.MinCarbsPer100g.HasValue)
         {
             query = query.Where(g =>
-                g.MacrosPer100.CarbsGramsPer100g >= filters.MinCarbsPer100g.Value);
+                g.MacrosPer100.CarbsGramsPer100 >= filters.MinCarbsPer100g.Value);
         }
 
         if (filters.MaxCarbsPer100g.HasValue)
         {
             query = query.Where(g =>
-                g.MacrosPer100.CarbsGramsPer100g <= filters.MaxCarbsPer100g.Value);
+                g.MacrosPer100.CarbsGramsPer100 <= filters.MaxCarbsPer100g.Value);
         }
 
         if (filters.MinFatPer100g.HasValue)
         {
             query = query.Where(g =>
-                g.MacrosPer100.FatGramsPer100g >= filters.MinFatPer100g.Value);
+                g.MacrosPer100.FatGramsPer100 >= filters.MinFatPer100g.Value);
         }
 
         if (filters.MaxFatPer100g.HasValue)
         {
             query = query.Where(g =>
-                g.MacrosPer100.FatGramsPer100g <= filters.MaxFatPer100g.Value);
+                g.MacrosPer100.FatGramsPer100 <= filters.MaxFatPer100g.Value);
         }
 
         var totalCount = await query.CountAsync(cancellationToken);

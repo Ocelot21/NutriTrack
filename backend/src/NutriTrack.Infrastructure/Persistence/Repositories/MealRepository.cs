@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using NutriTrack.Application.Common.Interfaces.Persistence;
 using NutriTrack.Domain.Meals;
 using NutriTrack.Domain.Users;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace NutriTrack.Infrastructure.Persistence.Repositories;
 

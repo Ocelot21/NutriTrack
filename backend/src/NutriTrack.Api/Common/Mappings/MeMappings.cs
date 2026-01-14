@@ -4,6 +4,10 @@ using NutriTrack.Application.Common.Models;
 using NutriTrack.Contracts.Me;
 using NutriTrack.Domain.Users;
 using NutriTrack.Application.Me.Common;
+using NutriTrack.Application.Me.Commands.ChangePassword;
+using NutriTrack.Application.Me.Commands.UpdateUserProfile;
+using NutriTrack.Application.Me.Commands.UploadAvatar;
+using Microsoft.AspNetCore.Http;
 
 namespace NutriTrack.Api.Common.Mappings;
 
@@ -33,5 +37,20 @@ public class MeMappings : IRegister
             .Map(dest => dest.Id, src => src.Id.Value);
 
         config.NewConfig<DailyOverviewResult, DailyOverviewResponse>();
+
+        config.NewConfig<(UserId UserId, UpdateUserProfileRequest Request), UpdateUserProfileCommand>()
+            .Map(dest => dest.UserId, src => src.UserId)
+            .Map(dest => dest, src => src.Request);
+
+        config.NewConfig<(UserId UserId, ChangePasswordRequest Request), ChangePasswordCommand>()
+            .Map(dest => dest.UserId, src =>  src.UserId)
+            .Map(dest => dest, src => src.Request);
+
+        config.NewConfig<(UserId UserId, IFormFile Image), UploadAvatarCommand>()
+            .ConstructUsing(src => new UploadAvatarCommand(
+                src.UserId,
+                src.Image.OpenReadStream(),
+                src.Image.FileName,
+                src.Image.ContentType));
     }
 }

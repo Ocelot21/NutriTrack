@@ -23,7 +23,9 @@ public sealed class CancelUserGoalCommandHandler : IRequestHandler<CancelUserGoa
         _dateTimeProvider = dateTimeProvider;
     }
 
-    public async Task<ErrorOr<Unit>> Handle(CancelUserGoalCommand request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<Unit>> Handle(
+        CancelUserGoalCommand request,
+        CancellationToken cancellationToken)
     {
         var goal = await _userGoalRepository.GetByIdAsync(request.Id, cancellationToken);
         if (goal is null)

@@ -5,98 +5,97 @@ using Microsoft.Extensions.Options;
 using System.Diagnostics;
 using ErrorOr;
 
-namespace NutriTrack.Notifications.Api.Common.Errors
+namespace NutriTrack.Notifications.Api.Common.Errors;
+
+public class NutriTrackProblemDetailsFactory : ProblemDetailsFactory
 {
-    public class NutriTrackProblemDetailsFactory : ProblemDetailsFactory
+    private readonly ApiBehaviorOptions _options;
+
+    public NutriTrackProblemDetailsFactory(IOptions<ApiBehaviorOptions> options)
     {
-        private readonly ApiBehaviorOptions _options;
+        _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
+    }
 
-        public NutriTrackProblemDetailsFactory(IOptions<ApiBehaviorOptions> options)
+    public override ProblemDetails CreateProblemDetails(
+    HttpContext httpContext,
+    int? statusCode = null,
+    string? title = null,
+    string? type = null,
+    string? detail = null,
+    string? instance = null)
+    {
+        statusCode ??= 500;
+
+        var problemDetails = new ProblemDetails
         {
-            _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
-        }
+            Status = statusCode,
+            Title = title,
+            Type = type,
+            Detail = detail,
+            Instance = instance
+        };
 
-        public override ProblemDetails CreateProblemDetails(
+        ApplyProblemDetailsDefaults(httpContext, problemDetails, statusCode.Value);
+
+        return problemDetails;
+    }
+
+    public override ValidationProblemDetails CreateValidationProblemDetails(
         HttpContext httpContext,
+        ModelStateDictionary modelStateDictionary,
         int? statusCode = null,
         string? title = null,
         string? type = null,
         string? detail = null,
         string? instance = null)
+    {
+        if (modelStateDictionary == null)
         {
-            statusCode ??= 500;
-
-            var problemDetails = new ProblemDetails
-            {
-                Status = statusCode,
-                Title = title,
-                Type = type,
-                Detail = detail,
-                Instance = instance
-            };
-
-            ApplyProblemDetailsDefaults(httpContext, problemDetails, statusCode.Value);
-
-            return problemDetails;
+            throw new ArgumentNullException(nameof(modelStateDictionary));
         }
 
-        public override ValidationProblemDetails CreateValidationProblemDetails(
-            HttpContext httpContext,
-            ModelStateDictionary modelStateDictionary,
-            int? statusCode = null,
-            string? title = null,
-            string? type = null,
-            string? detail = null,
-            string? instance = null)
+        statusCode ??= 400;
+
+        var problemDetails = new ValidationProblemDetails(modelStateDictionary)
         {
-            if (modelStateDictionary == null)
-            {
-                throw new ArgumentNullException(nameof(modelStateDictionary));
-            }
+            Status = statusCode,
+            Type = type,
+            Detail = detail,
+            Instance = instance,
+        };
 
-            statusCode ??= 400;
-
-            var problemDetails = new ValidationProblemDetails(modelStateDictionary)
-            {
-                Status = statusCode,
-                Type = type,
-                Detail = detail,
-                Instance = instance,
-            };
-
-            if (title != null)
-            {
-                // For validation problem details, don't overwrite the default title with null.
-                problemDetails.Title = title;
-            }
-
-            ApplyProblemDetailsDefaults(httpContext, problemDetails, statusCode.Value);
-
-            return problemDetails;
+        if (title != null)
+        {
+            // For validation problem details, don't overwrite the default title with null.
+            problemDetails.Title = title;
         }
 
-        private void ApplyProblemDetailsDefaults(HttpContext httpContext, ProblemDetails problemDetails, int statusCode)
+        ApplyProblemDetailsDefaults(httpContext, problemDetails, statusCode.Value);
+
+        return problemDetails;
+    }
+
+    private void ApplyProblemDetailsDefaults(HttpContext httpContext, ProblemDetails problemDetails, int statusCode)
+    {
+        problemDetails.Status ??= statusCode;
+
+        if (_options.ClientErrorMapping.TryGetValue(statusCode, out var clientErrorData))
         {
-            problemDetails.Status ??= statusCode;
+            problemDetails.Title ??= clientErrorData.Title;
+            problemDetails.Type ??= clientErrorData.Link;
+        }
 
-            if (_options.ClientErrorMapping.TryGetValue(statusCode, out var clientErrorData))
-            {
-                problemDetails.Title ??= clientErrorData.Title;
-                problemDetails.Type ??= clientErrorData.Link;
-            }
+        var traceId = Activity.Current?.Id ?? httpContext?.TraceIdentifier;
+        if (traceId != null)
+        {
+            problemDetails.Extensions["traceId"] = traceId;
+        }
 
-            var traceId = Activity.Current?.Id ?? httpContext?.TraceIdentifier;
-            if (traceId != null)
-            {
-                problemDetails.Extensions["traceId"] = traceId;
-            }
+        var errors = httpContext?.Items["errors"] as List<Error>;
 
-            var errors = httpContext?.Items["errors"] as List<Error>;
-
-            if (errors is not null)
-            {
-                problemDetails.Extensions.Add("errorCodes", errors.Select(e => e.Code));
-            }
+        if (errors is not null)
+        {
+            problemDetails.Extensions.Add("errorCodes", errors.Select(e => e.Code));
         }
     }
 }

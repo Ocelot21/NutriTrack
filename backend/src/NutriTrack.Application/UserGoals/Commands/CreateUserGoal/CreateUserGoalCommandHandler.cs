@@ -5,6 +5,7 @@ using NutriTrack.Application.Common.Interfaces.Persistence;
 using NutriTrack.Application.Common.Interfaces.Services;
 using NutriTrack.Application.UserGoals.Common;
 using NutriTrack.Domain.UserGoals;
+using NutriTrack.Domain.Common.Primitives;
 
 namespace NutriTrack.Application.UserGoals.Commands.CreateUserGoal;
 
@@ -30,7 +31,9 @@ public sealed class CreateUserGoalCommandHandler : IRequestHandler<CreateUserGoa
         _timeZoneService = timeZoneService;
     }
 
-    public async Task<ErrorOr<UserGoalResult>> Handle(CreateUserGoalCommand request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<UserGoalResult>> Handle(
+        CreateUserGoalCommand request,
+        CancellationToken cancellationToken)
     {
         var user = await _userRepository.GetByIdAsync(request.UserId, cancellationToken);
         if (user is null)
@@ -46,6 +49,14 @@ public sealed class CreateUserGoalCommandHandler : IRequestHandler<CreateUserGoa
         var localDate = _timeZoneService.LocalDate(utcNow, user.TimeZoneId);
 
         var startWeightKg = user.WeightKg.Value;
+
+        user.UpdateHealthProfile(
+            gender: Optional<Domain.Users.Gender>.None(),
+            birthdate: Optional<DateOnly?>.None(),
+            heightCm: Optional<decimal?>.None(),
+            weightKg: Optional<decimal?>.None(),
+            activityLevel: Optional<Domain.Users.ActivityLevel>.None(),
+            nutritionGoal: request.Type);
 
         var goal = UserGoal.Create(
             user.Id,

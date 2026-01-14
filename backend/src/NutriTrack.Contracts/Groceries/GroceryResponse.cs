@@ -4,13 +4,15 @@ public sealed record GroceryResponse(
     Guid Id,
     string Name,
     string Category,
-    string? Barcode,
-    decimal ProteinGramsPer100g,
-    decimal CarbsGramsPer100g,
-    decimal FatGramsPer100g,
+    decimal ProteinGramsPer100,
+    decimal CarbsGramsPer100,
+    decimal FatGramsPer100,
     int CaloriesPer100,
     string UnitOfMeasure,
+    decimal? GramsPerPiece,
+    string? Barcode,
     string? ImageUrl,
     bool IsApproved,
     bool IsDeleted
 );
+    

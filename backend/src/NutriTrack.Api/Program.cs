@@ -1,4 +1,5 @@
 using NutriTrack.Api;
+using NutriTrack.Api.Reports;
 using NutriTrack.Api.Startup;
 using NutriTrack.Application;
 using NutriTrack.Infrastructure;
@@ -9,6 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
     .AddPresentation()
     .AddApplication()
     .AddInfrastructure(builder.Configuration);
+
+    builder.Services.AddHostedService<ReportRunProcessor>();
 }
 
 var app = builder.Build();

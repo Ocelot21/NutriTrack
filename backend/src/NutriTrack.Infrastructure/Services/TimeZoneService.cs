@@ -1,4 +1,5 @@
 ﻿using NodaTime;
+using NodaTime.Extensions;
 using NodaTime.TimeZones;
 using NutriTrack.Application.Common.Interfaces.Services;
 
@@ -57,5 +58,15 @@ public sealed class TimeZoneService : ITimeZoneService
     {
         var tz = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
         return TimeZoneInfo.ConvertTimeToUtc(localDateTime.DateTime, tz);
+    }
+
+    public IEnumerable<string> GetSystemTimeZoneIds()
+    {
+        return _dateTimeZoneProvider.Ids.OrderBy(id => id);
+    }
+
+    public IEnumerable<DateTimeZone> GetSystemTimeZones()
+    {
+        return _dateTimeZoneProvider.GetAllZones();
     }
 }

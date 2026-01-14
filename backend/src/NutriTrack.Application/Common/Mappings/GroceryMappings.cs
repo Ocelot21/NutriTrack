@@ -16,6 +16,7 @@ public static class GroceryMappings
             grocery.MacrosPer100,
             grocery.CaloriesPer100,
             grocery.UnitOfMeasure,
+            grocery.GramsPerPiece,
             grocery.ImageUrl,
             grocery.IsApproved,
             grocery.IsDeleted

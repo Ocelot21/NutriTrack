@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import '../../../app/router.dart';
 import '../data/user_goal_models.dart';
 import 'user_goal_providers.dart';
+import 'user_goal_share_providers.dart';
+import 'user_goal_share_sheet.dart';
 
 class UserGoalPage extends ConsumerStatefulWidget {
   const UserGoalPage({super.key});
@@ -169,6 +171,7 @@ class _UserGoalPageState extends ConsumerState<UserGoalPage> {
 
                 // Actions
                 _GoalActions(
+                  goal: goal,
                   isSavingWeight: state.isSavingWeight,
                   onAddWeight: () => _showAddWeightDialog(context),
                   onViewHistory: () {
@@ -292,7 +295,7 @@ class _UserGoalPageState extends ConsumerState<UserGoalPage> {
                   valueListenable: type,
                   builder: (context, value, _) {
                     return DropdownButtonFormField<NutritionGoalTypeUi>(
-                      value: value,
+                      initialValue: value,
                       items: NutritionGoalTypeUi.values
                           .map(
                             (t) => DropdownMenuItem(
@@ -434,12 +437,12 @@ class _GoalSummary extends StatelessWidget {
             Chip(
               label: Text(goal.type.label),
               backgroundColor:
-              colorScheme.primaryContainer.withOpacity(0.3),
+              colorScheme.primaryContainer.withAlpha(77),
             ),
             const SizedBox(width: 8),
             Chip(
               label: Text(goal.status.label),
-              backgroundColor: statusColor.withOpacity(0.15),
+              backgroundColor: statusColor.withAlpha(38),
               labelStyle: textTheme.bodyMedium?.copyWith(
                 color: statusColor,
                 fontWeight: FontWeight.w600,
@@ -516,7 +519,9 @@ class _SummaryItem extends StatelessWidget {
   }
 }
 
-class _GoalActions extends StatelessWidget {
+class _GoalActions extends ConsumerWidget {
+  final UserGoalDto goal;
+
   final bool isSavingWeight;
   final VoidCallback onAddWeight;
   final VoidCallback onViewHistory;
@@ -525,6 +530,7 @@ class _GoalActions extends StatelessWidget {
   final VoidCallback onCancel;
 
   const _GoalActions({
+    required this.goal,
     required this.isSavingWeight,
     required this.onAddWeight,
     required this.onViewHistory,
@@ -533,9 +539,11 @@ class _GoalActions extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
+
+    final isShared = ref.watch(sharedGoalsProvider).contains(goal.id);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -558,6 +566,46 @@ class _GoalActions extends StatelessWidget {
               ),
           ],
         ),
+
+        const SizedBox(height: 8),
+
+        // Share progress
+        if (isShared)
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              color: colorScheme.surfaceContainerHighest,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.check_circle, color: colorScheme.primary),
+                const SizedBox(width: 8),
+                Text(
+                  'Shared to Social',
+                  style: textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          )
+        else
+          OutlinedButton.icon(
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                showDragHandle: true,
+                builder: (_) => GoalProgressShareSheet(goal: goal),
+              );
+            },
+            icon: const Icon(Icons.share),
+            label: const Text('Share progress'),
+          ),
+
         const SizedBox(height: 8),
 
         if (canCancel)
@@ -759,7 +807,7 @@ class _WeightChartPainter extends CustomPainter {
     // target horizontal line
     final double targetY = yForWeight(goal.targetWeightKg);
     final targetPaint = Paint()
-      ..color = targetColor.withOpacity(0.7)
+      ..color = targetColor.withAlpha(179)
       ..strokeWidth = 1.5
       ..style = PaintingStyle.stroke;
 

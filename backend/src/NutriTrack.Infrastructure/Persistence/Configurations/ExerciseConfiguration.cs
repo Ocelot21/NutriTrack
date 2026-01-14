@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using NutriTrack.Domain.Common;
 using NutriTrack.Domain.Exercises;
-using NutriTrack.Infrastructure.Persistence.Configurations;
 
 namespace NutriTrack.Infrastructure.Persistence.Configurations;
 
@@ -26,6 +25,9 @@ public sealed class ExerciseConfiguration : IEntityTypeConfiguration<Exercise>
 
         b.Property(e => e.DefaultCaloriesPerMinute)
             .IsRequired();
+
+        b.Property(e => e.ImageUrl)
+            .HasMaxLength(512);
 
         b.Property(e => e.IsApproved)
             .IsRequired();

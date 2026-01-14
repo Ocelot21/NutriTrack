@@ -1,13 +1,28 @@
+using Microsoft.EntityFrameworkCore;
+using NutriTrack.Notifications.Api;
+using NutriTrack.Notifications.Application;
+using NutriTrack.Notifications.Infrastructure;
+using NutriTrack.Notifications.Infrastructure.Persistence;
+
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddOpenApi();
+builder.Services.AddControllers();
+
+builder.Services.AddSingleton<InternalApiKeyMiddleware>();
+
+builder.Services.AddApplication().AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+using (var scope = app.Services.CreateScope())
 {
-    app.MapOpenApi();
+    var db = scope.ServiceProvider.GetRequiredService<NotificationsDbContext>();
+    db.Database.Migrate();
 }
 
-app.Run();
+app.UseMiddleware<InternalApiKeyMiddleware>();
 
+app.MapControllers();
+app.MapGet("/health", () => Results.Ok("ok"));
+
+app.Run();

@@ -1,11 +1,9 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/providers.dart';
-import '../../../core/token_store.dart';
-import '../data/exercise_models.dart';
-import '../data/exercise_repo.dart';
-import '../data/create_user_exercise_log_request.dart';
+import 'package:nutritrack_shared/exercises/data/exercise_models.dart';
+import 'package:nutritrack_shared/exercises/data/exercise_repo.dart';
+import 'package:nutritrack_shared/exercises/data/create_user_exercise_log_request.dart';
 
 class ExerciseLogState {
   final bool isSubmitting;

@@ -24,7 +24,8 @@ public sealed class MealItem : Entity<MealItemId>
             grocery.Name,
             grocery.CaloriesPer100,
             grocery.MacrosPer100,
-            grocery.UnitOfMeasure);
+            grocery.UnitOfMeasure,
+            grocery.GramsPerPiece);
 
         Quantity = quantity;
     }

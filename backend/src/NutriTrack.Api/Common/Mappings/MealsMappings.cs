@@ -9,6 +9,7 @@ using NutriTrack.Application.Common.Models;
 using NutriTrack.Application.Meals.Common;
 using NutriTrack.Application.Meals.Commands.UpdateMeal;
 using NutriTrack.Domain.Users;
+using NutriTrack.Contracts.Common;
 
 namespace NutriTrack.Api.Common.Mappings;
 
@@ -52,13 +53,14 @@ public class MealsMappings : IRegister
                 i.GroceryId.Value,
                 i.Snapshot.GroceryName,
                 i.Snapshot.CaloriesPer100,
-                i.Snapshot.MacrosPer100.ProteinGramsPer100g,
-                i.Snapshot.MacrosPer100.CarbsGramsPer100g,
-                i.Snapshot.MacrosPer100.FatGramsPer100g,
+                i.Snapshot.MacrosPer100.ProteinGramsPer100,
+                i.Snapshot.MacrosPer100.CarbsGramsPer100,
+                i.Snapshot.MacrosPer100.FatGramsPer100,
                 i.Snapshot.UnitOfMeasure.ToString(),
+                i.Snapshot.GramsPerPiece,
                 i.Quantity)).ToList());
 
-        config.NewConfig<PagedResult<Meal>, NutriTrack.Contracts.Common.PagedResponse<MealResponse>>()
+        config.NewConfig<PagedResult<Meal>, PagedResponse<MealResponse>>()
             .Map(dest => dest.Items, src => src.Items)
             .Map(dest => dest.TotalCount, src => src.TotalCount)
             .Map(dest => dest.Page, src => src.Page)

@@ -6,8 +6,6 @@ class GroceriesMenuPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Groceries'),
@@ -26,6 +24,15 @@ class GroceriesMenuPage extends StatelessWidget {
                   'Search and filter existing foods in the database.',
                   onTap: () {
                     context.push('/groceries');
+                  },
+                ),
+                const SizedBox(height: 12),
+                _MenuCard(
+                  icon: Icons.auto_awesome,
+                  title: 'Recommended for you',
+                  subtitle: 'Personalized suggestions powered by AI.',
+                  onTap: () {
+                    context.push('/groceries/recommended');
                   },
                 ),
                 const SizedBox(height: 12),
@@ -70,7 +77,7 @@ class _MenuCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: theme.colorScheme.surfaceVariant,
+          color: theme.colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(16),
         ),
         child: Row(

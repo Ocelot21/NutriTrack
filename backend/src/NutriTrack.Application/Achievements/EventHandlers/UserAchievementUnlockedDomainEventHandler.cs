@@ -3,6 +3,7 @@ using NutriTrack.Application.Common.Interfaces.Persistence;
 using NutriTrack.Application.Common.Interfaces.Services;
 using NutriTrack.Application.Common.Notifications;
 using NutriTrack.Application.Notifications.Messages;
+using NutriTrack.Domain.Achievements;
 using NutriTrack.Domain.Achievements.Events;
 using System.Text.Json;
 
@@ -33,13 +34,10 @@ public sealed class UserAchievementUnlockedDomainEventHandler
     {
         var domainEvent = notification.DomainEvent;
 
-        var achievement = await _achievementRepository.GetByIdAsync(
+        if ( await _achievementRepository.GetByIdAsync(
             domainEvent.AchievementId,
-            cancellationToken);
-
-        if (achievement is null)
+            cancellationToken) is not Achievement achievement)
         {
-            // Optional TODO: Log warning about missing achievement
             return;
         }
 
@@ -63,6 +61,8 @@ public sealed class UserAchievementUnlockedDomainEventHandler
             MetadataJson: JsonSerializer.Serialize(metadata)
         );
 
-        await _notificationPublisher.PublishAsync(notificationRequestedMessage, cancellationToken);
+        await _notificationPublisher.PublishAsync(
+            notificationRequestedMessage,
+            cancellationToken);
     }
 }

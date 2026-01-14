@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/auth/presentation/auth_providers.dart';
-import '../router.dart';
 
 
 class AppDrawer extends ConsumerWidget {
@@ -23,7 +22,7 @@ class AppDrawer extends ConsumerWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-            ),
+              ),
             ListTile(
               leading: const Icon(Icons.home),
               title: const Text('Home'),
@@ -78,6 +77,14 @@ class AppDrawer extends ConsumerWidget {
               onTap: () {
                 Navigator.of(context).pop();
                 context.push('/achievements');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.dynamic_feed_rounded),
+              title: const Text('Social'),
+              onTap: () {
+                Navigator.of(context).pop();
+                context.push('/social');
               },
             ),
 

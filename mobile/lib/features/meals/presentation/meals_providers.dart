@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/providers.dart';
-import '../../../core/token_store.dart';
 import '../data/meals_repo.dart';
 import '../data/create_meal_request.dart';
 
