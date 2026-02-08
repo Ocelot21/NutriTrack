@@ -1,4 +1,4 @@
-﻿using System.Net.Http.Json;
+﻿﻿using System.Net.Http.Json;
 using NutriTrack.Api.Contracts.Notifications;
 
 namespace NutriTrack.Api.Common.Clients;
@@ -16,7 +16,7 @@ public sealed class NotificationsClient
         int pageSize,
         CancellationToken cancellationToken)
     {
-        var url = $"internal/users/{userId}/notifications?unreadOnly={unreadOnly}&page={page}&pageSize={pageSize}";
+        var url = $"internal/users/{userId}/notifications?onlyUnread={unreadOnly}&page={page}&pageSize={pageSize}";
         return await _http.GetStringAsync(url, cancellationToken);
     }
 

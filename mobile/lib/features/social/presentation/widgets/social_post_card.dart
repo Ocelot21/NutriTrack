@@ -5,12 +5,14 @@ import '../../../achievements/data/user_achievement_models.dart';
 
 class SocialPostCard extends StatelessWidget {
   final SocialPostModel post;
+  final String? currentUserId;
   final VoidCallback? onAuthorTap;
   final VoidCallback? onDelete;
 
   const SocialPostCard({
     super.key,
     required this.post,
+    this.currentUserId,
     this.onAuthorTap,
     this.onDelete,
   });
@@ -29,6 +31,7 @@ class SocialPostCard extends StatelessWidget {
             _Header(
               author: post.author,
               localTime: post.localTime,
+              currentUserId: currentUserId,
               onTap: onAuthorTap,
               onDelete: onDelete,
             ),
@@ -63,12 +66,14 @@ class SocialPostCard extends StatelessWidget {
 class _Header extends StatelessWidget {
   final SocialPostAuthorModel author;
   final DateTime localTime;
+  final String? currentUserId;
   final VoidCallback? onTap;
   final VoidCallback? onDelete;
 
   const _Header({
     required this.author,
     required this.localTime,
+    this.currentUserId,
     this.onTap,
     this.onDelete,
   });
@@ -76,6 +81,7 @@ class _Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isOwnPost = currentUserId != null && currentUserId == author.id;
 
     return Row(
       children: [
@@ -111,7 +117,7 @@ class _Header extends StatelessWidget {
             ),
           ),
         ),
-        if (onDelete != null)
+        if (isOwnPost && onDelete != null)
           IconButton(
             tooltip: 'Delete',
             onPressed: onDelete,

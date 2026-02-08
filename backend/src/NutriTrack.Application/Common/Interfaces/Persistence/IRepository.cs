@@ -23,6 +23,8 @@ where TId : notnull
         TEntity entity,
         CancellationToken cancellationToken = default);
 
+    void Update(TEntity entity);
+
     void Remove(TEntity entity);
 
     Task<bool> ExistsAsync(

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/auth/presentation/auth_providers.dart';
+import '../../features/notifications/presentation/notification_providers.dart';
 
 
 class AppDrawer extends ConsumerWidget {
@@ -10,6 +11,8 @@ class AppDrawer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final unreadCountAsync = ref.watch(unreadNotificationCountProvider);
+
     return Drawer(
       child: SafeArea(
         child: Column(
@@ -64,7 +67,19 @@ class AppDrawer extends ConsumerWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.notifications),
+              leading: Badge(
+                isLabelVisible: unreadCountAsync.when(
+                  data: (count) => count > 0,
+                  loading: () => false,
+                  error: (_, __) => false,
+                ),
+                label: unreadCountAsync.when(
+                  data: (count) => Text(count > 99 ? '99+' : count.toString()),
+                  loading: () => const Text(''),
+                  error: (_, __) => const Text(''),
+                ),
+                child: const Icon(Icons.notifications),
+              ),
               title: const Text('Notifications'),
               onTap: () {
                 Navigator.of(context).pop();

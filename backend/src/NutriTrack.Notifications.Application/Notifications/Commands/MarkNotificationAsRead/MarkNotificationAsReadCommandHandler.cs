@@ -1,4 +1,4 @@
-﻿using ErrorOr;
+﻿﻿using ErrorOr;
 using MediatR;
 using NutriTrack.Notifications.Application.Common.Interfaces.Persistence;
 using NutriTrack.Notifications.Application.Common.Interfaces.Services;
@@ -11,13 +11,16 @@ public sealed class MarkNotificationAsReadCommandHandler
 {
     private readonly INotificationRepository _notificationRepository;
     private readonly IDateTimeProvider _dateTimeProvider;
+    private readonly IUnitOfWork _unitOfWork;
 
     public MarkNotificationAsReadCommandHandler(
         INotificationRepository notificationRepository,
-        IDateTimeProvider dateTimeProvider)
+        IDateTimeProvider dateTimeProvider,
+        IUnitOfWork unitOfWork)
     {
         _notificationRepository = notificationRepository;
         _dateTimeProvider = dateTimeProvider;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<ErrorOr<Unit>> Handle(
@@ -34,6 +37,8 @@ public sealed class MarkNotificationAsReadCommandHandler
         }
 
         notification.MarkAsRead(_dateTimeProvider.UtcNow);
+
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;
     }

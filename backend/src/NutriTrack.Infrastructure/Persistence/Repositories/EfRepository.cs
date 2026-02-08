@@ -36,6 +36,11 @@ public class EfRepository<TEntity, TId> : IRepository<TEntity, TId>
         await _dbContext.Set<TEntity>().AddAsync(entity, cancellationToken);
     }
 
+    public void Update(TEntity entity)
+    {
+        _dbContext.Set<TEntity>().Update(entity);
+    }
+
     public void Remove(TEntity entity)
     {
         _dbContext.Set<TEntity>().Remove(entity);

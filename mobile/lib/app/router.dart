@@ -28,6 +28,7 @@ import '../features/user/presentation/two_factor_settings_page.dart';
 import '../features/user_goals/presentation/user_goal_history_page.dart';
 import '../features/user_goals/presentation/user_goal_page.dart';
 import '../features/groceries/presentation/recommended_groceries_page.dart';
+import '../features/groceries/presentation/enhanced_recommended_groceries_page.dart';
 import '../features/social/presentation/social_profile_page.dart';
 
 enum AppRoute {

@@ -12,6 +12,7 @@ using NutriTrack.Application.Groceries.Commands.DeleteGrocery;
 using NutriTrack.Contracts.Common;
 using NutriTrack.Domain.Groceries;
 using NutriTrack.Application.Groceries.Queries.ListRecommendedGroceries;
+using NutriTrack.Application.Groceries.Queries.ListEnhancedRecommendedGroceries;
 using NutriTrack.Application.Groceries.Queries.GetGroceryByCode;
 using NutriTrack.Application.Groceries.Queries.ListGrocerySuggestions;
 using NutriTrack.Application.Groceries.Commands.CreateGrocerySuggestion;
@@ -97,7 +98,19 @@ public sealed class GroceriesController : ApiController
         [FromForm] IFormFile? image,
         CancellationToken cancellationToken = default)
     {
-        var command = _mapper.Map<CreateGrocerySuggestionCommand>((request, image));
+        var command = new CreateGrocerySuggestionCommand(
+            request.Name,
+            Enum.Parse<GroceryCategory>(request.Category, true),
+            request.ProteinPer100,
+            request.CarbsPer100,
+            request.FatPer100,
+            request.CaloriesPer100,
+            Enum.Parse<UnitOfMeasure>(request.UnitOfMeasure, true),
+            request.GramsPerPiece,
+            request.Barcode,
+            image?.OpenReadStream(),
+            image?.FileName,
+            image?.ContentType);
         var result = await _mediator.Send(command, cancellationToken);
 
         return result.Match(
@@ -129,7 +142,19 @@ public sealed class GroceriesController : ApiController
         [FromForm] IFormFile? image,
         CancellationToken cancellationToken = default)
     {
-        var command = _mapper.Map<CreateGroceryCommand>((request, image));
+        var command = new CreateGroceryCommand(
+            request.Name,
+            Enum.Parse<GroceryCategory>(request.Category, true),
+            request.ProteinPer100,
+            request.CarbsPer100,
+            request.FatPer100,
+            request.CaloriesPer100,
+            Enum.Parse<UnitOfMeasure>(request.UnitOfMeasure, true),
+            request.GramsPerPiece,
+            request.Barcode,
+            image?.OpenReadStream(),
+            image?.FileName,
+            image?.ContentType);
 
         var result = await _mediator.Send(command, cancellationToken);
 
@@ -145,11 +170,29 @@ public sealed class GroceriesController : ApiController
     [HttpPut("{id:Guid}")]
     public async Task<IActionResult> Update(
         [FromRoute] Guid id,
-        [FromForm] UpdateGroceryRequest request,
+        [FromForm] UpdateGroceryRequest? request,
         [FromForm] IFormFile? image,
         CancellationToken cancellationToken = default)
     {
-        var command = _mapper.Map<UpdateGroceryCommand>((id, request, image));
+        if (request is null)
+        {
+            return BadRequest("Request body cannot be null");
+        }
+
+        var command = new UpdateGroceryCommand(
+            new GroceryId(id),
+            request.Name,
+            string.IsNullOrWhiteSpace(request.Category) ? null : Enum.Parse<GroceryCategory>(request.Category, true),
+            request.ProteinPer100,
+            request.CarbsPer100,
+            request.FatPer100,
+            request.CaloriesPer100,
+            string.IsNullOrWhiteSpace(request.UnitOfMeasure) ? null : Enum.Parse<UnitOfMeasure>(request.UnitOfMeasure, true),
+            !string.IsNullOrWhiteSpace(request.GramsPerPiece) ? decimal.Parse(request.GramsPerPiece) : null,
+            request.Barcode,
+            image?.OpenReadStream(),
+            image?.FileName,
+            image?.ContentType);
 
         var result = await _mediator.Send(command, cancellationToken);
 
@@ -184,6 +227,24 @@ public sealed class GroceriesController : ApiController
 
         return result.Match(
             groceries => Ok(_mapper.Map<PagedResponse<GroceryResponse>>(groceries)),
+            errors => Problem(errors));
+    }
+
+    [Authorize(Policy = PermissionKeys.Groceries.Read)]
+    [HttpGet("recommended/enhanced")]
+    public async Task<IActionResult> EnhancedRecommended(
+        [FromQuery] ListRecommendedGroceriesRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var query = new ListEnhancedRecommendedGroceriesQuery(
+            GetUserId(),
+            request.Page ?? 1,
+            request.PageSize ?? 20);
+
+        var result = await _mediator.Send(query, cancellationToken);
+
+        return result.Match(
+            groceries => Ok(_mapper.Map<PagedResponse<GroceryRecommendationResponse>>(groceries)),
             errors => Problem(errors));
     }
 }

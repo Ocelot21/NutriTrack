@@ -79,7 +79,14 @@ public sealed class ExercisesController : ApiController
         [FromForm] IFormFile? image,
         CancellationToken cancellationToken = default)
     {
-        var command = _mapper.Map<CreateExerciseSuggestionCommand>((request, image));
+        var command = new CreateExerciseSuggestionCommand(
+            request.Name,
+            Enum.Parse<Domain.Exercises.ExerciseCategory>(request.Category, true),
+            request.DefaultCaloriesPerMinute,
+            request.Description,
+            image?.OpenReadStream(),
+            image?.FileName,
+            image?.ContentType);
         var result = await _mediator.Send(command, cancellationToken);
 
         return result.Match(
@@ -111,7 +118,14 @@ public sealed class ExercisesController : ApiController
         [FromForm] IFormFile? image,
         CancellationToken cancellationToken = default)
     {
-        var command = _mapper.Map<CreateExerciseCommand>((request, image));
+        var command = new CreateExerciseCommand(
+            request.Name,
+            Enum.Parse<Domain.Exercises.ExerciseCategory>(request.Category, true),
+            request.DefaultCaloriesPerMinute,
+            request.Description,
+            image?.OpenReadStream(),
+            image?.FileName,
+            image?.ContentType);
 
         var result = await _mediator.Send(command, cancellationToken);
 
@@ -127,11 +141,26 @@ public sealed class ExercisesController : ApiController
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(
         [FromRoute] Guid id,
-        [FromForm] UpdateExerciseRequest request,
+        [FromForm] UpdateExerciseRequest? request,
         [FromForm] IFormFile? image,
         CancellationToken cancellationToken = default)
     {
-        var command = _mapper.Map<UpdateExerciseCommand>((id, request, image));
+        if (request is null)
+        {
+            return BadRequest("Request body cannot be null");
+        }
+
+        var command = new UpdateExerciseCommand(
+            new Domain.Exercises.ExerciseId(id),
+            request.Name,
+            string.IsNullOrWhiteSpace(request.Category) ? null : Enum.Parse<Domain.Exercises.ExerciseCategory>(request.Category, true),
+            request.DefaultCaloriesPerMinute,
+            request.Description,
+            image?.OpenReadStream(),
+            image?.FileName,
+            image?.ContentType,
+            request.IsApproved,
+            request.IsDeleted);
 
         var result = await _mediator.Send(command, cancellationToken);
 

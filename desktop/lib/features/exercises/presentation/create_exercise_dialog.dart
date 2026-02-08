@@ -154,13 +154,18 @@ class _CreateExerciseDialogState extends ConsumerState<CreateExerciseDialog> {
                             TextFormField(
                               controller: _nameController,
                               decoration:
-                              const InputDecoration(labelText: 'Name'),
-                              validator: (v) =>
-                              v == null || v.trim().isEmpty ? 'Required' : null,
+                              const InputDecoration(labelText: 'Name *'),
+                              validator: (v) {
+                                if (v == null || v.trim().isEmpty) return 'Name is required';
+                                if (!RegExp(r'[a-zA-Z]').hasMatch(v)) {
+                                  return 'Name must contain at least one letter';
+                                }
+                                return null;
+                              },
                             ),
                             const SizedBox(height: 12),
                             DropdownButtonFormField<ExerciseCategory>(
-                              value: _category,
+                              initialValue: _category,
                               items: ExerciseCategory.values
                                   .map(
                                     (c) => DropdownMenuItem(
@@ -179,9 +184,15 @@ class _CreateExerciseDialogState extends ConsumerState<CreateExerciseDialog> {
                             TextFormField(
                               controller: _caloriesController,
                               decoration: const InputDecoration(
-                                labelText: 'Default calories per minute',
+                                labelText: 'Default calories per minute *',
                               ),
                               keyboardType: TextInputType.number,
+                              validator: (v) {
+                                if (v == null || v.trim().isEmpty) return 'Required';
+                                final val = double.tryParse(v.replaceAll(',', '.'));
+                                if (val == null || val <= 0) return 'Enter valid number > 0';
+                                return null;
+                              },
                             ),
                             const SizedBox(height: 12),
                             TextFormField(

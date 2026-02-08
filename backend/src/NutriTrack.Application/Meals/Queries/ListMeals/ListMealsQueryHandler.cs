@@ -21,10 +21,14 @@ public sealed class ListMealsQueryHandler : IRequestHandler<ListMealsQuery, Erro
         {
             var meals = await _mealRepository
                 .GetByUserAndDateRangeAsync(request.UserId, request.From.Value, request.To.Value, cancellationToken);
-            return meals.Select(m => m.ToMealResult()).ToList();
+            // Reverse order for dropdown: latest meals first
+            return meals.OrderByDescending(m => m.OccurredAtLocal).Select(m => m.ToMealResult()).ToList();
         }
 
         var all = await _mealRepository.ListAsync(cancellationToken);
-        return all.Where(m => m.UserId == request.UserId).Select(m => m.ToMealResult()).ToList();
+        return all.Where(m => m.UserId == request.UserId)
+            .OrderByDescending(m => m.OccurredAtLocal)
+            .Select(m => m.ToMealResult())
+            .ToList();
     }
 }

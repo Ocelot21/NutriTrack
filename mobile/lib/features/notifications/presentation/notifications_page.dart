@@ -110,11 +110,10 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                       final n = state.items[index];
                       return _NotificationCard(
                         notification: n,
-                        onTap: () {
+                        onTap: () async {
                           if (n.isUnread) {
-                            controller.markAsRead(n.id);
+                            await controller.markAsRead(n.id);
                           }
-                          // optional todo: handle linkUrl navigation
                         },
                       );
                     },
@@ -131,7 +130,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
 
 class _NotificationCard extends StatelessWidget {
   final AppNotification notification;
-  final VoidCallback onTap;
+  final Future<void> Function() onTap;
 
   const _NotificationCard({
     required this.notification,

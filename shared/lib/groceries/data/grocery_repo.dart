@@ -199,6 +199,34 @@ class GroceryRepo {
     }
   }
 
+  Future<PagedResponse<GroceryRecommendation>> enhancedRecommendedGroceries({
+    required int page,
+    required int pageSize,
+  }) async {
+    try {
+      final token = await _tokenStore.read();
+      _api.setAuthToken(token);
+
+      final response = await _api.get<Map<String, dynamic>>(
+        '/groceries/recommended/enhanced',
+        queryParameters: {
+          'Page': page,
+          'PageSize': pageSize,
+        },
+      );
+
+      final data = response.data ?? {};
+      return PagedResponse<GroceryRecommendation>.fromJson(
+        data,
+        (j) => GroceryRecommendation.fromJson(j),
+      );
+    } on ApiException catch (e) {
+      throw GrocerySearchException(e.message);
+    } catch (e) {
+      throw GrocerySearchException('Unexpected error: $e');
+    }
+  }
+
   Future<Grocery> getByCode(String code) async {
     try {
       final token = await _tokenStore.read();

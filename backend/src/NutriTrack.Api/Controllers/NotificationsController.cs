@@ -27,7 +27,6 @@ public class NotificationsController : ApiController
         return Content(json, "application/json");
     }
 
-    /* NOT USED YET
     [HttpGet("unread-count")]
     [Authorize]
     public async Task<IActionResult> GetUnreadCount(
@@ -40,7 +39,6 @@ public class NotificationsController : ApiController
 
         return Ok(count);
     }
-    */
 
     [HttpPost("{notificationId:guid}/read")]
     [Authorize]

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../achievements/data/user_achievement_models.dart';
+import '../../user/presentation/user_providers.dart';
 import '../data/social_models.dart';
 import 'social_providers.dart';
 import 'widgets/social_post_card.dart';
@@ -46,6 +47,8 @@ class _SocialProfilePageState extends ConsumerState<SocialProfilePage>
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(socialProfileControllerProvider);
+    final userState = ref.watch(userControllerProvider);
+    final currentUserId = userState.me?.id;
 
     final profile = state.profile;
 
@@ -83,7 +86,10 @@ class _SocialProfilePageState extends ConsumerState<SocialProfilePage>
                   : TabBarView(
                       controller: _tabController,
                       children: [
-                        _PostsTab(posts: profile?.posts ?? const []),
+                        _PostsTab(
+                          posts: profile?.posts ?? const [],
+                          currentUserId: currentUserId,
+                        ),
                         _AchievementsTab(
                           achievements: profile?.achievements ?? const [],
                         ),
@@ -151,8 +157,9 @@ class _Header extends StatelessWidget {
 
 class _PostsTab extends StatelessWidget {
   final List<SocialPostModel> posts;
+  final String? currentUserId;
 
-  const _PostsTab({required this.posts});
+  const _PostsTab({required this.posts, this.currentUserId});
 
   @override
   Widget build(BuildContext context) {
@@ -170,6 +177,7 @@ class _PostsTab extends StatelessWidget {
         final post = posts[index];
         return SocialPostCard(
           post: post,
+          currentUserId: currentUserId,
           onAuthorTap: null,
           onDelete: null,
         );

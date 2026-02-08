@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿﻿using Microsoft.EntityFrameworkCore;
 using NutriTrack.Application.Common.Interfaces.Persistence;
 using NutriTrack.Application.Common.Models;
 using NutriTrack.Domain.Users;
@@ -9,6 +9,13 @@ namespace NutriTrack.Infrastructure.Persistence.Repositories
     {
 
         public UserRepository(AppDbContext dbContext) : base(dbContext) { }
+
+        public new Task<User?> GetByIdAsync(UserId id, CancellationToken cancellationToken = default)
+        {
+            return _dbContext.Users
+                .Include(u => u.Role)
+                .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+        }
 
         public Task<User?> GetByEmailAsync(Email email, CancellationToken cancellationToken = default)
         {
@@ -34,6 +41,7 @@ namespace NutriTrack.Infrastructure.Persistence.Repositories
             if (pageSize <= 0) pageSize = 10;
 
             var query = _dbContext.Users
+                .Include(u => u.Role)
                 .OrderBy(u => u.Username)
                 .AsQueryable();
 

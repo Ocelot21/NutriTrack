@@ -403,11 +403,15 @@ class _GroceryDetailsPageState extends ConsumerState<GroceryDetailsPage> {
                                 controller: _nameController,
                                 enabled: _isEditing,
                                 decoration: const InputDecoration(
-                                  labelText: 'Name',
+                                  labelText: 'Name *',
                                 ),
-                                validator: (v) => (v == null || v.trim().isEmpty)
-                                    ? 'Required'
-                                    : null,
+                                validator: (v) {
+                                  if (v == null || v.trim().isEmpty) return 'Name is required';
+                                  if (!RegExp(r'[a-zA-Z]').hasMatch(v)) {
+                                    return 'Name must contain at least one letter';
+                                  }
+                                  return null;
+                                },
                               ),
                             ),
                             SizedBox(
@@ -502,9 +506,15 @@ class _GroceryDetailsPageState extends ConsumerState<GroceryDetailsPage> {
                                 controller: _proteinController,
                                 enabled: _isEditing,
                                 decoration: InputDecoration(
-                                  labelText: 'Protein ${per100LabelSuffix()}',
+                                  labelText: 'Protein ${per100LabelSuffix()} *',
                                 ),
                                 keyboardType: TextInputType.number,
+                                validator: (v) {
+                                  if (v == null || v.trim().isEmpty) return 'Required';
+                                  final val = double.tryParse(v.replaceAll(',', '.'));
+                                  if (val == null || val < 0) return 'Enter valid number ≥ 0';
+                                  return null;
+                                },
                               ),
                             ),
                             SizedBox(
@@ -513,9 +523,15 @@ class _GroceryDetailsPageState extends ConsumerState<GroceryDetailsPage> {
                                 controller: _carbsController,
                                 enabled: _isEditing,
                                 decoration: InputDecoration(
-                                  labelText: 'Carbs ${per100LabelSuffix()}',
+                                  labelText: 'Carbs ${per100LabelSuffix()} *',
                                 ),
                                 keyboardType: TextInputType.number,
+                                validator: (v) {
+                                  if (v == null || v.trim().isEmpty) return 'Required';
+                                  final val = double.tryParse(v.replaceAll(',', '.'));
+                                  if (val == null || val < 0) return 'Enter valid number ≥ 0';
+                                  return null;
+                                },
                               ),
                             ),
                             SizedBox(
@@ -524,9 +540,15 @@ class _GroceryDetailsPageState extends ConsumerState<GroceryDetailsPage> {
                                 controller: _fatController,
                                 enabled: _isEditing,
                                 decoration: InputDecoration(
-                                  labelText: 'Fat ${per100LabelSuffix()}',
+                                  labelText: 'Fat ${per100LabelSuffix()} *',
                                 ),
                                 keyboardType: TextInputType.number,
+                                validator: (v) {
+                                  if (v == null || v.trim().isEmpty) return 'Required';
+                                  final val = double.tryParse(v.replaceAll(',', '.'));
+                                  if (val == null || val < 0) return 'Enter valid number ≥ 0';
+                                  return null;
+                                },
                               ),
                             ),
                             SizedBox(
@@ -535,9 +557,15 @@ class _GroceryDetailsPageState extends ConsumerState<GroceryDetailsPage> {
                                 controller: _caloriesController,
                                 enabled: _isEditing,
                                 decoration: InputDecoration(
-                                  labelText: 'Calories ${per100LabelSuffix()}',
+                                  labelText: 'Calories ${per100LabelSuffix()} *',
                                 ),
                                 keyboardType: TextInputType.number,
+                                validator: (v) {
+                                  if (v == null || v.trim().isEmpty) return 'Required';
+                                  final val = int.tryParse(v);
+                                  if (val == null || val < 0) return 'Enter valid integer ≥ 0';
+                                  return null;
+                                },
                               ),
                             ),
                           ],

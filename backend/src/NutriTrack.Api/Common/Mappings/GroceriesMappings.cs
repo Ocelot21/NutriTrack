@@ -69,6 +69,26 @@ public class GroceriesMappings : IRegister
         config.NewConfig<PagedResult<GroceryResult>, PagedResult<GroceryResponse>>()
             .Map(dest => dest.Items, src => src.Items);
 
+        config.NewConfig<GroceryRecommendationResult, GroceryRecommendationResponse>()
+            .Map(dest => dest.Id, src => src.Id.Value)
+            .Map(dest => dest.Name, src => src.Name)
+            .Map(dest => dest.Category, src => src.Category.ToString())
+            .Map(dest => dest.Barcode, src => src.Barcode)
+            .Map(dest => dest.ProteinGramsPer100, src => src.MacrosPer100.ProteinGramsPer100)
+            .Map(dest => dest.CarbsGramsPer100, src => src.MacrosPer100.CarbsGramsPer100)
+            .Map(dest => dest.FatGramsPer100, src => src.MacrosPer100.FatGramsPer100)
+            .Map(dest => dest.CaloriesPer100, src => src.CaloriesPer100)
+            .Map(dest => dest.UnitOfMeasure, src => src.UnitOfMeasure.ToString())
+            .Map(dest => dest.GramsPerPiece, src => src.GramsPerPiece)
+            .Map(dest => dest.ImageUrl, src => src.ImageUrl)
+            .Map(dest => dest.IsApproved, src => src.IsApproved)
+            .Map(dest => dest.IsDeleted, src => src.IsDeleted)
+            .Map(dest => dest.Score, src => src.Score)
+            .Map(dest => dest.Explanation, src => src.Explanation);
+
+        config.NewConfig<PagedResult<GroceryRecommendationResult>, PagedResult<GroceryRecommendationResponse>>()
+            .Map(dest => dest.Items, src => src.Items);
+
         config.NewConfig<(UserId UserId, ListGroceriesRequest Request), ListGroceriesQuery>()
             .Map(dest => dest.UserId, src => src.UserId)
             .Map(dest => dest, src => src.Request)

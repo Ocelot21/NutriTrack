@@ -55,6 +55,10 @@ public sealed class CreateGroceryCommandHandler : IRequestHandler<CreateGroceryC
         await _groceryRepository.AddAsync(entity, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return entity.ToGroceryResult();
+        var result = entity.ToGroceryResult();
+        return result with
+        {
+            ImageUrl = _blobStorageService.GenerateReadUri(BlobContainer.Groceries, result.ImageUrl)
+        };
     }
 }

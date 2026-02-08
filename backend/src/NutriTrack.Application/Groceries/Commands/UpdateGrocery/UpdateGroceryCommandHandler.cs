@@ -65,7 +65,13 @@ public sealed class UpdateGroceryCommandHandler : IRequestHandler<UpdateGroceryC
             request.Barcode is null ? Optional<string>.None() : request.Barcode
            );
 
+        _unitOfWork.MarkAsModified(entity);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-        return entity.ToGroceryResult();
+
+        var result = entity.ToGroceryResult();
+        return result with
+        {
+            ImageUrl = _blobStorageService.GenerateReadUri(BlobContainer.Groceries, result.ImageUrl)
+        };
     }
 }

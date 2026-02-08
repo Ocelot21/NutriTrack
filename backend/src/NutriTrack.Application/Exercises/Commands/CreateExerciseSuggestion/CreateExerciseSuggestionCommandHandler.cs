@@ -57,6 +57,10 @@ public sealed class CreateExerciseSuggestionCommandHandler
         await _exerciseRepository.AddAsync(entity, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return entity.ToExerciseResult();
+        var result = entity.ToExerciseResult();
+        return result with
+        {
+            ImageUrl = _blobStorageService.GenerateReadUri(BlobContainer.Exercises, result.ImageUrl)
+        };
     }
 }

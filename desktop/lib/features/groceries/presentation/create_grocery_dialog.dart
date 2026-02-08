@@ -184,9 +184,14 @@ class _CreateGroceryDialogState extends ConsumerState<CreateGroceryDialog> {
                             TextFormField(
                               controller: _nameController,
                               decoration:
-                              const InputDecoration(labelText: 'Name'),
-                              validator: (v) =>
-                              v == null || v.trim().isEmpty ? 'Required' : null,
+                              const InputDecoration(labelText: 'Name *'),
+                              validator: (v) {
+                                if (v == null || v.trim().isEmpty) return 'Name is required';
+                                if (!RegExp(r'[a-zA-Z]').hasMatch(v)) {
+                                  return 'Name must contain at least one letter';
+                                }
+                                return null;
+                              },
                             ),
                             const SizedBox(height: 12),
 
@@ -254,7 +259,7 @@ class _CreateGroceryDialogState extends ConsumerState<CreateGroceryDialog> {
                             TextFormField(
                               controller: _barcodeController,
                               decoration:
-                              const InputDecoration(labelText: 'Barcode'),
+                              const InputDecoration(labelText: 'Barcode (optional)'),
                             ),
                             const SizedBox(height: 12),
 
@@ -264,9 +269,15 @@ class _CreateGroceryDialogState extends ConsumerState<CreateGroceryDialog> {
                                   child: TextFormField(
                                     controller: _proteinController,
                                     decoration: InputDecoration(
-                                      labelText: 'Protein ${per100LabelSuffix()}',
+                                      labelText: 'Protein ${per100LabelSuffix()} *',
                                     ),
                                     keyboardType: TextInputType.number,
+                                    validator: (v) {
+                                      if (v == null || v.trim().isEmpty) return 'Required';
+                                      final val = double.tryParse(v.replaceAll(',', '.'));
+                                      if (val == null || val < 0) return 'Enter valid number ≥ 0';
+                                      return null;
+                                    },
                                   ),
                                 ),
                                 const SizedBox(width: 8),
@@ -274,9 +285,15 @@ class _CreateGroceryDialogState extends ConsumerState<CreateGroceryDialog> {
                                   child: TextFormField(
                                     controller: _carbsController,
                                     decoration: InputDecoration(
-                                      labelText: 'Carbs ${per100LabelSuffix()}',
+                                      labelText: 'Carbs ${per100LabelSuffix()} *',
                                     ),
                                     keyboardType: TextInputType.number,
+                                    validator: (v) {
+                                      if (v == null || v.trim().isEmpty) return 'Required';
+                                      final val = double.tryParse(v.replaceAll(',', '.'));
+                                      if (val == null || val < 0) return 'Enter valid number ≥ 0';
+                                      return null;
+                                    },
                                   ),
                                 ),
                               ],
@@ -289,17 +306,29 @@ class _CreateGroceryDialogState extends ConsumerState<CreateGroceryDialog> {
                                   child: TextFormField(
                                     controller: _fatController,
                                     decoration: InputDecoration(
-                                      labelText: 'Fat ${per100LabelSuffix()}',
+                                      labelText: 'Fat ${per100LabelSuffix()} *',
                                     ),
                                     keyboardType: TextInputType.number,
+                                    validator: (v) {
+                                      if (v == null || v.trim().isEmpty) return 'Required';
+                                      final val = double.tryParse(v.replaceAll(',', '.'));
+                                      if (val == null || val < 0) return 'Enter valid number ≥ 0';
+                                      return null;
+                                    },
                                   ),
                                 ),
                                 const SizedBox(width: 8),
                                 Expanded(
                                   child: TextFormField(
                                     controller: _caloriesController,
-                                    decoration: InputDecoration(labelText: 'Calories ${per100LabelSuffix()}'),
+                                    decoration: InputDecoration(labelText: 'Calories ${per100LabelSuffix()} *'),
                                     keyboardType: TextInputType.number,
+                                    validator: (v) {
+                                      if (v == null || v.trim().isEmpty) return 'Required';
+                                      final val = int.tryParse(v);
+                                      if (val == null || val < 0) return 'Enter valid integer ≥ 0';
+                                      return null;
+                                    },
                                   ),
                                 ),
                               ],

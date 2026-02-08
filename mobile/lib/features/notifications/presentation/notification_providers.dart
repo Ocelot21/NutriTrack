@@ -106,6 +106,9 @@ class NotificationListController extends Notifier<NotificationListState> {
     }).toList();
 
     state = state.copyWith(items: updated);
+
+    // Invalidate unread count to refresh badge
+    ref.invalidate(unreadNotificationCountProvider);
   }
 
   Future<void> markAllAsRead() async {
@@ -125,6 +128,9 @@ class NotificationListController extends Notifier<NotificationListState> {
         .toList();
 
     state = state.copyWith(items: updated);
+
+    // Invalidate unread count to refresh badge
+    ref.invalidate(unreadNotificationCountProvider);
   }
 
   Future<void> _loadPage({
@@ -163,3 +169,17 @@ final notificationListControllerProvider =
 NotifierProvider.autoDispose<NotificationListController, NotificationListState>(
   NotificationListController.new,
 );
+
+// Unread count provider with auto-refresh
+final unreadNotificationCountProvider = StreamProvider.autoDispose<int>((ref) async* {
+  final repo = ref.read(notificationRepoProvider);
+
+  // Initial fetch
+  yield await repo.getUnreadCount();
+
+  // Refresh every 30 seconds
+  await for (final _ in Stream.periodic(const Duration(seconds: 30))) {
+    yield await repo.getUnreadCount();
+  }
+});
+

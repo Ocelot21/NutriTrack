@@ -43,7 +43,7 @@ public sealed class UserGoalSeeder : ISeeder
 
             ("mobile", NutritionGoal.LoseWeight, today.AddDays(-21), today.AddDays(49), 60.0m, 56.5m),
 
-            ("user", NutritionGoal.GainWeight, today.AddDays(-14), today.AddDays(70), 70.0m, 74.0m),
+            ("user", NutritionGoal.LoseWeight, today.AddDays(-14), today.AddDays(70), 85.0m, 78.0m),
 
             ("admin", NutritionGoal.MaintainWeight, today.AddDays(-10), today.AddDays(20), 78.0m, 78.0m),
 

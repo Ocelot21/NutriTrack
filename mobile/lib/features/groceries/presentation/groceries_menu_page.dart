@@ -37,6 +37,15 @@ class GroceriesMenuPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
                 _MenuCard(
+                  icon: Icons.stars,
+                  title: 'Enhanced Recommender',
+                  subtitle: 'Advanced AI recommendations with explanations and scores.',
+                  onTap: () {
+                    context.push('/groceries/recommended/enhanced');
+                  },
+                ),
+                const SizedBox(height: 12),
+                _MenuCard(
                   icon: Icons.add_circle_outline,
                   title: 'Suggest a grocery',
                   subtitle:

@@ -7,6 +7,7 @@ using NutriTrack.Contracts.UserExerciseLogs;
 using NutriTrack.Application.UserExercises.Queries.GetUserExerciseLogById;
 using NutriTrack.Application.UserExercises.Queries.ListUserExerciseLogs;
 using NutriTrack.Application.UserExercises.Commands.CreateUserExerciseLog;
+using NutriTrack.Application.UserExercises.Commands.UpdateUserExerciseLog;
 using NutriTrack.Application.UserExercises.Commands.DeleteUserExerciseLog;
 using NutriTrack.Domain.UserExercises;
 
@@ -67,6 +68,22 @@ public sealed class UserExerciseLogsController : ApiController
         var result = await _mediator.Send(command, cancellationToken);
         return result.Match(
             log => CreatedAtAction(nameof(GetById), new { id = log.Id.Value }, _mapper.Map<UserExerciseLogResponse>(log)),
+            errors => Problem(errors));
+    }
+
+    [Authorize(Policy = PermissionKeys.UserExerciseLogs.Update_Own)]
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(
+        [FromRoute] Guid id,
+        [FromBody] UpdateUserExerciseLogRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var command = _mapper.Map<UpdateUserExerciseLogCommand>((id, request));
+
+        var result = await _mediator.Send(command, cancellationToken);
+
+        return result.Match(
+            _ => NoContent(),
             errors => Problem(errors));
     }
 

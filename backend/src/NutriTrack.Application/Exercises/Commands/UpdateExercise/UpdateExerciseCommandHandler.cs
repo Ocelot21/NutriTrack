@@ -66,7 +66,13 @@ public sealed class UpdateExerciseCommandHandler : IRequestHandler<UpdateExercis
             entity.MarkDeleted();
         }
 
+        _unitOfWork.MarkAsModified(entity);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-        return entity.ToExerciseResult();
+
+        var result = entity.ToExerciseResult();
+        return result with
+        {
+            ImageUrl = _blobStorageService.GenerateReadUri(BlobContainer.Exercises, result.ImageUrl)
+        };
     }
 }

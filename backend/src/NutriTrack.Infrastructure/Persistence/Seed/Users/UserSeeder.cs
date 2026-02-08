@@ -65,7 +65,7 @@ public sealed class UserSeeder : ISeeder
                 Gender.Female, new DateOnly(2000, 3, 8), 168m, 60m, ActivityLevel.Active, NutritionGoal.LoseWeight, true),
 
             ("Regular", "User", "user", "user@nutritrack.local", userRoleId, true, defaultTimeZoneId, "DE",
-                Gender.Unknown, null, null, null, ActivityLevel.Sedentary, NutritionGoal.MaintainWeight, false),
+                Gender.Male, new DateOnly(1995, 6, 15), 178m, 85m, ActivityLevel.Sedentary, NutritionGoal.LoseWeight, true),
 
             ("System", "Admin", "admin", "admin@nutritrack.local", adminRoleId, true, defaultTimeZoneId, "CA",
                 Gender.Male, new DateOnly(1988, 11, 2), 175m, 78m, ActivityLevel.Light, NutritionGoal.MaintainWeight, true),

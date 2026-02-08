@@ -25,6 +25,7 @@ public sealed class MealRepository : EfRepository<Meal, MealId>, IMealRepository
         CancellationToken cancellationToken = default)
         => await _dbContext.Meals
             .Where(m => m.UserId == userId && m.LocalDate >= from && m.LocalDate <= to)
+            .OrderBy(m => m.OccurredAtLocal)
             .ToListAsync(cancellationToken);
 
     public async Task<int> GetCurrentStreakDaysAsync(

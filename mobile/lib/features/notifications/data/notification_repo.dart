@@ -21,12 +21,12 @@ class NotificationRepo {
       _api.setAuthToken(token);
 
       final query = <String, dynamic>{
-        'Page': page,
-        'PageSize': pageSize,
+        'page': page,
+        'pageSize': pageSize,
       };
 
       if (onlyUnread == true) {
-        query['OnlyUnread'] = 'true';
+        query['onlyUnread'] = 'true';
       }
 
       final response = await _api.get<Map<String, dynamic>>(
@@ -69,6 +69,23 @@ class NotificationRepo {
       );
     } on ApiException {
       // no need to handle
+    }
+  }
+
+  Future<int> getUnreadCount() async {
+    try {
+      final token = await _tokenStore.read();
+      _api.setAuthToken(token);
+
+      final response = await _api.get<int>(
+        '/notifications/unread-count',
+      );
+
+      return response.data ?? 0;
+    } on ApiException {
+      return 0;
+    } catch (e) {
+      return 0;
     }
   }
 }

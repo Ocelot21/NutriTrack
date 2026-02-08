@@ -1,4 +1,5 @@
-﻿using NutriTrack.Application.Common.Interfaces.Persistence;
+﻿using Microsoft.EntityFrameworkCore;
+using NutriTrack.Application.Common.Interfaces.Persistence;
 
 namespace NutriTrack.Infrastructure.Persistence
 {
@@ -10,5 +11,8 @@ namespace NutriTrack.Infrastructure.Persistence
 
         public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
             => _dbContext.SaveChangesAsync(cancellationToken);
+
+        public void MarkAsModified<TEntity>(TEntity entity) where TEntity : class
+            => _dbContext.Entry(entity).State = EntityState.Modified;
     }
 }

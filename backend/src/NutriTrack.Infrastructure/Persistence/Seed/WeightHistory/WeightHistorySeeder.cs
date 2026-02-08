@@ -59,7 +59,7 @@ public sealed class WeightHistorySeeder : ISeeder
                 Username = "user",
                 StartDaysAgo = 42,
                 IntervalDays = 7,
-                Weights = new decimal[] { 69.5m, 69.8m, 70.1m, 70.4m, 70.6m, 70.9m, 71.1m }
+                Weights = new decimal[] { 87.5m, 87.2m, 86.8m, 86.4m, 86.0m, 85.6m, 85.2m }
             },
             new
             {

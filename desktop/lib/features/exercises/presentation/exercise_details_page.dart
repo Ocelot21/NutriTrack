@@ -366,11 +366,15 @@ class _ExerciseDetailsPageState extends ConsumerState<ExerciseDetailsPage> {
                                 controller: _nameController,
                                 enabled: _isEditing,
                                 decoration: const InputDecoration(
-                                  labelText: 'Name',
+                                  labelText: 'Name *',
                                 ),
-                                validator: (v) => v == null || v.trim().isEmpty
-                                    ? 'Required'
-                                    : null,
+                                validator: (v) {
+                                  if (v == null || v.trim().isEmpty) return 'Name is required';
+                                  if (!RegExp(r'[a-zA-Z]').hasMatch(v)) {
+                                    return 'Name must contain at least one letter';
+                                  }
+                                  return null;
+                                },
                               ),
                             ),
                             SizedBox(

@@ -201,3 +201,78 @@ extension UnitOfMeasureUiMapper on UnitOfMeasureUi {
     return UnitOfMeasureUi.gram;
   }
 }
+
+class GroceryRecommendation {
+  final String id;
+  final String name;
+  final GroceryCategory category;
+  final String? barcode;
+  final double proteinPer100;
+  final double carbsPer100;
+  final double fatPer100;
+  final int caloriesPer100;
+  final UnitOfMeasureUi unitOfMeasure;
+  final double? gramsPerPiece;
+  final String? imageUrl;
+  final bool isApproved;
+  final double score;
+  final String explanation;
+
+  GroceryRecommendation({
+    required this.id,
+    required this.name,
+    required this.category,
+    required this.barcode,
+    required this.proteinPer100,
+    required this.carbsPer100,
+    required this.fatPer100,
+    required this.caloriesPer100,
+    required this.unitOfMeasure,
+    required this.gramsPerPiece,
+    required this.imageUrl,
+    required this.isApproved,
+    required this.score,
+    required this.explanation,
+  });
+
+  factory GroceryRecommendation.fromJson(Map<String, dynamic> json) {
+    final rawCategory = json['category'];
+    final rawUnit = json['unitOfMeasure'];
+
+    return GroceryRecommendation(
+      id: json['id'] as String,
+      name: json['name'] as String,
+      category: GroceryCategoryMapper.fromBackendDynamic(rawCategory),
+      barcode: json['barcode'] as String?,
+      proteinPer100: (json['proteinGramsPer100'] as num).toDouble(),
+      carbsPer100: (json['carbsGramsPer100'] as num).toDouble(),
+      fatPer100: (json['fatGramsPer100'] as num).toDouble(),
+      caloriesPer100: json['caloriesPer100'] as int,
+      unitOfMeasure: UnitOfMeasureUiMapper.fromBackendDynamic(rawUnit),
+      gramsPerPiece: (json['gramsPerPiece'] as num?)?.toDouble(),
+      imageUrl: json['imageUrl'] as String?,
+      isApproved: json['isApproved'] as bool? ?? false,
+      score: (json['score'] as num?)?.toDouble() ?? 0.0,
+      explanation: json['explanation'] as String? ?? '',
+    );
+  }
+
+  // Convert to regular Grocery for compatibility
+  Grocery toGrocery() {
+    return Grocery(
+      id: id,
+      name: name,
+      category: category,
+      barcode: barcode,
+      proteinPer100: proteinPer100,
+      carbsPer100: carbsPer100,
+      fatPer100: fatPer100,
+      caloriesPer100: caloriesPer100,
+      unitOfMeasure: unitOfMeasure,
+      gramsPerPiece: gramsPerPiece,
+      imageUrl: imageUrl,
+      isApproved: isApproved,
+    );
+  }
+}
+
