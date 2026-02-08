@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/providers.dart';
-import '../../../core/token_store.dart';
 import '../data/user_goal_models.dart';
 import '../data/user_goal_repo.dart';
 
@@ -65,7 +64,6 @@ class UserGoalController extends Notifier<UserGoalState> {
       final goal = await _repo.getCurrentGoal();
 
       if (goal == null) {
-        // nema goal-a
         state = state.copyWith(
           isLoading: false,
           currentGoal: null,
@@ -118,7 +116,6 @@ class UserGoalController extends Notifier<UserGoalState> {
         targetWeightKg: targetWeightKg,
       );
 
-      // nakon kreiranja goal-a, refrešujemo sve
       state = state.copyWith(isCreatingGoal: false);
       await load();
     } on UserGoalException catch (e) {
@@ -151,10 +148,6 @@ class UserGoalController extends Notifier<UserGoalState> {
         weightKg: weightKg,
       );
 
-      // backend u handleru može:
-      // - updateat userov current weight
-      // - evaluirati goal (Completed/Failed)
-      // pa nakon toga samo refrešujemo state
       state = state.copyWith(isSavingWeight: false);
       await load();
     } on UserGoalException catch (e) {

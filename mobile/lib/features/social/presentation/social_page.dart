@@ -21,7 +21,6 @@ class _SocialPageState extends ConsumerState<SocialPage> {
 
     _scrollController.addListener(_onScroll);
 
-    // Load once AFTER first frame/microtask, NOT in build.
     Future.microtask(() {
       ref.read(socialFeedControllerProvider.notifier).loadInitialIfEmpty();
     });
@@ -37,7 +36,6 @@ class _SocialPageState extends ConsumerState<SocialPage> {
   void _onScroll() {
     final st = ref.read(socialFeedControllerProvider);
 
-    // guards: don't spam loadMore while loading or if there's no more
     if (st.isLoading || !st.canLoadMore) return;
 
     final threshold = 300.0;
@@ -130,7 +128,7 @@ class _SocialPageState extends ConsumerState<SocialPage> {
                 padding: const EdgeInsets.only(bottom: 96, top: 12),
                 itemCount: state.items.length +
                     ((state.isLoading && state.items.isNotEmpty) ? 1 : 0),
-                separatorBuilder: (_, __) => const SizedBox(height: 10),
+                separatorBuilder: (_, _) => const SizedBox(height: 10),
                 itemBuilder: (context, index) {
                   if (index >= state.items.length) {
                     return const Padding(

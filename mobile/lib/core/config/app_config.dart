@@ -5,6 +5,6 @@ class AppConfig {
   static String get resolvedApiBaseUrl {
     if (apiBaseUrl.isNotEmpty) return apiBaseUrl;
 
-    return 'http://192.168.0.29:5000/api';
+    return 'http://10.0.2.2:5071/api';
   }
 }

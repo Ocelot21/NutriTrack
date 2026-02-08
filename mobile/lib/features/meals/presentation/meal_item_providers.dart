@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/providers.dart';
-import '../../../core/token_store.dart';
 import '../data/meals_repo.dart';
 import '../data/create_meal_item_request.dart';
 

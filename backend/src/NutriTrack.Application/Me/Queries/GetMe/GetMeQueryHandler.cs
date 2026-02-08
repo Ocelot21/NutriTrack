@@ -29,6 +29,7 @@ public sealed class GetMeQueryHandler : IRequestHandler<GetMeQuery, ErrorOr<User
         }
 
         var result = user.ToUserResult();
+
         return result with
         {
             AvatarUrl = _blobStorageService.GenerateReadUri(BlobContainer.Avatars, result.AvatarUrl)

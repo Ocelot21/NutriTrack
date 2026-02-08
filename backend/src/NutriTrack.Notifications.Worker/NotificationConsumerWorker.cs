@@ -39,98 +39,112 @@ public sealed class NotificationConsumerWorker : BackgroundService
             Password = _settings.Password
         };
 
-        _connection = await factory.CreateConnectionAsync();
-        _channel = await _connection.CreateChannelAsync(cancellationToken: stoppingToken);
-
-        await _channel.QueueDeclareAsync(
-            queue: _settings.QueueName,
-            durable: true,
-            exclusive: false,
-            autoDelete: false,
-            arguments: null,
-            cancellationToken: stoppingToken);
-
-        var consumer = new AsyncEventingBasicConsumer(_channel);
-
-        consumer.ReceivedAsync += async (sender, ea) =>
+        while (!stoppingToken.IsCancellationRequested)
         {
-            var bodyBytes = ea.Body.ToArray();
-            var json = Encoding.UTF8.GetString(bodyBytes);
-
             try
             {
-                var message = JsonSerializer.Deserialize<NotificationRequestedMessage>(json);
+                _logger.LogInformation("Attempting to connect to RabbitMQ at {HostName}:{Port}", _settings.HostName, _settings.Port);
+                _connection = await factory.CreateConnectionAsync();
+                _channel = await _connection.CreateChannelAsync(cancellationToken: stoppingToken);
 
-                if (message is null)
+                await _channel.QueueDeclareAsync(
+                    queue: _settings.QueueName,
+                    durable: true,
+                    exclusive: false,
+                    autoDelete: false,
+                    arguments: null,
+                    cancellationToken: stoppingToken);
+
+                _logger.LogInformation("Successfully connected to RabbitMQ and declared queue {QueueName}", _settings.QueueName);
+
+                var consumer = new AsyncEventingBasicConsumer(_channel);
+
+                consumer.ReceivedAsync += async (sender, ea) =>
                 {
-                    _logger.LogWarning(
-                        "Received invalid NotificationRequestedMessage: {Json}",
-                        json);
+                    var bodyBytes = ea.Body.ToArray();
+                    var json = Encoding.UTF8.GetString(bodyBytes);
 
-                    await _channel.BasicAckAsync(
-                        ea.DeliveryTag,
-                        multiple: false,
-                        cancellationToken: stoppingToken);
+                    try
+                    {
+                        var message = JsonSerializer.Deserialize<NotificationRequestedMessage>(json);
 
-                    return;
-                }
+                        if (message is null)
+                        {
+                            _logger.LogWarning(
+                                "Received invalid NotificationRequestedMessage: {Json}",
+                                json);
 
-                using var scope = _scopeFactory.CreateScope();
-                var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+                            await _channel.BasicAckAsync(
+                                ea.DeliveryTag,
+                                multiple: false,
+                                cancellationToken: stoppingToken);
 
-                var command = new CreateNotificationCommand(
-                    message.UserId,
-                    message.Title,
-                    message.Message,
-                    Enum.Parse<NotificationType>(message.Type),
-                    message.OccurredAtUtc,
-                    message.LinkUrl,
-                    message.MetadataJson);
+                            return;
+                        }
 
-                await mediator.Send(command, stoppingToken);
+                        using var scope = _scopeFactory.CreateScope();
+                        var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-                await _channel.BasicAckAsync(
-                    ea.DeliveryTag,
-                    multiple: false,
+                        var command = new CreateNotificationCommand(
+                            message.UserId,
+                            message.Title,
+                            message.Message,
+                            Enum.Parse<NotificationType>(message.Type),
+                            message.OccurredAtUtc,
+                            message.LinkUrl,
+                            message.MetadataJson);
+
+                        await mediator.Send(command, stoppingToken);
+
+                        await _channel.BasicAckAsync(
+                            ea.DeliveryTag,
+                            multiple: false,
+                            cancellationToken: stoppingToken);
+
+                        _logger.LogInformation(
+                            "Processed notification for user {UserId}, type {Type}",
+                            message.UserId,
+                            message.Type);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(
+                            ex,
+                            "Error while processing notification message: {Json}",
+                            json);
+
+                        await _channel.BasicNackAsync(
+                            ea.DeliveryTag,
+                            multiple: false,
+                            requeue: false,
+                            cancellationToken: stoppingToken);
+                    }
+                };
+
+                await _channel.BasicConsumeAsync(
+                    queue: _settings.QueueName,
+                    autoAck: false,
+                    consumer: consumer,
                     cancellationToken: stoppingToken);
 
                 _logger.LogInformation(
-                    "Processed notification for user {UserId}, type {Type}",
-                    message.UserId,
-                    message.Type);
+                    "NotificationConsumerWorker started. Listening on queue {Queue}",
+                    _settings.QueueName);
+
+                try
+                {
+                    await Task.Delay(Timeout.Infinite, stoppingToken);
+                }
+                catch (TaskCanceledException)
+                {
+
+                }
             }
             catch (Exception ex)
             {
-                _logger.LogError(
-                    ex,
-                    "Error while processing notification message: {Json}",
-                    json);
-
-                await _channel.BasicNackAsync(
-                    ea.DeliveryTag,
-                    multiple: false,
-                    requeue: false,
-                    cancellationToken: stoppingToken);
+                _logger.LogError(ex, "Error occurred while connecting to RabbitMQ. Retrying in 5 seconds...");
+                await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
             }
-        };
-
-        await _channel.BasicConsumeAsync(
-            queue: _settings.QueueName,
-            autoAck: false,
-            consumer: consumer,
-            cancellationToken: stoppingToken);
-
-        _logger.LogInformation(
-            "NotificationConsumerWorker started. Listening on queue {Queue}",
-            _settings.QueueName);
-
-        try
-        {
-            await Task.Delay(Timeout.Infinite, stoppingToken);
-        }
-        catch (TaskCanceledException)
-        {
-
         }
     }
 

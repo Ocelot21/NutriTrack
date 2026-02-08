@@ -105,7 +105,6 @@ public sealed class BlobStorageService : IBlobStorageService
             BlobContainer.Avatars => _settings.Containers.Avatars,
             BlobContainer.Groceries => _settings.Containers.Groceries,
             BlobContainer.Exercises => _settings.Containers.Exercises,
-            BlobContainer.MealPhotos => _settings.Containers.MealPhotos,
             BlobContainer.Reports => _settings.Containers.Reports,
             _ => throw new ArgumentOutOfRangeException(nameof(container), container, "Unknown container.")
         };

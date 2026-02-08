@@ -1,8 +1,6 @@
-﻿using ErrorOr;
-using MapsterMapper;
+﻿using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NutriTrack.Application.TwoFactor.Commands.ConfirmTotp;
 using NutriTrack.Application.TwoFactor.Commands.SetupTotp;

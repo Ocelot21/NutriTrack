@@ -20,10 +20,10 @@ class HealthProfileRepo {
   Future<void> upsertHealthProfile(HealthProfileRequest request) async {
     try {
       final token = await _tokenStore.read();
-      print('HEALTH PROFILE → token from store: $token');
+      //print('HEALTH PROFILE → token from store: $token');
 
       _api.setAuthToken(token);
-      print('HEALTH PROFILE → calling PUT /me/health-profile with headers: ${_api.raw.options.headers}');
+      //print('HEALTH PROFILE → calling PUT /me/health-profile with headers: ${_api.raw.options.headers}');
 
       await _api.put<Map<String, dynamic>>(
         '/me/health-profile',

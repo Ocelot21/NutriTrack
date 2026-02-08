@@ -25,7 +25,7 @@ String per100UnitLabel(UnitOfMeasureUi u) {
     case UnitOfMeasureUi.milliliter:
       return '100 ml';
     case UnitOfMeasureUi.piece:
-      return '100 g'; // canonical for piece too
+      return '100 g';
   }
 }
 
@@ -40,7 +40,7 @@ String unitChipLabel(UnitOfMeasureUi u) {
   }
 }
 
-/// Normalizes raw scanner output (barcode/QR payload) into the code format our API expects.
+/// Normalizes raw scanner output (barcode/QR payload) into the code format that the API expects.
 ///
 /// Handles:
 /// - whitespace/newlines
@@ -51,7 +51,6 @@ String? normalizeScannedCode(String? raw) {
   var v = raw.trim();
   if (v.isEmpty) return null;
 
-  // Some QR codes contain URLs or "barcode=..." query params.
   try {
     final uri = Uri.tryParse(v);
     if (uri != null && (uri.hasScheme || uri.host.isNotEmpty)) {
@@ -64,12 +63,10 @@ String? normalizeScannedCode(String? raw) {
       }
     }
   } catch (_) {
-    // ignore parse errors, keep original
   }
 
   v = v.trim();
 
-  // Strip common prefixes from scanners / QR payloads.
   final lower = v.toLowerCase();
   const prefixes = [
     'ean-13:',
@@ -89,7 +86,6 @@ String? normalizeScannedCode(String? raw) {
     }
   }
 
-  // Remove whitespace and hyphens that might be introduced in some formats.
   v = v.replaceAll(RegExp(r'[\s-]'), '');
 
   return v.isEmpty ? null : v;
@@ -117,8 +113,8 @@ class _GrocerySearchPageState extends ConsumerState<GrocerySearchPage> {
   final _minFatCtrl = TextEditingController();
   final _maxFatCtrl = TextEditingController();
 
-  GroceryCategory? _category; // null = All
-  UnitOfMeasureUi? _unit; // null = Any
+  GroceryCategory? _category;
+  UnitOfMeasureUi? _unit;
 
   Timer? _debounce;
 
@@ -434,7 +430,6 @@ class _GrocerySearchPageState extends ConsumerState<GrocerySearchPage> {
               ),
             ),
 
-            // Compact filter pills
             Padding(
               padding: const EdgeInsets.fromLTRB(12, 0, 12, 10),
               child: Column(
@@ -513,7 +508,7 @@ class _GrocerySearchPageState extends ConsumerState<GrocerySearchPage> {
                   ),
                   itemCount: state.items.length +
                       (state.canLoadMore ? 1 : 0),
-                  separatorBuilder: (_, __) =>
+                  separatorBuilder: (_, _) =>
                   const SizedBox(height: 10),
                   itemBuilder: (context, index) {
                     if (index < state.items.length) {
@@ -596,7 +591,7 @@ class _GrocerySearchPageState extends ConsumerState<GrocerySearchPage> {
 }
 
 class _CategoryPills extends StatelessWidget {
-  final GroceryCategory? selected; // null = All
+  final GroceryCategory? selected;
   final ValueChanged<GroceryCategory?> onChanged;
 
   const _CategoryPills({
@@ -660,7 +655,7 @@ class _CategoryPills extends StatelessWidget {
 }
 
 class _UnitPills extends StatelessWidget {
-  final UnitOfMeasureUi? selected; // null = Any
+  final UnitOfMeasureUi? selected;
   final ValueChanged<UnitOfMeasureUi?> onChanged;
 
   const _UnitPills({
@@ -855,7 +850,7 @@ class _GroceryAvatar extends StatelessWidget {
             ? Image.network(
           imageUrl,
           fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => _placeholder(theme),
+          errorBuilder: (_, _, _) => _placeholder(theme),
         )
             : _placeholder(theme),
       ),

@@ -15,7 +15,6 @@ public sealed class AzureBlobSettings
         public string Avatars { get; init; } = "avatars";
         public string Groceries { get; init; } = "groceries";
         public string Exercises { get; init; } = "exercises";
-        public string MealPhotos { get; init; } = "meal-photos";
         public string Reports { get; init; } = "reports";
     }
 }

@@ -2,8 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using NutriTrack.Application.Common.Interfaces.Persistence;
 using NutriTrack.Domain.Authorization;
 using NutriTrack.Domain.Common.Errors;
-using NutriTrack.Domain.Common.Models;
-using NutriTrack.Infrastructure.Persistence;
 
 namespace NutriTrack.Infrastructure.Persistence.Repositories;
 

@@ -1,5 +1,4 @@
 using FluentValidation;
-using NutriTrack.Domain.Users;
 
 namespace NutriTrack.Application.Me.Queries.GetMe;
 

@@ -6,6 +6,13 @@ services:
       - "5672:5672"
       - "15672:15672"
     networks: [nutritrack]
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
 
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -16,6 +23,13 @@ services:
     ports:
       - "1433:1433"
     networks: [nutritrack]
+    healthcheck:
+      test: ["CMD-SHELL", "timeout 5 bash -c 'cat < /dev/null > /dev/tcp/localhost/1433' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 40s
+    restart: unless-stopped
 
   nutritrack-api:
     build:
@@ -23,31 +37,25 @@ services:
       dockerfile: src/NutriTrack.Api/Dockerfile
     container_name: nutritrack-api
     depends_on:
-      - sqlserver
-      - rabbitmq
-      - nutritrack-notifications-api
+      sqlserver:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      nutritrack-notifications-api:
+        condition: service_healthy
     environment:
-      # DB (main)
       - Database__ConnectionString=Server=sqlserver;Database=NTTest1;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True
-
-      # RabbitMQ
       - RabbitMq__HostName=rabbitmq
       - RabbitMq__Port=5672
       - RabbitMq__UserName=guest
       - RabbitMq__Password=guest
       - RabbitMq__QueueName=notifications-queue
-
-      # JWT
       - JwtSettings__Secret=${JWT_SECRET}
       - JwtSettings__Issuer=${JWT_ISSUER}
       - JwtSettings__Audience=${JWT_AUDIENCE}
       - JwtSettings__ExpiryMinutes=60
-
-      # Notifications.Api connection (internal)
       - Services__Notifications__BaseUrl=http://nutritrack-notifications-api:8080
       - Services__Notifications__ApiKey=${INTERNAL_NOTIF_API_KEY}
-
-      # Azure Blob Storage
       - AzureBlob__ConnectionString=${AZURE_BLOB_CONNECTION_STRING}
       - AzureBlob__Containers__Avatars=avatars
       - AzureBlob__Containers__Groceries=groceries
@@ -57,6 +65,13 @@ services:
     ports:
       - "5000:8080"
     networks: [nutritrack]
+    healthcheck:
+      test: ["CMD-SHELL", "timeout 5 bash -c 'cat < /dev/null > /dev/tcp/localhost/8080' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
 
   nutritrack-notifications-api:
     build:
@@ -64,22 +79,26 @@ services:
       dockerfile: src/NutriTrack.Notifications.Api/Dockerfile
     container_name: nutritrack-notifications-api
     depends_on:
-      - sqlserver
-      - rabbitmq
+      sqlserver:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     environment:
       - InternalAuth__ApiKey=${INTERNAL_NOTIF_API_KEY}
-
-      # Notifications DB
       - Database__ConnectionString=Server=sqlserver;Database=NTNotif1;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True
-
-      # RabbitMQ
       - RabbitMq__HostName=rabbitmq
       - RabbitMq__Port=5672
       - RabbitMq__UserName=guest
       - RabbitMq__Password=guest
       - RabbitMq__QueueName=notifications-queue
-    # bez ports -> internal-only
     networks: [nutritrack]
+    healthcheck:
+      test: ["CMD-SHELL", "timeout 5 bash -c 'cat < /dev/null > /dev/tcp/localhost/8080' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
 
   nutritrack-notifications-worker:
     build:
@@ -87,8 +106,10 @@ services:
       dockerfile: src/NutriTrack.Notifications.Worker/Dockerfile
     container_name: nutritrack-notifications-worker
     depends_on:
-      - sqlserver
-      - rabbitmq
+      sqlserver:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     environment:
       - Database__ConnectionString=Server=sqlserver;Database=NTNotif1;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True
       - RabbitMq__HostName=rabbitmq
@@ -97,6 +118,7 @@ services:
       - RabbitMq__Password=guest
       - RabbitMq__QueueName=notifications-queue
     networks: [nutritrack]
+    restart: unless-stopped
 
 networks:
   nutritrack:

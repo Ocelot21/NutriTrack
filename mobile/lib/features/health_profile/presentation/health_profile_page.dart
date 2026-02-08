@@ -112,7 +112,7 @@ class HealthProfilePage extends ConsumerWidget {
                 ],
                 // Gender
                 DropdownButtonFormField<EnumOption>(
-                  value: state.gender,
+                  initialValue: state.gender,
                   items: GenderOptions.values
                       .map(
                         (e) => DropdownMenuItem(
@@ -175,7 +175,7 @@ class HealthProfilePage extends ConsumerWidget {
                 const SizedBox(height: 12),
                 // Activity level
                 DropdownButtonFormField<EnumOption>(
-                  value: state.activityLevel,
+                  initialValue: state.activityLevel,
                   items: ActivityLevelOptions.values
                       .map(
                         (e) => DropdownMenuItem(
@@ -196,7 +196,7 @@ class HealthProfilePage extends ConsumerWidget {
                 const SizedBox(height: 12),
                 // Nutrition goal
                 DropdownButtonFormField<EnumOption>(
-                  value: state.nutritionGoal,
+                  initialValue: state.nutritionGoal,
                   items: NutritionGoalOptions.values
                       .map(
                         (e) => DropdownMenuItem(

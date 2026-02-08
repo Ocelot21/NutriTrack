@@ -50,7 +50,6 @@ class _EditMealItemPageState extends ConsumerState<EditMealItemPage> {
   }
 
   int _calcCalories(double quantity) {
-    // caloriesPer100 * quantity / 100
     return (widget.args.item.caloriesPer100 * quantity / 100).round();
   }
 
@@ -154,11 +153,10 @@ class _EditMealItemPageState extends ConsumerState<EditMealItemPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Header card
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceVariant,
+                    color: theme.colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Column(

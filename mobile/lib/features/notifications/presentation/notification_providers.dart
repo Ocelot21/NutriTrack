@@ -1,8 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/providers.dart';
-import '../../../core/token_store.dart';
-import '../../../core/models/paged_response.dart';
 import '../data/notification_models.dart';
 import '../data/notification_repo.dart';
 
@@ -90,7 +88,6 @@ class NotificationListController extends Notifier<NotificationListState> {
 
   Future<void> markAsRead(String id) async {
     await _repo.markAsRead(id);
-    // lokalno updateaj status
     final updated = state.items.map((n) {
       if (n.id == id) {
         return AppNotification(

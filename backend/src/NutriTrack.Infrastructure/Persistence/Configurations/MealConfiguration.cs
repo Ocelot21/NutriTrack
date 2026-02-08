@@ -58,6 +58,8 @@ public sealed class MealConfiguration : IEntityTypeConfiguration<Meal>
 
         b.OwnsMany(m => m.Items, nb =>
         {
+            nb.ToTable("MealItems");
+
             nb.WithOwner().HasForeignKey(mi => mi.MealId);
 
             nb.HasKey(mi => mi.Id);
@@ -89,23 +91,27 @@ public sealed class MealConfiguration : IEntityTypeConfiguration<Meal>
                 {
                     mb.Property(m => m.ProteinGramsPer100)
                         .HasPrecision(5, 2)
-                        .HasColumnName("ProteinGramsPer100g")
+                        .HasColumnName("ProteinGramsPer100")
                         .IsRequired();
 
                     mb.Property(m => m.CarbsGramsPer100)
                         .HasPrecision(5, 2)
-                        .HasColumnName("CarbsGramsPer100g")
+                        .HasColumnName("CarbsGramsPer100")
                         .IsRequired();
 
                     mb.Property(m => m.FatGramsPer100)
                         .HasPrecision(5, 2)
-                        .HasColumnName("FatGramsPer100g")
+                        .HasColumnName("FatGramsPer100")
                         .IsRequired();
                 });
 
                 sb.Property(s => s.UnitOfMeasure)
                     .HasColumnName("UnitOfMeasure")
                     .IsRequired();
+
+                sb.Property(g => g.GramsPerPiece)
+                    .HasColumnName("GramsPerPiece")
+                    .HasPrecision(7, 2);
 
                 sb.WithOwner();
             });

@@ -141,7 +141,6 @@ class _GoalHistoryItem extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // top row: type + status
             Row(
               children: [
                 Expanded(

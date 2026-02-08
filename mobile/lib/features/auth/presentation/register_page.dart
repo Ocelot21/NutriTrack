@@ -299,8 +299,6 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     final isSubmitting = state.isSubmitting;
     final error = state.error;
     final step = state.step;
-
-    // ovdje *pratimo* metadata providere (prefetch)
     final countriesAsync = ref.watch(countriesProvider);
     final timeZonesAsync = ref.watch(timeZonesProvider);
 
@@ -375,8 +373,6 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     );
   }
 }
-
-// ===== UI helper widgeti =====
 
 class _StepIndicator extends StatelessWidget {
   final RegisterStep currentStep;

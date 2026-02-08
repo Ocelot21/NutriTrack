@@ -7,7 +7,7 @@ import 'package:nutritrack_mobile/core/config/app_config.dart';
 
 
 /// - Emulator →  `http://10.0.2.2:5000/api`
-/// - Smartphone → IP of PC `http://192.168.0.29:5000/api`
+/// - Smartphone → IP of PC, example: `http://192.168.0.29:5000/api`
 final baseUrlProvider = Provider<String>((ref) {
   return AppConfig.resolvedApiBaseUrl;
 });

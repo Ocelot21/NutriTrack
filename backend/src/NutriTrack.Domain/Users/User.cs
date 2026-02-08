@@ -95,8 +95,6 @@ public sealed class User : AggregateRoot<UserId>
         timeZoneId = NormalizeTimeZoneId(timeZoneId);
         var countryCode = CountryCode.CreateOptional(countryIso2);
 
-        // TODO: Add health profile normalization if creating pre-completed profile.
-
         return new User(
             new UserId(Guid.NewGuid()),
             firstName,
@@ -314,8 +312,6 @@ public sealed class User : AggregateRoot<UserId>
                 DomainErrorCodes.Users.InvalidTimeZone,
                 "Time zone identifier cannot be empty.");
         }
-
-        // TODO: validate against a list of supported time zone identifiers.
 
         return timeZoneId;
     }

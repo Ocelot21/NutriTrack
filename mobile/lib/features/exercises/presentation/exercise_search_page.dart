@@ -176,14 +176,12 @@ class _ExerciseSearchPageState extends ConsumerState<ExerciseSearchPage> {
                           );
 
                           if (logged == true) {
-                            // zatvaramo search i javljamo Home-u da se nešto promijenilo
                             Navigator.of(context).pop(true);
                           }
                         },
                       );
                     }
 
-                    // "Load more" row
                     if (!state.canLoadMore) {
                       return const SizedBox.shrink();
                     }

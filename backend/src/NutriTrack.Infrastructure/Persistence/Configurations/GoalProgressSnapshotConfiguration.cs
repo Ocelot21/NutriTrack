@@ -52,6 +52,9 @@ public sealed class GoalProgressSnapshotConfiguration : IEntityTypeConfiguration
             .HasColumnType("decimal(18,2)")
             .IsRequired();
 
+        builder.Property(x => x.CurrentWeightKg)
+            .HasPrecision(7, 2);
+
         builder.OwnsMany(x => x.Points, points =>
         {
             points.ToTable("GoalProgressSnapshotPoints");

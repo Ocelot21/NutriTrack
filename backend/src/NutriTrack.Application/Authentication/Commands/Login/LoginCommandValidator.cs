@@ -1,5 +1,4 @@
 using FluentValidation;
-using NutriTrack.Domain.Common;
 
 namespace NutriTrack.Application.Authentication.Commands.Login;
 
@@ -13,6 +12,6 @@ public sealed class LoginCommandValidator : AbstractValidator<LoginCommand>
         RuleFor(x => x.Password)
             .NotEmpty()
             .MinimumLength(4)
-            .MaximumLength(200);
+            .MaximumLength(64);
     }
 }

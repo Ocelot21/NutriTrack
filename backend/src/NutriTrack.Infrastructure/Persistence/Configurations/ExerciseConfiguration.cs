@@ -24,6 +24,7 @@ public sealed class ExerciseConfiguration : IEntityTypeConfiguration<Exercise>
             .IsRequired();
 
         b.Property(e => e.DefaultCaloriesPerMinute)
+            .HasPrecision(7, 2)
             .IsRequired();
 
         b.Property(e => e.ImageUrl)

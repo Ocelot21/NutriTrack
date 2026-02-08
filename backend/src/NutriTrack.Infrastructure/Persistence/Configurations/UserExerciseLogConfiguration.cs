@@ -60,6 +60,8 @@ public sealed class UserExerciseLogConfiguration : IEntityTypeConfiguration<User
         b.Property(x => x.OccurredAtLocal)
             .HasColumnType("datetimeoffset")
             .IsRequired();
+        b.Property(x => x.TotalCalories)
+            .HasPrecision(7, 2);
 
         b.Property(x => x.LocalDate)
             .IsRequired();

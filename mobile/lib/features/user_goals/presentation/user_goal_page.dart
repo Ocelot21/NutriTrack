@@ -86,7 +86,6 @@ class _UserGoalPageState extends ConsumerState<UserGoalPage> {
             }
 
             if (state.currentGoal == null) {
-              // nema goal-a
               return ListView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 padding:
@@ -149,7 +148,6 @@ class _UserGoalPageState extends ConsumerState<UserGoalPage> {
               padding:
               const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
               children: [
-                // Goal summary
                 Card(
                   child: Padding(
                     padding: const EdgeInsets.all(16),
@@ -159,7 +157,6 @@ class _UserGoalPageState extends ConsumerState<UserGoalPage> {
 
                 const SizedBox(height: 8),
 
-                // Weight chart
                 Card(
                   child: Padding(
                     padding: const EdgeInsets.all(16),
@@ -169,7 +166,6 @@ class _UserGoalPageState extends ConsumerState<UserGoalPage> {
 
                 const SizedBox(height: 8),
 
-                // Actions
                 _GoalActions(
                   goal: goal,
                   isSavingWeight: state.isSavingWeight,
@@ -290,7 +286,6 @@ class _UserGoalPageState extends ConsumerState<UserGoalPage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Goal type
                 ValueListenableBuilder<NutritionGoalTypeUi>(
                   valueListenable: type,
                   builder: (context, value, _) {
@@ -315,7 +310,6 @@ class _UserGoalPageState extends ConsumerState<UserGoalPage> {
                 ),
                 const SizedBox(height: 12),
 
-                // Target date
                 Align(
                   alignment: Alignment.centerLeft,
                   child: TextButton.icon(
@@ -344,7 +338,6 @@ class _UserGoalPageState extends ConsumerState<UserGoalPage> {
                 ),
                 const SizedBox(height: 8),
 
-                // Target weight
                 TextFormField(
                   controller: targetWeightController,
                   keyboardType:
@@ -569,7 +562,6 @@ class _GoalActions extends ConsumerWidget {
 
         const SizedBox(height: 8),
 
-        // Share progress
         if (isShared)
           Container(
             width: double.infinity,
@@ -693,7 +685,6 @@ class _WeightLineChart extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    // sort by date to be safe
     final sorted = [...history]
       ..sort((a, b) => a.date.compareTo(b.date));
 
@@ -744,7 +735,6 @@ class _WeightChartPainter extends CustomPainter {
 
     if (chartWidth <= 0 || chartHeight <= 0) return;
 
-    // min/max weight kao double
     final double minWeight = history
         .map((e) => e.weightKg)
         .followedBy([goal.targetWeightKg])
@@ -757,14 +747,12 @@ class _WeightChartPainter extends CustomPainter {
 
     const double margin = 1.0;
 
-    // bez clamp da izbjegnemo num -> double
     final double yMin =
     (minWeight - margin) <= 0 ? 0.0 : (minWeight - margin);
     final double yMax = maxWeight + margin;
     final double rawRange = yMax - yMin;
     final double yRange = rawRange.abs() < 0.1 ? 1.0 : rawRange;
 
-    // datumi
     final dates = history.map((e) => e.date).toList();
     final startDate = dates.first;
     final endDate = dates.last;
@@ -790,21 +778,18 @@ class _WeightChartPainter extends CustomPainter {
       ..color = axisColor
       ..strokeWidth = 1;
 
-    // y-axis
     canvas.drawLine(
       const Offset(paddingLeft, paddingTop),
       Offset(paddingLeft, paddingTop + chartHeight),
       axisPaint,
     );
 
-    // x-axis
     canvas.drawLine(
       Offset(paddingLeft, paddingTop + chartHeight),
       Offset(paddingLeft + chartWidth, paddingTop + chartHeight),
       axisPaint,
     );
 
-    // target horizontal line
     final double targetY = yForWeight(goal.targetWeightKg);
     final targetPaint = Paint()
       ..color = targetColor.withAlpha(179)
@@ -823,7 +808,6 @@ class _WeightChartPainter extends CustomPainter {
       gapWidth: 4,
     );
 
-    // line kroz history
     final linePaint = Paint()
       ..color = lineColor
       ..strokeWidth = 2
@@ -842,7 +826,6 @@ class _WeightChartPainter extends CustomPainter {
     }
     canvas.drawPath(path, linePaint);
 
-    // tačke
     final pointPaint = Paint()
       ..color = lineColor
       ..style = PaintingStyle.fill;
@@ -853,7 +836,6 @@ class _WeightChartPainter extends CustomPainter {
       canvas.drawCircle(Offset(x, y), 3.5, pointPaint);
     }
 
-    // y-axis labele
     final textPainter = TextPainter(
       textAlign: TextAlign.right,
       textDirection: TextDirection.ltr,

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using NutriTrack.Application.Common.Interfaces.Authorization;
 using NutriTrack.Application.Common.Interfaces.Persistence;
@@ -26,11 +27,15 @@ public static class PersistenceExtensions
         services.AddDbContext<AppDbContext>((sp, options) =>
         {
             var dbSettings = sp.GetRequiredService<IOptions<DatabaseSettings>>().Value;
+            var env = sp.GetService<IHostEnvironment>();
 
             options.UseSqlServer(dbSettings.ConnectionString);
-
             options.EnableDetailedErrors();
-            options.EnableSensitiveDataLogging();
+
+            if (env != null && env.IsDevelopment())
+            {
+                options.EnableSensitiveDataLogging();
+            }
         });
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();

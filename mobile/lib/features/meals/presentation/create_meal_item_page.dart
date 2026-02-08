@@ -25,7 +25,7 @@ String per100UnitLabel(UnitOfMeasureUi u) {
     case UnitOfMeasureUi.milliliter:
       return '100 ml';
     case UnitOfMeasureUi.piece:
-      return '100 g'; // canonical for piece too (piece converts to grams)
+      return '100 g';
   }
 }
 
@@ -84,7 +84,6 @@ class _MealItemCreatePageState extends ConsumerState<MealItemCreatePage> {
       return;
     }
 
-    // Optional safety: if Piece but missing gramsPerPiece, warn (data bug)
     final g = widget.args.grocery;
     final isPiece = g.unitOfMeasure == UnitOfMeasureUi.piece;
     if (isPiece && g.gramsPerPiece == null) {
@@ -93,7 +92,6 @@ class _MealItemCreatePageState extends ConsumerState<MealItemCreatePage> {
           content: Text('This grocery is missing grams per piece.'),
         ),
       );
-      // You can "return;" if you want to block saving completely.
       // return;
     }
 
@@ -163,7 +161,6 @@ class _MealItemCreatePageState extends ConsumerState<MealItemCreatePage> {
             orElse: () => meals.first,
           );
 
-          // Optional computed info preview (approx per entered quantity)
           final q = _parseQuantity();
           final factor = (q != null && q > 0)
               ? (isPiece
@@ -188,7 +185,6 @@ class _MealItemCreatePageState extends ConsumerState<MealItemCreatePage> {
                     _GroceryHeader(grocery: grocery),
                     const SizedBox(height: 14),
 
-                    // A slightly more prominent macro summary card
                     _MacroSummaryCard(grocery: grocery),
 
                     const SizedBox(height: 16),
@@ -204,7 +200,7 @@ class _MealItemCreatePageState extends ConsumerState<MealItemCreatePage> {
                     ],
 
                     DropdownButtonFormField<String>(
-                      value: _selectedMealId,
+                      initialValue: _selectedMealId,
                       decoration: const InputDecoration(
                         labelText: 'Meal',
                       ),
@@ -240,7 +236,6 @@ class _MealItemCreatePageState extends ConsumerState<MealItemCreatePage> {
 
                     const SizedBox(height: 12),
 
-                    // Preview card (optional but very useful UX)
                     _QuantityPreviewCard(
                       isVisible: q != null && q > 0,
                       calories: kcalApprox,
@@ -308,7 +303,7 @@ class _GroceryHeader extends StatelessWidget {
                 ? Image.network(
               imageUrl,
               fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => _placeholder(theme),
+              errorBuilder: (_, _, _) => _placeholder(theme),
             )
                 : _placeholder(theme),
           ),
@@ -378,7 +373,7 @@ class _MacroSummaryCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceVariant,
+        color: theme.colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -504,7 +499,7 @@ class _InfoChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceVariant,
+        color: theme.colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(999),
       ),
       child: Row(

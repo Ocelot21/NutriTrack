@@ -40,7 +40,6 @@ class _ExerciseLogPageState extends ConsumerState<ExerciseLogPage> {
     _date = DateTime(initial.year, initial.month, initial.day);
     _time = TimeOfDay(hour: initial.hour, minute: initial.minute);
 
-    // možeš prepopuniti default trajanje, npr. 30min
     _durationCtrl = TextEditingController(text: '');
     _notesCtrl = TextEditingController();
   }
@@ -234,7 +233,6 @@ class _ExerciseHeader extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // slika / placeholder – ograničena visina da ne pojede ekran
         ClipRRect(
           borderRadius: BorderRadius.circular(16),
           child: SizedBox(

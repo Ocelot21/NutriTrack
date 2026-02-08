@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using NutriTrack.Application.Common.Interfaces.Persistence;
 using NutriTrack.Domain.Users;
-using NutriTrack.Infrastructure.Persistence;
 
 namespace NutriTrack.Infrastructure.Persistence.Repositories;
 
@@ -27,7 +26,7 @@ public sealed class MealItemReadRepository : IMealItemReadRepository
 
         var sql = @"
         SELECT mi.GroceryId, COUNT(1) AS [Count]
-        FROM MealItem mi
+        FROM MealItems mi
         INNER JOIN Meals m ON mi.MealId = m.Id
         WHERE m.UserId IN ({0})
         GROUP BY mi.GroceryId";

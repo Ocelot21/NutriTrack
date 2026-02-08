@@ -9,7 +9,6 @@ using NutriTrack.Application.Me.Queries.GetDailyOverview;
 using NutriTrack.Application.Me.Commands.ChangePassword;
 using NutriTrack.Application.Me.Commands.UpdateUserProfile;
 using NutriTrack.Application.Me.Commands.UploadAvatar;
-using Microsoft.AspNetCore.Http;
 
 namespace NutriTrack.Api.Controllers;
 

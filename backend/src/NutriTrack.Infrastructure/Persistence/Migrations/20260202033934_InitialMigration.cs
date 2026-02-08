@@ -81,7 +81,7 @@ namespace NutriTrack.Infrastructure.Persistence.Migrations
                     Name = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
                     Category = table.Column<byte>(type: "tinyint", nullable: false),
-                    DefaultCaloriesPerMinute = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    DefaultCaloriesPerMinute = table.Column<decimal>(type: "decimal(7,2)", precision: 7, scale: 2, nullable: false),
                     ImageUrl = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     IsApproved = table.Column<bool>(type: "bit", nullable: false),
@@ -103,12 +103,12 @@ namespace NutriTrack.Infrastructure.Persistence.Migrations
                     Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     Category = table.Column<int>(type: "int", nullable: false),
                     Barcode = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: true),
-                    ProteinGramsPer100g = table.Column<decimal>(type: "decimal(5,2)", precision: 5, scale: 2, nullable: false),
-                    CarbsGramsPer100g = table.Column<decimal>(type: "decimal(5,2)", precision: 5, scale: 2, nullable: false),
-                    FatGramsPer100g = table.Column<decimal>(type: "decimal(5,2)", precision: 5, scale: 2, nullable: false),
+                    ProteinGramsPer100 = table.Column<decimal>(type: "decimal(5,2)", precision: 5, scale: 2, nullable: false),
+                    CarbsGramsPer100 = table.Column<decimal>(type: "decimal(5,2)", precision: 5, scale: 2, nullable: false),
+                    FatGramsPer100 = table.Column<decimal>(type: "decimal(5,2)", precision: 5, scale: 2, nullable: false),
                     CaloriesPer100 = table.Column<short>(type: "smallint", nullable: false),
                     UnitOfMeasure = table.Column<byte>(type: "tinyint", nullable: false),
-                    GramsPerPiece = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    GramsPerPiece = table.Column<decimal>(type: "decimal(7,2)", precision: 7, scale: 2, nullable: true),
                     ImageUrl = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: true),
                     IsApproved = table.Column<bool>(type: "bit", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
@@ -230,8 +230,8 @@ namespace NutriTrack.Infrastructure.Persistence.Migrations
                     Gender = table.Column<byte>(type: "tinyint", nullable: false),
                     ActivityLevel = table.Column<byte>(type: "tinyint", nullable: false),
                     Birthdate = table.Column<DateOnly>(type: "date", nullable: true),
-                    HeightCm = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    WeightKg = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    HeightCm = table.Column<decimal>(type: "decimal(7,2)", precision: 7, scale: 2, nullable: true),
+                    WeightKg = table.Column<decimal>(type: "decimal(7,2)", precision: 7, scale: 2, nullable: true),
                     NutritionGoal = table.Column<byte>(type: "tinyint", nullable: false),
                     IsTwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
                     TotpSecretProtected = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: true),
@@ -396,7 +396,7 @@ namespace NutriTrack.Infrastructure.Persistence.Migrations
                     OccurredAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
                     OccurredAtLocal = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     LocalDate = table.Column<DateOnly>(type: "date", nullable: false),
-                    TotalCalories = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    TotalCalories = table.Column<decimal>(type: "decimal(7,2)", precision: 7, scale: 2, nullable: false),
                     Notes = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
                     CreatedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -475,7 +475,7 @@ namespace NutriTrack.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "MealItem",
+                name: "MealItems",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -483,24 +483,24 @@ namespace NutriTrack.Infrastructure.Persistence.Migrations
                     GroceryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     GroceryName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     CaloriesPer100 = table.Column<short>(type: "smallint", nullable: false),
-                    ProteinGramsPer100g = table.Column<decimal>(type: "decimal(5,2)", precision: 5, scale: 2, nullable: false),
-                    CarbsGramsPer100g = table.Column<decimal>(type: "decimal(5,2)", precision: 5, scale: 2, nullable: false),
-                    FatGramsPer100g = table.Column<decimal>(type: "decimal(5,2)", precision: 5, scale: 2, nullable: false),
+                    ProteinGramsPer100 = table.Column<decimal>(type: "decimal(5,2)", precision: 5, scale: 2, nullable: false),
+                    CarbsGramsPer100 = table.Column<decimal>(type: "decimal(5,2)", precision: 5, scale: 2, nullable: false),
+                    FatGramsPer100 = table.Column<decimal>(type: "decimal(5,2)", precision: 5, scale: 2, nullable: false),
                     UnitOfMeasure = table.Column<byte>(type: "tinyint", nullable: false),
-                    Snapshot_GramsPerPiece = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    GramsPerPiece = table.Column<decimal>(type: "decimal(7,2)", precision: 7, scale: 2, nullable: true),
                     Quantity = table.Column<decimal>(type: "decimal(9,2)", precision: 9, scale: 2, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_MealItem", x => x.Id);
+                    table.PrimaryKey("PK_MealItems", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_MealItem_Groceries_GroceryId",
+                        name: "FK_MealItems_Groceries_GroceryId",
                         column: x => x.GroceryId,
                         principalTable: "Groceries",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_MealItem_Meals_MealId",
+                        name: "FK_MealItems_Meals_MealId",
                         column: x => x.MealId,
                         principalTable: "Meals",
                         principalColumn: "Id",
@@ -518,7 +518,7 @@ namespace NutriTrack.Infrastructure.Persistence.Migrations
                     GoalTargetDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     SnapshotDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     StartWeightKg = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    CurrentWeightKg = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    CurrentWeightKg = table.Column<decimal>(type: "decimal(7,2)", precision: 7, scale: 2, nullable: false),
                     TargetWeightKg = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
@@ -654,18 +654,18 @@ namespace NutriTrack.Infrastructure.Persistence.Migrations
                 column: "Name");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MealItem_GroceryId",
-                table: "MealItem",
+                name: "IX_MealItems_GroceryId",
+                table: "MealItems",
                 column: "GroceryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MealItem_MealId",
-                table: "MealItem",
+                name: "IX_MealItems_MealId",
+                table: "MealItems",
                 column: "MealId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MealItem_Quantity",
-                table: "MealItem",
+                name: "IX_MealItems_Quantity",
+                table: "MealItems",
                 column: "Quantity");
 
             migrationBuilder.CreateIndex(
@@ -844,7 +844,7 @@ namespace NutriTrack.Infrastructure.Persistence.Migrations
                 name: "GoalProgressSnapshotPoints");
 
             migrationBuilder.DropTable(
-                name: "MealItem");
+                name: "MealItems");
 
             migrationBuilder.DropTable(
                 name: "PendingLoginChallenges");

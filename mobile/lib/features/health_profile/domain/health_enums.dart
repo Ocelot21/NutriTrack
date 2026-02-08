@@ -70,20 +70,20 @@ class ActivityLevelOptions {
   ];
 }
 
-// NutritionGoal (LoseWeight=0, MaintainWeight=1, GainWeight=2)
+// NutritionGoal (LoseWeight=1, MaintainWeight=2, GainWeight=3)
 class NutritionGoalOptions {
   static const lose = EnumOption(
-    id: 0,
+    id: 1,
     label: 'Lose weight',
     backendValue: 'LoseWeight',
   );
   static const maintain = EnumOption(
-    id: 1,
+    id: 2,
     label: 'Maintain weight',
     backendValue: 'MaintainWeight',
   );
   static const gain = EnumOption(
-    id: 2,
+    id: 3,
     label: 'Gain weight',
     backendValue: 'GainWeight',
   );

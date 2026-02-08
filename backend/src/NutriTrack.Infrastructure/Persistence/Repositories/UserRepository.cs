@@ -8,10 +8,7 @@ namespace NutriTrack.Infrastructure.Persistence.Repositories
     internal sealed class UserRepository : EfRepository<User, UserId>, IUserRepository
     {
 
-        public UserRepository(AppDbContext dbContext) : base(dbContext)
-        {
-
-        }
+        public UserRepository(AppDbContext dbContext) : base(dbContext) { }
 
         public Task<User?> GetByEmailAsync(Email email, CancellationToken cancellationToken = default)
         {

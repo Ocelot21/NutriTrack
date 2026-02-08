@@ -715,7 +715,6 @@ class _MealBlock extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        // items
         Column(
           children: [
             for (final item in meal.items) ...[
@@ -748,7 +747,6 @@ class _MealItemCard extends StatelessWidget {
   });
 
   int _calculateCalories() {
-    // caloriesPer100 * quantity / 100
     return (item.caloriesPer100 * item.quantity / 100).round();
   }
 

@@ -1,8 +1,5 @@
 ﻿using NutriTrack.Application.Common.Models;
 using NutriTrack.Domain.Users;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace NutriTrack.Application.Common.Services;
 

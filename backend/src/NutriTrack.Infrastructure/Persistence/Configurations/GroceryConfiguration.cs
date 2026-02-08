@@ -23,21 +23,24 @@ public sealed class GroceryConfiguration : IEntityTypeConfiguration<Grocery>
         b.Property(g => g.Barcode)
             .HasMaxLength(DomainConstraints.Groceries.MaxBarcodeLength);
 
+        b.Property(g => g.GramsPerPiece)
+            .HasPrecision(7, 2);
+
         b.OwnsOne(g => g.MacrosPer100, nb =>
         {
             nb.Property(m => m.ProteinGramsPer100)
                 .HasPrecision(5, 2)
-                .HasColumnName("ProteinGramsPer100g")
+                .HasColumnName("ProteinGramsPer100")
                 .IsRequired();
 
             nb.Property(m => m.CarbsGramsPer100)
                 .HasPrecision(5, 2)
-                .HasColumnName("CarbsGramsPer100g")
+                .HasColumnName("CarbsGramsPer100")
                 .IsRequired();
 
             nb.Property(m => m.FatGramsPer100)
                 .HasPrecision(5, 2)
-                .HasColumnName("FatGramsPer100g")
+                .HasColumnName("FatGramsPer100")
                 .IsRequired();
         });
 

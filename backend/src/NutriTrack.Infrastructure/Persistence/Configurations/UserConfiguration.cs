@@ -46,6 +46,12 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
             .HasOptionalCountryCodeConversion()
             .HasMaxLength(2);
 
+        builder.Property(u => u.HeightCm)
+            .HasPrecision(7, 2);
+
+        builder.Property(u => u.WeightKg)
+            .HasPrecision(7, 2);
+
         builder.HasOne(u => u.Country)
             .WithMany()
             .HasForeignKey(u => u.CountryCode)

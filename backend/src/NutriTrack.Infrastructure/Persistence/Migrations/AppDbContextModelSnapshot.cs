@@ -279,7 +279,8 @@ namespace NutriTrack.Infrastructure.Persistence.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("DefaultCaloriesPerMinute")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(7, 2)
+                        .HasColumnType("decimal(7,2)");
 
                     b.Property<string>("Description")
                         .HasMaxLength(1000)
@@ -339,7 +340,8 @@ namespace NutriTrack.Infrastructure.Persistence.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal?>("GramsPerPiece")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(7, 2)
+                        .HasColumnType("decimal(7,2)");
 
                     b.Property<string>("ImageUrl")
                         .HasMaxLength(512)
@@ -570,7 +572,8 @@ namespace NutriTrack.Infrastructure.Persistence.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("CurrentWeightKg")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(7, 2)
+                        .HasColumnType("decimal(7,2)");
 
                     b.Property<DateTime>("GoalStartDate")
                         .HasColumnType("datetime2");
@@ -699,7 +702,8 @@ namespace NutriTrack.Infrastructure.Persistence.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<decimal>("TotalCalories")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(7, 2)
+                        .HasColumnType("decimal(7,2)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -811,7 +815,8 @@ namespace NutriTrack.Infrastructure.Persistence.Migrations
                         .HasColumnType("tinyint");
 
                     b.Property<decimal?>("HeightCm")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(7, 2)
+                        .HasColumnType("decimal(7,2)");
 
                     b.Property<bool>("IsEmailVerified")
                         .HasColumnType("bit");
@@ -861,7 +866,8 @@ namespace NutriTrack.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(32)");
 
                     b.Property<decimal?>("WeightKg")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(7, 2)
+                        .HasColumnType("decimal(7,2)");
 
                     b.HasKey("Id");
 
@@ -1019,17 +1025,17 @@ namespace NutriTrack.Infrastructure.Persistence.Migrations
                             b1.Property<decimal>("CarbsGramsPer100")
                                 .HasPrecision(5, 2)
                                 .HasColumnType("decimal(5,2)")
-                                .HasColumnName("CarbsGramsPer100g");
+                                .HasColumnName("CarbsGramsPer100");
 
                             b1.Property<decimal>("FatGramsPer100")
                                 .HasPrecision(5, 2)
                                 .HasColumnType("decimal(5,2)")
-                                .HasColumnName("FatGramsPer100g");
+                                .HasColumnName("FatGramsPer100");
 
                             b1.Property<decimal>("ProteinGramsPer100")
                                 .HasPrecision(5, 2)
                                 .HasColumnType("decimal(5,2)")
-                                .HasColumnName("ProteinGramsPer100g");
+                                .HasColumnName("ProteinGramsPer100");
 
                             b1.HasKey("GroceryId");
 
@@ -1074,7 +1080,7 @@ namespace NutriTrack.Infrastructure.Persistence.Migrations
 
                             b1.HasIndex("Quantity");
 
-                            b1.ToTable("MealItem");
+                            b1.ToTable("MealItems", (string)null);
 
                             b1.HasOne("NutriTrack.Domain.Groceries.Grocery", "Grocery")
                                 .WithMany()
@@ -1095,7 +1101,9 @@ namespace NutriTrack.Infrastructure.Persistence.Migrations
                                         .HasColumnName("CaloriesPer100");
 
                                     b2.Property<decimal?>("GramsPerPiece")
-                                        .HasColumnType("decimal(18,2)");
+                                        .HasPrecision(7, 2)
+                                        .HasColumnType("decimal(7,2)")
+                                        .HasColumnName("GramsPerPiece");
 
                                     b2.Property<string>("GroceryName")
                                         .IsRequired()
@@ -1109,7 +1117,7 @@ namespace NutriTrack.Infrastructure.Persistence.Migrations
 
                                     b2.HasKey("MealItemId");
 
-                                    b2.ToTable("MealItem");
+                                    b2.ToTable("MealItems");
 
                                     b2.WithOwner()
                                         .HasForeignKey("MealItemId");
@@ -1122,21 +1130,21 @@ namespace NutriTrack.Infrastructure.Persistence.Migrations
                                             b3.Property<decimal>("CarbsGramsPer100")
                                                 .HasPrecision(5, 2)
                                                 .HasColumnType("decimal(5,2)")
-                                                .HasColumnName("CarbsGramsPer100g");
+                                                .HasColumnName("CarbsGramsPer100");
 
                                             b3.Property<decimal>("FatGramsPer100")
                                                 .HasPrecision(5, 2)
                                                 .HasColumnType("decimal(5,2)")
-                                                .HasColumnName("FatGramsPer100g");
+                                                .HasColumnName("FatGramsPer100");
 
                                             b3.Property<decimal>("ProteinGramsPer100")
                                                 .HasPrecision(5, 2)
                                                 .HasColumnType("decimal(5,2)")
-                                                .HasColumnName("ProteinGramsPer100g");
+                                                .HasColumnName("ProteinGramsPer100");
 
                                             b3.HasKey("GrocerySnapshotMealItemId");
 
-                                            b3.ToTable("MealItem");
+                                            b3.ToTable("MealItems");
 
                                             b3.WithOwner()
                                                 .HasForeignKey("GrocerySnapshotMealItemId");

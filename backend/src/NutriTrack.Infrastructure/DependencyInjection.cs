@@ -50,7 +50,12 @@ public static class DependencyInjection
         services.AddScoped<IAchievementService, AchievementService>();
         services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
         services.AddScoped<IGroceryRecommender, GroceryRecommender>();
+        services.AddScoped<IEnhancedGroceryRecommender, EnhancedGroceryRecommender>();
         services.AddScoped<IMealItemReadRepository, MealItemReadRepository>();
+        services.AddScoped<IRecommendationMetricsTracker, RecommendationMetricsTracker>();
+
+        services.AddMemoryCache();
+        services.AddHostedService<RecommendationCacheWarmer>();
 
         services.AddScoped<IAdminDashboardService, AdminDashboardService>();
 

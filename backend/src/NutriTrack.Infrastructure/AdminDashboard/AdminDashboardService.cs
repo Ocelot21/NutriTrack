@@ -65,7 +65,7 @@ public sealed class AdminDashboardService : IAdminDashboardService
         var topGroceriesRows = await _dbContext.Database
             .SqlQuery<DashboardTopRow>($@"
                 SELECT TOP({top}) g.Name AS [Name], COUNT(1) AS [Count]
-                FROM MealItem mi
+                FROM MealItems mi
                 INNER JOIN Meals m ON mi.MealId = m.Id
                 INNER JOIN Groceries g ON mi.GroceryId = g.Id
                 WHERE m.OccurredAtUtc >= {fromUtc} AND m.OccurredAtUtc < {toUtc}

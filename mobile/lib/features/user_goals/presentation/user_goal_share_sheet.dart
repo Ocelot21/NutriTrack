@@ -61,7 +61,6 @@ class _GoalProgressShareSheetState extends ConsumerState<GoalProgressShareSheet>
             ),
             const SizedBox(height: 8),
 
-            // Summary
             Text(
               widget.goal.type.label,
               style: theme.textTheme.titleMedium?.copyWith(

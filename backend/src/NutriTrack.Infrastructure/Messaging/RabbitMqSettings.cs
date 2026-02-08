@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace NutriTrack.Infrastructure.Messaging;
+﻿namespace NutriTrack.Infrastructure.Messaging;
 
 public sealed class RabbitMqSettings
 {

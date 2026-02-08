@@ -71,7 +71,7 @@ class UserAchievementModel {
   factory UserAchievementModel.fromJson(Map<String, dynamic> json) {
     final rawCategory = json['category'];
     final earnedAtStr =
-        json['localDateEarned'] as String ?? json['earnedAtLocal'] as String? ?? json['earnedAtUtc'] as String;
+        json['localDateEarned'] as String;
 
     return UserAchievementModel(
       id: json['id'] as String,

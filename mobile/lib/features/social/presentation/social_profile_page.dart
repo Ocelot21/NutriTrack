@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../achievements/data/user_achievement_models.dart';
 import '../data/social_models.dart';
 import 'social_providers.dart';
 import 'widgets/social_post_card.dart';
@@ -164,13 +165,13 @@ class _PostsTab extends StatelessWidget {
     return ListView.separated(
       padding: const EdgeInsets.fromLTRB(12, 12, 12, 24),
       itemCount: posts.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 10),
+      separatorBuilder: (_, _) => const SizedBox(height: 10),
       itemBuilder: (context, index) {
         final post = posts[index];
         return SocialPostCard(
           post: post,
-          onAuthorTap: null, // already on profile
-          onDelete: null, // keep minimal (no delete here)
+          onAuthorTap: null,
+          onDelete: null,
         );
       },
     );
@@ -195,9 +196,10 @@ class _AchievementsTab extends StatelessWidget {
     return ListView.separated(
       padding: const EdgeInsets.fromLTRB(12, 12, 12, 24),
       itemCount: achievements.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 10),
+      separatorBuilder: (_, _) => const SizedBox(height: 10),
       itemBuilder: (context, index) {
         final a = achievements[index];
+        final iconData = achievementIconForName(a.icon);
         return Card(
           elevation: 0,
           shape: RoundedRectangleBorder(
@@ -209,11 +211,9 @@ class _AchievementsTab extends StatelessWidget {
           child: ListTile(
             leading: CircleAvatar(
               backgroundColor: theme.colorScheme.primaryContainer,
-              child: Text(
-                a.icon,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  color: theme.colorScheme.onPrimaryContainer,
-                ),
+              child: Icon(
+                iconData,
+                color: theme.colorScheme.onPrimaryContainer,
               ),
             ),
             title: Text(a.name),

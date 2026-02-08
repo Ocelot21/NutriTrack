@@ -211,7 +211,7 @@ class AppRouter {
       ),
       GoRoute(
         path: '/scanner',
-        pageBuilder: (_, __) => const MaterialPage(
+        pageBuilder: (_, _) => const MaterialPage(
           child: ScannerPage(),
         ),
       ),

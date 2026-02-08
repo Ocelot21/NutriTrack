@@ -5,6 +5,5 @@ public enum BlobContainer
     Avatars,
     Groceries,
     Exercises,
-    MealPhotos,
     Reports
 }

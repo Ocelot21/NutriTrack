@@ -65,7 +65,7 @@ class _RecommendedGroceriesPageState
                         ),
                         itemCount:
                             state.items.length + (state.canLoadMore ? 1 : 0),
-                        separatorBuilder: (_, __) => const SizedBox(height: 10),
+                        separatorBuilder: (_, _) => const SizedBox(height: 10),
                         itemBuilder: (context, index) {
                           if (index < state.items.length) {
                             final g = state.items[index];

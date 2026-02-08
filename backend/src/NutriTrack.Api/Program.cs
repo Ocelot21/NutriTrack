@@ -1,8 +1,12 @@
+using DotNetEnv;
 using NutriTrack.Api;
 using NutriTrack.Api.Reports;
 using NutriTrack.Api.Startup;
 using NutriTrack.Application;
 using NutriTrack.Infrastructure;
+using System.IO;
+
+DotNetEnv.Env.Load(Path.Combine("src", "NutriTrack.Api", ".env"));
 
 var builder = WebApplication.CreateBuilder(args);
 {
