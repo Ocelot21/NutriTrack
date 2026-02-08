@@ -7,11 +7,11 @@ import 'package:nutritrack_shared/nutritrack_shared.dart';
 /// API base URL.
 ///
 /// You can override this at runtime:
-/// flutter run --dart-define=API_BASE_URL=http://192.168.0.29:5000/api
+/// flutter run --dart-define=API_BASE_URL=http://localhost:5000/api
 ///
 /// If not provided, we fall back to a sensible default.
 final baseUrlProvider = Provider<String>((ref) {
-  const fallback = 'http://192.168.0.29:5000/api';
+  const fallback = 'http://localhost:5000/api';
 
   const defined = String.fromEnvironment('API_BASE_URL', defaultValue: '');
   final v = defined.trim();
